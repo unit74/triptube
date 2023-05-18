@@ -1,12 +1,11 @@
 package com.ssafy.triptube.trip.controllers;
 
-import java.util.List;
-
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.triptube.trip.models.Cat1Entity;
+import com.ssafy.triptube.support.web.ApiResponseUtil;
 import com.ssafy.triptube.trip.services.Cat1Service;
 
 @RestController
@@ -20,7 +19,7 @@ public class Cat1Controller {
 	}
 
 	@GetMapping("")
-	public List<Cat1Entity> getCat1s() {
-		return cat1Service.getCat1s();
+	public ResponseEntity<?> getCat1s() {
+		return ApiResponseUtil.createResponse(true, "대분류 가져오기", cat1Service.getCat1s());
 	}
 }

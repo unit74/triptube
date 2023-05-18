@@ -11,12 +11,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "cat1")
-public class Cat1Entity {
+@Entity(name = "cat2")
+public class Cat2Entity {
 	@Id
-	@Column(name = "cat1_code")
-	private String cat1Code;
+	@Column(name = "cat2_code")
+	private String cat2Code;
 
-	@Column(name = "cat1_name", nullable = false)
-	private String cat1Name;
+	@Column(name = "cat2_name", nullable = false)
+	private String cat2Name;
+
+	@Column(name = "cat1_code", nullable = false)
+	private String cat1Code;
 }
