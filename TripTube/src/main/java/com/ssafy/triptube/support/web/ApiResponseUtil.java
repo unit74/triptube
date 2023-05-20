@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class ApiResponseUtil {
+
 	public static <T> ResponseEntity<ApiResponseDto<T>> createResponse(Boolean success, String message, T data) {
 		ApiResponseDto<T> apiResponse = new ApiResponseDto<>(success, message, data);
 		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
