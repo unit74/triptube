@@ -33,22 +33,19 @@
         </template>
         <span>Notifications</span>
       </v-tooltip> -->
-      <v-btn v-show="false" tile outlined color="blue" class="font-weight-bold" v-if="!$store.getters.isAuthenticated" router to="/signin">
-        <v-icon left size="26">mdi-account-circle</v-icon>로그인
-      </v-btn>
-      <v-btn v-show="true" tile outlined color="blue" class="font-weight-bold" v-if="!$store.getters.isAuthenticated" router to="/signin">
-        <v-icon left size="26">mdi-account-circle</v-icon>로그아웃
+      <v-btn tile outlined color="blue" class="font-weight-bold" v-if="!$store.getters.isAuthenticated" router to="/signin">
+        <v-icon left size="26">mdi-account-circle</v-icon> 로그인
       </v-btn>
 
       <v-menu offset-y left v-else>
         <template v-slot:activator="{ on }">
           <v-btn small color="red" depressed fab v-on="on" class="white--text">
-            <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
-              <img :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`" :alt="`${currentUser.channelName} avatar`" />
+            <v-avatar v-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'">
+              <img :src="`${currentUser.profilePhotoUrl}`" :alt="`${currentUser.name} avatar`" />
             </v-avatar>
             <template v-else>
               <span class="headline">
-                {{ currentUser.channelName.split("")[0].toUpperCase() }}
+                {{ currentUser.name.split("")[0].toUpperCase() }}
               </span>
             </template>
           </v-btn>
@@ -58,18 +55,18 @@
           <v-list>
             <v-list-item>
               <v-list-item-avatar>
-                <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
-                  <img :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`" :alt="`${currentUser.channelName} avatar`" />
+                <v-avatar v-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'">
+                  <img :src="`${currentUser.profilePhotoUrl}`" :alt="`${currentUser.name} avatar`" />
                 </v-avatar>
                 <template v-else>
                   <v-avatar color="red">
-                    <span class="white--text headline "> {{ currentUser.channelName.split("")[0].toUpperCase() }}</span>
+                    <span class="white--text headline "> {{ currentUser.name.split("")[0].toUpperCase() }}</span>
                   </v-avatar>
                 </template>
               </v-list-item-avatar>
 
               <v-list-item-content>
-                <v-list-item-title class="text-capitalize">{{ currentUser.channelName }}</v-list-item-title>
+                <v-list-item-title class="text-capitalize">{{ currentUser.name }}</v-list-item-title>
                 <v-list-item-subtitle>{{ currentUser.email }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -166,7 +163,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import SubscriptionService from "@/services/SubscriptionService";
+//import SubscriptionService from "@/services/SubscriptionService";
 import HistoryService from "@/services/HistoryService";
 
 export default {
@@ -303,11 +300,11 @@ export default {
         query: { "search-query": this.searchText },
       });
     },
-    async getSubscribedChannels() {
-      const channels = await SubscriptionService.getSubscribedChannels(this.currentUser._id).catch((err) => console.log(err));
-      this.items[2].pages = channels.data.data;
-      this.channelLength = 3;
-    },
+    // async getSubscribedChannels() {
+    //   const channels = await SubscriptionService.getSubscribedChannels(this.currentUser._id).catch((err) => console.log(err));
+    //   this.items[2].pages = channels.data.data;
+    //   this.channelLength = 3;
+    // },
     moreChannels() {
       if (this.channelLength === 3) this.channelLength = this.items[2].pages.length;
       else this.channelLength = 3;
@@ -337,16 +334,19 @@ export default {
     // if (this.$route.query['search-query'])
     //   this.searchText = this.$route.query['search-query']
 
-    if (this.currentUser) this.getSubscribedChannels();
+    //if (this.currentUser) this.getSubscribedChannels();
     // this.user = this.$store.getters.currentUser
     // console.log(this.user)
     this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true;
     // console.log(this.$route.name)
     this.drawer = this.$route.name === "Watch" ? false : this.drawer;
+    console.log("nav  mounted()");
+    console.log(this.currentUser.name);
   },
   created() {
     this.drawer = this.$route.name === "Watch" ? false : this.drawer;
-
+    console.log("nav created()");
+    console.log(this.currentUser.name);
     if (!this.isAuthenticated) {
       this.items[2].header = false;
       this.items[0].pages.pop();

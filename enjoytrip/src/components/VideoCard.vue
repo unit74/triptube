@@ -10,7 +10,7 @@
             <v-img v-if="video.firstImage" class="elevation-6" :src="`${video.firstImage2}`"></v-img>
 
             <v-avatar v-else color="red">
-              <span class="white--text headline "> {{ video.title }}</span>
+              <span class="white--text headline "> {{ video.title.split("")[0].toUpperCase() }}</span>
             </v-avatar>
           </v-list-item-avatar>
         </v-list-item>
