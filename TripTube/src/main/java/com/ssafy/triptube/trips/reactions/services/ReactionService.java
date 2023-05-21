@@ -1,8 +1,10 @@
 package com.ssafy.triptube.trips.reactions.services;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
-import com.ssafy.triptube.configures.security.utils.SecurityUtil;
+import com.ssafy.triptube.trips.attractions.dtos.AttractionInfoDto;
 import com.ssafy.triptube.trips.attractions.models.AttractionInfoEntity;
 import com.ssafy.triptube.trips.attractions.repositories.AttractionInfoRepository;
 import com.ssafy.triptube.trips.reactions.models.ReactionEntity;
@@ -22,20 +24,42 @@ public class ReactionService {
 
 	private final UserRepository userRepository;
 
-	public ReactionEntity react(Integer contentId, ReactionEntity.Type type) {
-		ReactionEntity reactionEntity = new ReactionEntity();
+	public ReactionEntity react(Long userId, Integer contentId, ReactionEntity.Type type) {
+		ReactionEntity reactionEntity = reactionRepository.findByUser_UserIdAndAttractionInfo_ContentId(userId,
+				contentId);
+		if (reactionEntity == null) {
+			reactionEntity = new ReactionEntity();
+		}
 
-		UserEntity userEntity = userRepository.findByEmail(SecurityUtil.getLoginUsername());
-		System.out.println(userEntity);
+		AttractionInfoEntity attractionInfoEntity = reactionEntity.getAttractionInfo();
+		if (attractionInfoEntity == null) {
+			attractionInfoEntity = attractionInfoRepository.findById(contentId).get();
+		}
 
-		AttractionInfoEntity attractionInfoEntity = attractionInfoRepository.findById(contentId).get();
-		System.out.println(attractionInfoEntity);
+		UserEntity userEntity = reactionEntity.getUser();
+		if (userEntity == null) {
+			userEntity = userRepository.findById(userId).get();
+		}
 
 		reactionEntity.setUser(userEntity);
 		reactionEntity.setAttractionInfo(attractionInfoEntity);
 		reactionEntity.setType(type);
 
 		return reactionRepository.save(reactionEntity);
+	}
+
+	@Transactional
+	public AttractionInfoDto cancelReaction(Long userId, Integer contentId) {
+		reactionRepository.deleteByUser_UserIdAndAttractionInfo_ContentId(userId, contentId);
+
+		AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
+
+		attractionInfoDto.setLikes(
+				reactionRepository.countByTypeAndAttractionInfo_ContentId(ReactionEntity.Type.LIKE, contentId));
+		attractionInfoDto.setDislikes(
+				reactionRepository.countByTypeAndAttractionInfo_ContentId(ReactionEntity.Type.DISLIKE, contentId));
+
+		return attractionInfoDto;
 	}
 
 }
