@@ -14,7 +14,7 @@ import com.ssafy.triptube.trips.categories.services.Cat3Service;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/public/trip/categories")
+@RequestMapping("/api/v1/public/trips/categories")
 @RequiredArgsConstructor
 public class CategoryPublicController {
 
