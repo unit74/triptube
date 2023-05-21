@@ -24,7 +24,7 @@ public class ReactionService {
 
 	private final UserRepository userRepository;
 
-	public ReactionEntity react(Long userId, Integer contentId, ReactionEntity.Type type) {
+	public void react(Long userId, Integer contentId, ReactionEntity.Type type) {
 		ReactionEntity reactionEntity = reactionRepository.findByUser_UserIdAndAttractionInfo_ContentId(userId,
 				contentId);
 		if (reactionEntity == null) {
@@ -45,7 +45,7 @@ public class ReactionService {
 		reactionEntity.setAttractionInfo(attractionInfoEntity);
 		reactionEntity.setType(type);
 
-		return reactionRepository.save(reactionEntity);
+		reactionRepository.save(reactionEntity);
 	}
 
 	@Transactional

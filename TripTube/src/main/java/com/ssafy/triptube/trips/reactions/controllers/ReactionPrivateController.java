@@ -30,8 +30,10 @@ public class ReactionPrivateController {
 			return ApiResponseUtil.createResponse(false, "리액션은 LIKE, DISLIKE만 가능");
 		}
 
-		return ApiResponseUtil.createResponse(true, reactionDto.getType(), reactionService.react(getLoginUserId(),
-				reactionDto.getContentId(), ReactionEntity.Type.valueOf(reactionDto.getType())));
+		reactionService.react(getLoginUserId(), reactionDto.getContentId(),
+				ReactionEntity.Type.valueOf(reactionDto.getType()));
+
+		return ApiResponseUtil.createResponse(true, reactionDto.getType());
 	}
 
 	@DeleteMapping("/{contentId}")
