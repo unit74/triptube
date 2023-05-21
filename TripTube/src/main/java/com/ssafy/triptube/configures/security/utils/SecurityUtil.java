@@ -13,9 +13,13 @@ public class SecurityUtil {
 	}
 
 	public static Long getLoginUserId() {
-		CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		return user.getUserId();
+		if (principal instanceof CustomUserDetails) {
+			return ((CustomUserDetails) principal).getUserId();
+		}
+
+		return null;
 	}
+
 }

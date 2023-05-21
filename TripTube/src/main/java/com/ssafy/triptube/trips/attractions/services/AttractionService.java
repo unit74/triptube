@@ -3,8 +3,6 @@ package com.ssafy.triptube.trips.attractions.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.springframework.stereotype.Service;
 
 import com.ssafy.triptube.trips.attractions.dtos.AttractionInfoDto;
@@ -48,7 +46,6 @@ public class AttractionService {
 		return attractionInfoDtos;
 	}
 
-	@Transactional
 	public AttractionInfoDto getAttractionDetail(Integer contentId) {
 		AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
 
