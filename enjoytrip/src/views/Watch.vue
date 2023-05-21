@@ -21,12 +21,25 @@
               <v-skeleton-loader type="card-avatar, article, actions" :loading="videoLoading" tile large>
                 <div ref="hello">
                   <v-responsive max-height="450">
+                    <!-- <v-img v-if="video.firstImage" :src="`${video.firstImage}`" max-width="100%" max-height="350" style="border-radius: 5%"></v-img>
+                    <v-img v-else :src="require(`@/assets/logo.png`)" max-width="100" x-height="350" style="border-radius: 5%"></v-img> -->
+
                     <!-- <video ref="videoPlayer" controls style="height: 100%; width: 100%">
                       <source :src="`${video.firstImage}`" type="video/mp4" />
                     </video> -->
-                    <v-img v-if="video.firstImage" :src="`${video.firstImage}`" max-width="500" max-height="300" style="border-radius: 5%"></v-img>
-                    <v-img v-else :src="require(`@/assets/logo.png`)" max-width="500" x-height="300" style="border-radius: 5%"></v-img>
+                    <v-container class="grey lighten-5">
+                      <v-row>
+                        <v-col cols="6">
+                          <v-img v-if="video.firstImage" :src="`${video.firstImage}`" width="100%" height="350" style="border-radius: 5%"></v-img>
+                          <v-img v-else :src="require(`@/assets/logo.png`)" width="100%" height="350" style="border-radius: 5%"></v-img>
+                        </v-col>
+                        <v-col cols="6">
+                          <show-map :video="video" />
+                        </v-col>
+                      </v-row>
+                    </v-container>
                   </v-responsive>
+                  <!-- <show-map :video="video" /> -->
 
                   <v-card flat tile class="card">
                     <v-card-title class="pl-0 pb-0">{{ video.title }}</v-card-title>
@@ -191,6 +204,7 @@ import HistoryService from "@/services/HistoryService";
 import SigninModal from "@/components/SigninModal";
 import AddComment from "@/components/comments/AddComment";
 import CommentList from "@/components/comments/CommentList";
+import ShowMap from "@/components/map/ShowMap";
 
 export default {
   data: () => ({
@@ -231,7 +245,7 @@ export default {
       } finally {
         this.videoLoading = false;
         // this.checkSubscription(this.video.userId._id);
-        //this.checkFeeling(this.video.contentId);
+        // this.checkFeeling(this.video.contentId);
       }
       // if (this.currentUser && this.currentUser._id === this.video.userId._id) {
       //   this.showSubBtn = false;
@@ -283,7 +297,7 @@ export default {
       if (!this.isAuthenticated) return;
 
       this.loading = true;
-      const sub = await SubscriptionService.checkSubscription({ channelId: id })
+      const sub = await SubscriptionService.checkSubscription({ userId: id })
         .catch((err) => {
           console.log(err);
         })
@@ -300,7 +314,7 @@ export default {
       if (!this.isAuthenticated) return;
 
       this.loading = true;
-      const feeling = await FeelingService.checkFeeling({ videoId: id })
+      const feeling = await FeelingService.checkFeeling({ contentId: id })
         .catch((err) => {
           console.log(err);
         })
@@ -428,6 +442,7 @@ export default {
     AddComment,
     CommentList,
     SigninModal,
+    ShowMap,
     InfiniteLoading,
   },
   mounted() {
