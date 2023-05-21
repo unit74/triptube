@@ -5,7 +5,7 @@ export default {
     console.log(data, params);
     // console.log("Api.get(`/videos`)");
     // console.log(Api.get(`/videos`));
-    return Api().get(`/api/v1/trip`);
+    return Api().get(`/api/v1/public/trips/attractions`);
   },
   getHotplace() {
     console.log();
@@ -14,7 +14,7 @@ export default {
     return Api().get(`/api/v1/trip/hot`);
   },
   async getById(id) {
-    return Api().get(`/api/v1/trip/${id}`);
+    return Api().get(`/api/v1/public/trips/attractions/${id}`);
   },
   uploadVideo(data, optional) {
     console.log("uploadVideo");

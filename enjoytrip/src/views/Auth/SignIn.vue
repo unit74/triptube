@@ -12,41 +12,18 @@
               <ValidationObserver ref="form" v-slot="{ handleSubmit, reset }">
                 <form @submit.prevent="handleSubmit(signin)" @reset.prevent="reset">
                   <ValidationProvider v-slot="{ errors }" name="Email" rules="required|email">
-                    <v-text-field
-                      v-model="email"
-                      :error-messages="errors"
-                      label="Email"
-                      outlined
-                    ></v-text-field>
+                    <v-text-field v-model="email" :error-messages="errors" label="Email" outlined></v-text-field>
                   </ValidationProvider>
                   <ValidationProvider v-slot="{ errors }" name="Password" rules="required">
-                    <v-text-field
-                      v-model="password"
-                      type="password"
-                      :error-messages="errors"
-                      label="Password"
-                      outlined
-                    ></v-text-field>
+                    <v-text-field v-model="password" type="password" :error-messages="errors" label="Password" outlined></v-text-field>
                     <p class="ma-0 text-right">
-                      <v-btn text small class="pl-0 text-capitalize" color="primary" href="true"
-                        >비밀번호를 잊어버렸나요?</v-btn
-                      >
+                      <v-btn text small class="pl-0 text-capitalize" color="primary" href="true">비밀번호를 잊어버렸나요?</v-btn>
                     </p>
                   </ValidationProvider>
                   <div class="mt-6 d-flex justify-space-between">
                     <div>
-                      <v-btn
-                        text
-                        small
-                        class="pl-0 text-capitalize"
-                        color="primary"
-                        router
-                        to="signup"
-                        >회원이 아니신가요?</v-btn
-                      >
-                      <v-btn text small class="pl-0 text-capitalize" color="red" router to="/"
-                        >돌아갈래요</v-btn
-                      >
+                      <v-btn text small class="pl-0 text-capitalize" color="primary" router to="signup">회원이 아니신가요?</v-btn>
+                      <v-btn text small class="pl-0 text-capitalize" color="red" router to="/">돌아갈래요</v-btn>
                     </div>
                     <v-btn type="submit" class="primary" :loading="loading" depressed>로그인</v-btn>
                   </div>
@@ -73,22 +50,18 @@ export default {
       if (this.loading) return;
       this.loading = true;
 
-      const data = await this.$store
-        .dispatch("signIn", { email: this.email, password: this.password })
-        .catch((err) => {
-          this.loading = false;
-          console.log(err);
-          this.$refs.form.setErrors({
-            Email: ["We don't reconize, this email"],
-            Password: ["We don't reconize, this password"],
-          });
+      const data = await this.$store.dispatch("signIn", { email: this.email, password: this.password }).catch((err) => {
+        this.loading = false;
+        console.log(err);
+        this.$refs.form.setErrors({
+          Email: ["We don't reconize, this email"],
+          Password: ["We don't reconize, this password"],
         });
+      });
 
       if (!data) return;
-      const user = await this.$store
-        .dispatch("getCurrentUser", data.token)
-        .catch((err) => console.log(err));
-
+      // const user = await this.$store.dispatch("getCurrentUser", data.data.token).catch((err) => console.log(err));
+      const user = { name: data.data.name, profilePhotoUrl: data.data.profilePhotoUrl };
       if (!user) return;
 
       this.loading = false;

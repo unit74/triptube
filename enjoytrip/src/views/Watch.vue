@@ -60,11 +60,11 @@
                     <v-col cols="12" sm="6" md="5" lg="5">
                       <v-card class="transparent" flat>
                         <v-list-item three-line>
-                          <v-list-item-avatar v-if="typeof video !== 'undefined'" size="50">
+                          <v-list-item-avatar v-if="`typeof video !== 'undefined'`" size="50">
                             <img v-if="video.firstImage" :src="`${video.firstImage2}`" :alt="`${video.title} avatar`" />
 
                             <v-avatar v-else color="red">
-                              <span class="white--text headline "> {{ video.title }}</span>
+                              <span class="white--text headline "> {{ video.title.split("")[0].toUpperCase() }}</span>
                             </v-avatar>
                           </v-list-item-avatar>
                           <v-list-item-content v-if="video" class="align-self-auto">
@@ -75,9 +75,9 @@
                       </v-card>
                     </v-col>
                     <v-col cols="12" sm="6" md="4" lg="4">
-                      <div class="d-flex justify-end align-center" v-if="typeof video !== 'undefined'">
+                      <div class="d-flex justify-end align-center" v-if="`typeof video !== 'undefined'`">
                         <v-btn
-                          v-if="currentUser && video.contentId !== currentUser._id"
+                          v-if="showSubBtn"
                           :class="[
                             { 'red white--text': !subscribed },
                             {
@@ -92,50 +92,10 @@
                           @click="subscribe"
                           >{{ !subscribed ? "subscribe" : "subscribed" }}</v-btn
                         >
-
-                        <v-btn
-                          v-else-if="showSubBtn"
-                          :class="[
-                            { 'red white--text': !subscribed },
-                            {
-                              'grey grey--text lighten-3 text--darken-3': subscribed,
-                            },
-                            'mt-6',
-                          ]"
-                          tile
-                          large
-                          depressed
-                          :loading="subscribeLoading"
-                          @click="subscribe"
-                          >{{ !subscribed ? "subscribe" : "subscribed" }}</v-btn
-                        >
-
-                        <!-- <v-btn
-                          v-if="
-                            video.userId && video.userId._id !== currentUser._id
-                          "
-                          :class="[
-                            { 'red white--text': !subscribed },
-                            {
-                              'grey grey--text lighten-3 text--darken-3': subscribed
-                            },
-                            'mt-6'
-                          ]"
-                          tile
-                          large
-                          depressed
-                          :loading="subscribeLoading"
-                          @click="subscribe"
-                          >{{ !subscribed ? 'subscribe' : 'subscribed' }}</v-btn
-                        > -->
-                        <!-- <v-btn icon class="ml-5 mt-6"
-                          ><v-icon>mdi-bell</v-icon></v-btn
-                        > -->
                       </div>
                     </v-col>
                     <v-col class="pl-11" offset="1" cols="11" md="11">
                       <p>
-                        <!-- {{ truncate ? truncateText(video.description, 150) : video.description }} -->
                         {{ truncate ? truncateText(video.overview, 150) : video.overview }}
                       </p>
                       <v-btn text @click="show" class="remove-hover-bg">Show More</v-btn>
@@ -273,15 +233,15 @@ export default {
         // this.checkSubscription(this.video.userId._id);
         //this.checkFeeling(this.video.contentId);
       }
-      if (this.currentUser && this.currentUser._id === this.video.userId._id) {
-        this.showSubBtn = false;
-      } else {
-        this.showSubBtn = true;
-      }
+      // if (this.currentUser && this.currentUser._id === this.video.userId._id) {
+      //   this.showSubBtn = false;
+      // } else {
+      //   this.showSubBtn = true;
+      // }
+
+      this.showSubBtn = true;
 
       if (!this.isAuthenticated) return;
-
-      if (this.video.userId._id.toString() !== this.currentUser._id.toString() && this.video.status !== "public") return this.$router.push("/");
 
       const data = {
         type: "watch",
@@ -397,8 +357,8 @@ export default {
       }
 
       const feeling = await FeelingService.createFeeling({
-        videoId: this.video.contentId,
-        type,
+        contentId: this.video.contentId,
+        type: this.feeling.toUpperCase(),
       }).catch((err) => {
         console.log(err);
       });

@@ -265,6 +265,12 @@ export default {
         // this.checkSubscription(this.video.userId._id);
         //this.checkFeeling(this.video.contentId);
       }
+      // if (this.currentUser && this.currentUser._id === this.video.userId._id) {
+      //   this.showSubBtn = false;
+      // } else {
+      //   this.showSubBtn = true;
+      // }
+
       if (this.currentUser && this.currentUser._id === this.video.userId._id) {
         this.showSubBtn = false;
       } else {
