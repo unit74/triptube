@@ -20,7 +20,7 @@ public class AttractionPrivateController {
 	private final AttractionService attractionInfoService;
 
 	@GetMapping("/likes")
-	public ResponseEntity<?> getLikeAttractions() {
-		return createResponse(true, "좋아요한 관광지", attractionInfoService.getLikeAttractions(getLoginUserId()));
+	public ResponseEntity<?> getLikeAttractions(Integer page) {
+		return createResponse(true, "좋아요한 관광지", attractionInfoService.getLikeAttractions(getLoginUserId(), page));
 	}
 }

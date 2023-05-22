@@ -3,6 +3,8 @@ package com.ssafy.triptube.trips.histories.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.triptube.trips.attractions.dtos.AttractionInfoDto;
@@ -54,13 +56,15 @@ public class HistoryService {
 		historyRepository.save(historyEntity);
 	}
 
-	public List<HistoryDto> getHistories(Long userId, HistoryEntity.Type type) {
+	public List<HistoryDto> getHistories(Long userId, HistoryEntity.Type type, Integer page) {
 		List<HistoryDto> historyDtos = new ArrayList<>();
 
-		List<HistoryEntity> HistoryEntities = historyRepository.findAllByUser_UserIdAndTypeOrderByUpdatedAtDesc(userId,
-				type);
+		PageRequest pageRequest = PageRequest.of(page - 1, 12);
 
-		for (HistoryEntity historyEntity : HistoryEntities) {
+		Slice<HistoryEntity> historyEntitySlice = historyRepository.findByUser_UserIdAndTypeOrderByUpdatedAtDesc(userId,
+				type, pageRequest);
+
+		for (HistoryEntity historyEntity : historyEntitySlice.getContent()) {
 			HistoryDto historyDto = new HistoryDto();
 
 			historyDto.setHistoryId(historyEntity.getHistoryId());

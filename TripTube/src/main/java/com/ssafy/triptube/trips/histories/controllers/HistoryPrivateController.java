@@ -23,13 +23,13 @@ public class HistoryPrivateController {
 	private final HistoryService historyService;
 
 	@GetMapping("")
-	public ResponseEntity<?> getHistories(String type) {
+	public ResponseEntity<?> getHistories(String type, Integer page) {
 		if (!("VISIT".equals(type) || "SEARCH".equals(type))) {
 			return createResponse(false, "검색 기록은 VISIT, SEARCH만 가능");
 		}
 
 		return createResponse(true, type + " 기록 조회",
-				historyService.getHistories(getLoginUserId(), HistoryEntity.Type.valueOf(type)));
+				historyService.getHistories(getLoginUserId(), HistoryEntity.Type.valueOf(type), page));
 	}
 
 	@DeleteMapping("/{historyId}")
