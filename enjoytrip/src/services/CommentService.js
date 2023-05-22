@@ -2,7 +2,8 @@ import Api from "@/services/Api";
 
 export default {
   getCommentByVideoId(filters) {
-    return Api().get(`comments/${filters}/videos`);
+    console.log(filters);
+    // return Api().get(`comments/${filters}/videos`);
   },
   createComment(data) {
     return Api().post("comments", data);

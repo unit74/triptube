@@ -6,9 +6,7 @@
           <v-row align="center">
             <v-col class="grow">
               <div class="title">Error!</div>
-              <div>
-                Something went wrong, but don’t fret — let’s give it another shot.
-              </div>
+              <div>Something went wrong, but don’t fret — let’s give it another shot.</div>
             </v-col>
             <v-col class="shrink">
               <v-btn @click="actions">Take action</v-btn>
@@ -21,12 +19,6 @@
               <v-skeleton-loader type="card-avatar, article, actions" :loading="videoLoading" tile large>
                 <div ref="hello">
                   <v-responsive max-height="450">
-                    <!-- <v-img v-if="video.firstImage" :src="`${video.firstImage}`" max-width="100%" max-height="350" style="border-radius: 5%"></v-img>
-                    <v-img v-else :src="require(`@/assets/logo.png`)" max-width="100" x-height="350" style="border-radius: 5%"></v-img> -->
-
-                    <!-- <video ref="videoPlayer" controls style="height: 100%; width: 100%">
-                      <source :src="`${video.firstImage}`" type="video/mp4" />
-                    </video> -->
                     <v-container class="grey lighten-5">
                       <v-row>
                         <v-col cols="6">
@@ -39,12 +31,11 @@
                       </v-row>
                     </v-container>
                   </v-responsive>
-                  <!-- <show-map :video="video" /> -->
 
                   <v-card flat tile class="card">
                     <v-card-title class="pl-0 pb-0">{{ video.title }}</v-card-title>
                     <div class="d-flex flex-wrap justify-space-between" id="btns">
-                      <v-card-subtitle class="pl-0 pt-0 pb-0 subtitle-1" style="line-height: 2.4em;">
+                      <v-card-subtitle class="pl-0 pt-0 pb-0 subtitle-1" style="line-height: 2.4em">
                         {{ video.readcount }} views<v-icon>mdi-circle-small</v-icon>{{ dateFormatter(video.createdAt) }}
                       </v-card-subtitle>
                       <v-card-actions class="pt-0 pl-0">
@@ -56,9 +47,8 @@
                           ><v-icon :class="`pr-2${feeling !== 'dislike' ? ' grey--text text--darken-1' : ''}`">mdi-thumb-down</v-icon>
                           {{ video.dislikes }}</v-btn
                         >
-                        <v-btn :href="`${url}/uploads/videos/${video.url}`" text class="grey--text text--darken-1"
-                          ><v-icon>mdi-download</v-icon> Download</v-btn
-                        >
+                        <!-- 다운로드 버튼은 어찌 쓰지? -->
+                        <v-btn :href="'#'" text class="grey--text text--darken-1"><v-icon>mdi-download</v-icon> Download</v-btn>
                         <!-- <v-btn text class="grey--text text--darken-1"
                           ><v-icon>mdi-share</v-icon> Share</v-btn
                         >
@@ -73,11 +63,10 @@
                     <v-col cols="12" sm="6" md="5" lg="5">
                       <v-card class="transparent" flat>
                         <v-list-item three-line>
-                          <v-list-item-avatar v-if="`typeof video !== 'undefined'`" size="50">
-                            <img v-if="video.firstImage" :src="`${video.firstImage2}`" :alt="`${video.title} avatar`" />
-
+                          <v-list-item-avatar v-if="typeof video !== 'undefined'" size="50">
+                            <img v-if="video.firstImage2" :src="`${video.firstImage2}`" :alt="`${video.title} avatar`" />
                             <v-avatar v-else color="red">
-                              <span class="white--text headline "> {{ video.title.split("")[0].toUpperCase() }}</span>
+                              <span v-if="video.title" class="white--text headline"> {{ video.title.split("")[0].toUpperCase() }}</span>
                             </v-avatar>
                           </v-list-item-avatar>
                           <v-list-item-content v-if="video" class="align-self-auto">
@@ -88,7 +77,7 @@
                       </v-card>
                     </v-col>
                     <v-col cols="12" sm="6" md="4" lg="4">
-                      <div class="d-flex justify-end align-center" v-if="`typeof video !== 'undefined'`">
+                      <div class="d-flex justify-end align-center" v-if="typeof video.userId !== 'undefined'">
                         <v-btn
                           v-if="showSubBtn"
                           :class="[
@@ -122,8 +111,8 @@
                 <v-col v-if="video">
                   <p class="mb-0">{{ video.comments }} Comments</p>
 
-                  <AddComment :videoId="video.contentId" @videoCommentLength="video.comments++" />
-                  <CommentList @videoCommentLength="video.comments--" :videoId="video.contentId" />
+                  <AddComment @videoCommentLength="video.comments++" :videoId="video.contentId || 1" />
+                  <CommentList @videoCommentLength="video.comments--" :videoId="video.contentId || 1" />
                 </v-col>
               </v-row>
             </v-col>
@@ -143,7 +132,7 @@
                       </v-col>
                       <v-col>
                         <div class="ml-2">
-                          <v-card-title class="pl-2 pt-0 subtitle-1 font-weight-bold" style="line-height: 1">
+                          <v-card-title class="pl-2 pt-2 subtitle-1 font-weight-bold " style="line-height: 1">
                             {{ video.title }}
                           </v-card-title>
 
@@ -199,7 +188,7 @@ import InfiniteLoading from "vue-infinite-loading";
 import VideoService from "@/services/VideoService";
 import SubscriptionService from "@/services/SubscriptionService";
 import FeelingService from "@/services/FeelingService";
-import HistoryService from "@/services/HistoryService";
+// import HistoryService from "@/services/HistoryService";
 
 import SigninModal from "@/components/SigninModal";
 import AddComment from "@/components/comments/AddComment";
@@ -245,7 +234,7 @@ export default {
       } finally {
         this.videoLoading = false;
         // this.checkSubscription(this.video.userId._id);
-        // this.checkFeeling(this.video.contentId);
+        this.checkFeeling(this.video.contentId);
       }
       // if (this.currentUser && this.currentUser._id === this.video.userId._id) {
       //   this.showSubBtn = false;
@@ -256,13 +245,6 @@ export default {
       this.showSubBtn = true;
 
       if (!this.isAuthenticated) return;
-
-      const data = {
-        type: "watch",
-        videoId: this.video.contentId,
-      };
-
-      await HistoryService.createHistory(data).catch((err) => console.log(err));
     },
     async getVideos($state) {
       this.errored = false;
@@ -314,7 +296,7 @@ export default {
       if (!this.isAuthenticated) return;
 
       this.loading = true;
-      const feeling = await FeelingService.checkFeeling({ contentId: id })
+      const feeling = await FeelingService.checkFeeling(id)
         .catch((err) => {
           console.log(err);
         })
@@ -322,10 +304,14 @@ export default {
           this.loading = false;
         });
 
-      if (!feeling) return;
+      if (!feeling) {
+        return;
+      }
 
-      if (feeling.data.data.feeling === "like") this.feeling = "like";
-      else if (feeling.data.data.feeling === "dislike") this.feeling = "dislike";
+      console.log(feeling);
+      if (feeling.data.data.type === "LIKE") this.feeling = "like";
+      else if (feeling.data.data.type === "DISLIKE") this.feeling = "dislike";
+      else this.feeling = "";
     },
     async createFeeling(type) {
       if (!this.isAuthenticated) {
@@ -370,14 +356,22 @@ export default {
         // console.log('change to dislike')
       }
 
-      const feeling = await FeelingService.createFeeling({
-        contentId: this.video.contentId,
-        type: this.feeling.toUpperCase(),
-      }).catch((err) => {
-        console.log(err);
-      });
+      if (this.feeling == "") {
+        const feeling = await FeelingService.deleteFeeling(this.video.contentId).catch((err) => {
+          console.log(err);
+        });
 
-      if (!feeling) return;
+        if (!feeling) return;
+      } else {
+        const feeling = await FeelingService.createFeeling({
+          contentId: this.video.contentId,
+          type: this.feeling.toUpperCase(),
+        }).catch((err) => {
+          console.log(err);
+        });
+
+        if (!feeling) return;
+      }
     },
     async subscribe() {
       if (!this.isAuthenticated) {
@@ -405,14 +399,14 @@ export default {
         this.subscribed = true;
       }
     },
-    async updateViews(id) {
-      const views = await VideoService.updateViews(id).catch((err) => {
-        console.log(err);
-      });
-      if (!views) return;
+    // async updateViews(id) {
+    //   const views = await VideoService.updateViews(id).catch((err) => {
+    //     console.log(err);
+    //   });
+    //   if (!views) return;
 
-      this.video.readcount++;
-    },
+    //   this.video.readcount++;
+    // },
     play(e) {
       console.log(e);
     },
@@ -447,7 +441,7 @@ export default {
   },
   mounted() {
     this.getVideo(this.$route.params.id);
-    if (this.isAuthenticated) this.updateViews(this.$route.params.id);
+    // if (this.isAuthenticated) this.updateViews(this.$route.params.id);
   },
   beforeRouteUpdate(to, from, next) {
     this.page = 1;

@@ -10,72 +10,29 @@
               <ValidationObserver ref="form" v-slot="{ handleSubmit, reset }">
                 <form @submit.prevent="handleSubmit(signUp)" @reset.prevent="reset">
                   <ValidationProvider v-slot="{ errors }" name="Email" rules="required|email">
-                    <v-text-field
-                      v-model="email"
-                      :error-messages="errors"
-                      label="Email"
-                      class="mb-3"
-                      outlined
-                      dense
-                    ></v-text-field>
+                    <v-text-field v-model="email" :error-messages="errors" label="Email" class="mb-3" outlined dense></v-text-field>
                   </ValidationProvider>
                   <ValidationProvider v-slot="{ errors }" name="Name" rules="required|min:3">
-                    <v-text-field
-                      v-model="name"
-                      :error-messages="errors"
-                      label="Name"
-                      outlined
-                      dense
-                    ></v-text-field>
+                    <v-text-field v-model="name" :error-messages="errors" label="Name" outlined dense></v-text-field>
                   </ValidationProvider>
                   <v-row>
                     <v-col cols="6">
-                      <ValidationProvider
-                        v-slot="{ errors }"
-                        name="Password"
-                        rules="required|password:@confirm"
-                      >
-                        <v-text-field
-                          v-model="password"
-                          type="password"
-                          :error-messages="errors"
-                          label="Password"
-                          outlined
-                          dense
-                        ></v-text-field>
+                      <ValidationProvider v-slot="{ errors }" name="Password" rules="required|password:@confirm">
+                        <v-text-field v-model="password" type="password" :error-messages="errors" label="Password" outlined dense></v-text-field>
                       </ValidationProvider>
                     </v-col>
                     <v-col cols="6">
                       <ValidationProvider v-slot="{ errors }" name="confirm" rules="required">
-                        <v-text-field
-                          type="password"
-                          v-model="confirmPassword"
-                          :error-messages="errors"
-                          label="Confirm"
-                          outlined
-                          dense
-                        ></v-text-field>
+                        <v-text-field type="password" v-model="confirmPassword" :error-messages="errors" label="Confirm" outlined dense></v-text-field>
                       </ValidationProvider>
                     </v-col>
                   </v-row>
                   <div class="mt-6 d-flex justify-space-between">
                     <div>
-                      <v-btn
-                        text
-                        small
-                        class="pl-0 text-capitalize"
-                        color="primary"
-                        router
-                        to="signin"
-                        >이미 아이디가 있습니다.</v-btn
-                      >
-                      <v-btn text small class="pl-0 text-capitalize" color="red" router to="/"
-                        >돌아갈래요</v-btn
-                      >
+                      <v-btn text small class="pl-0 text-capitalize" color="primary" router to="signin">이미 아이디가 있습니다.</v-btn>
+                      <v-btn text small class="pl-0 text-capitalize" color="red" router to="/">돌아갈래요</v-btn>
                     </div>
-                    <v-btn type="submit" class="primary" :loading="loading" depressed
-                      >회원가입</v-btn
-                    >
+                    <v-btn type="submit" class="primary" :loading="loading" depressed>회원가입</v-btn>
                   </div>
                 </form>
               </ValidationObserver>
@@ -127,10 +84,11 @@ export default {
 
       if (!data) return;
 
-      const user = await this.$store
-        .dispatch("getCurrentUser", data.token)
-        .catch((err) => console.log(err));
+      // const user = await this.$store
+      //   .dispatch("getCurrentUser", data.token)
+      //   .catch((err) => console.log(err));
 
+      const user = { name: data.data.name, profilePhotoUrl: data.data.profilePhotoUrl };
       if (!user) return;
       this.loading = false;
       this.$router.push({ name: "Home" });

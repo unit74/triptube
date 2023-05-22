@@ -5,10 +5,10 @@
         <v-avatar v-if="!isAuthenticated" color="primary">
           <v-icon class="white--text">mdi-account</v-icon>
         </v-avatar>
-        <!-- <v-img v-else-if="currentUser.photoUrl !== 'no-photo.jpg'" :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"></v-img> -->
+        <v-img v-else-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'" :src="`${currentUser.profilePhotoUrl}`"></v-img>
 
         <v-avatar v-else color="red">
-          <span class="white--text headline "> 현재 로그인한 유저 이름 나와야함</span>
+          <span class="white--text headline "> {{ currentUser.name.split("")[0].toUpperCase() }}</span>
         </v-avatar>
       </v-list-item-avatar>
       <v-list-item-content class="align-self-auto">
@@ -28,7 +28,7 @@ import CommentService from "@/services/CommentService";
 export default {
   props: {
     videoId: {
-      type: String,
+      type: Number,
       required: true,
     },
   },
