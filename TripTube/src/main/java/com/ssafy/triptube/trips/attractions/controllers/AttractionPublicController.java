@@ -33,7 +33,10 @@ public class AttractionPublicController {
 
 	@GetMapping("/{contentId}")
 	public ResponseEntity<?> getAttractionDetail(@PathVariable Integer contentId) {
+
+		System.out.println("contentId : "+contentId);
 		AttractionInfoDto attractionInfoDto = attractionInfoService.getAttractionDetail(contentId);
+		
 
 		Long userId = getLoginUserId();
 		if (userId != null) {

@@ -10,27 +10,47 @@
             </template>
             <section>
               <div v-for="(history, i) in loading ? 12 : histories" :key="i" class="mb-5">
-                <v-skeleton-loader class="mx-auto" type="list-item-avatar-three-line" :loading="loading" tile large>
-                  <v-card class="card" tile flat>
-                    <v-row no-gutters v-if="history.videoId">
+                <v-skeleton-loader
+                  v-if="history.attractionInfo"
+                  class="mx-auto"
+                  type="list-item-avatar-three-line"
+                  :loading="loading"
+                  tile
+                  large
+                  @click="movePage(history.attractionInfo.contentId)"
+                  style="cursor:Pointer"
+                >
+                  <v-card class="card" v-if="history.attractionInfo.contentId" tile flat>
+                    <v-row no-gutters>
                       <v-col class="mx-auto" cols="3" sm="3" md="5" lg="5">
-                        <v-img class="align-center" :src="`${getUrl}/uploads/thumbnails/${history.videoId.thumbnailUrl}`"> </v-img>
+                        <v-img
+                          v-if="history.attractionInfo.firstImage"
+                          max-width="400"
+                          max-height="200"
+                          class="align-center"
+                          :src="`${history.attractionInfo.firstImage}`"
+                        >
+                        </v-img>
+                        <v-img v-else :src="require(`@/assets/logo.png`)" max-width="400" max-height="200" style="border-radius: 5%"></v-img>
                       </v-col>
                       <v-col>
                         <div class="ml-2">
                           <v-card-title class="pl-2 pt-0 subtitle-1 font-weight-bold d-flex justify-space-between" style="line-height: 1">
-                            {{ history.videoId.title }}
+                            {{ history.attractionInfo.title }}
 
-                            <v-btn text @click="deleteHistory(history._id)">
+                            <v-btn text @click="deleteHistory(history.historyId)">
                               <v-icon>mdi-close</v-icon>
                             </v-btn>
                           </v-card-title>
 
                           <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1">
-                            {{ history.userId.channelName }}<v-icon>mdi-circle-small</v-icon>{{ history.videoId.views }} views
+                            {{ history.attractionInfo.title }}<v-icon>mdi-circle-small</v-icon>{{ history.attractionInfo.readcount }} views
                           </v-card-subtitle>
                           <v-card-subtitle class="pl-2 pt-2 pb-0">
-                            {{ history.videoId.description }}
+                            {{ history.attractionInfo.addr1 }}
+                          </v-card-subtitle>
+                          <v-card-subtitle class="pl-2 pt-2 pb-0">
+                            {{ dateFormatter(history.updatedAt) }}
                           </v-card-subtitle>
                         </div>
                       </v-col>
@@ -62,7 +82,7 @@
               </infinite-loading>
             </section>
           </template>
-          <template v-else>
+          <!-- <template v-else>
             <template v-if="histories.length <= 0 && !loading">
               <p class="text-center body-1">No search history yet.</p>
             </template>
@@ -105,7 +125,7 @@
                 </div>
               </infinite-loading>
             </div>
-          </template>
+          </template> -->
         </v-col>
         <v-col
           cols="12"
@@ -176,6 +196,7 @@ export default {
     page: 1,
     infiniteId: +new Date(),
     clearLoading: false,
+    moveCheck: true,
   }),
   computed: {
     ...mapGetters(["currentUser", "getUrl"]),
@@ -189,7 +210,7 @@ export default {
 
       const params = {
         page: this.page,
-        type: this.historyType === "Watch History" ? "watch" : "search",
+        type: this.historyType === "Watch History" ? "VISIT" : "SEARCH",
       };
 
       const histories = await HistoryService.getAll(params)
@@ -235,7 +256,8 @@ export default {
         });
     },
     async deleteHistory(id) {
-      this.histories = this.histories.filter((history) => history._id.toString() !== id.toString());
+      this.histories = this.histories.filter((history) => history.historyId.toString() !== id.toString());
+      this.moveCheck = false;
       await HistoryService.deleteById(id)
         .catch((err) => {
           console.log(err);
@@ -243,6 +265,7 @@ export default {
         .finally(() => {
           this.deleteMessage = "History Deleted Successfully";
           this.snackbar = true;
+          this.moveCheck = true;
         });
     },
     clickItem(item) {
@@ -254,13 +277,17 @@ export default {
     dateFormatter(date) {
       return moment(date).fromNow();
     },
+    movePage(id) {
+      if (this.moveCheck) this.$router.push(`/Watch/${id}`);
+    },
   },
   components: {
     InfiniteLoading,
   },
-  mounted() {
-    this.getHistories();
-  },
+  // mounted() {
+  //   console.log("mounted");
+  //   this.getHistories();
+  // },
 };
 </script>
 

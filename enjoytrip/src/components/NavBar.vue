@@ -340,13 +340,9 @@ export default {
     this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true;
     // console.log(this.$route.name)
     this.drawer = this.$route.name === "Watch" ? false : this.drawer;
-    console.log("nav  mounted()");
-    console.log(this.currentUser.name);
   },
   created() {
     this.drawer = this.$route.name === "Watch" ? false : this.drawer;
-    console.log("nav created()");
-    console.log(this.currentUser.name);
     if (!this.isAuthenticated) {
       this.items[2].header = false;
       this.items[0].pages.pop();

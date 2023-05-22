@@ -9,11 +9,11 @@ export default {
   data() {
     return {
       map: null,
+      mapLoading: false,
     };
   },
-
   mounted() {
-    if (window.kakao && window.kakoa.maps) {
+    if (window.kakao) {
       this.loadMap();
     } else {
       this.loadScript();
@@ -24,7 +24,7 @@ export default {
       const script = document.createElement("script");
       script.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=5cbe260f12f7558c41e541afc9525bf6&autoload=false";
       script.onload = () => window.kakao.maps.load(this.loadMap);
-
+      this.mapLoading = true;
       document.head.appendChild(script);
     },
     loadMap() {
@@ -50,7 +50,7 @@ export default {
 
       const iwContent = `
       <div style="padding:5px;font-weight:bold;text-align:center">${this.video.title} <br>
-        <a href="https://map.kakao.com/link/map/${this.video.title},${this.video.latitude}, ${this.video.longitude}" style="color:gray;text-decoration: none; font-size:12px;" target="_blank">큰지도보기</a> 
+        <a href="https://map.kakao.com/link/map/${this.video.title},${this.video.latitude}, ${this.video.longitude}" style="color:gray;text-decoration: none; font-size:12px;" target="_blank">큰지도보기</a>
         <a href="https://map.kakao.com/link/to/${this.video.title},${this.video.latitude}, ${this.video.longitude}" style="color:gray;text-decoration: none; font-size:12px;" target="_blank">길찾기</a>
       </div>`; // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
 
@@ -65,10 +65,19 @@ export default {
       // 마커 위에 인포윈도우를 표시합니다. 두번째 파라미터인 marker를 넣어주지 않으면 지도 위에 표시됩니다
       infowindow.open(this.map, marker);
     },
+
+    setCenter() {
+      // 이동할 위도 경도 위치를 생성합니다
+      var moveLatLon = new window.kakao.maps.LatLng(this.video.latitude, this.video.longitude);
+
+      // 지도 중심을 이동 시킵니다
+      this.map.setCenter(moveLatLon);
+      this.loadMaker();
+    },
   },
   watch: {
     video: function() {
-      this.loadMap();
+      this.setCenter();
     },
   },
 };

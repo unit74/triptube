@@ -14,7 +14,10 @@ export default {
     return Api().get(`/api/v1/trip/hot`);
   },
   async getById(id) {
-    return Api().get(`/api/v1/public/trips/attractions/${id}`);
+    const token = localStorage.getItem("token");
+    return Api().get(`/api/v1/public/trips/attractions/${id}`, {
+      headers: { Authorization: token },
+    });
   },
   uploadVideo(data, optional) {
     console.log("uploadVideo");
@@ -26,9 +29,9 @@ export default {
     return Api().put(`videos/${id}`, data);
   },
   updateViews(id) {
-    console.log("updateViews");
+    console.log("updateViews", id);
 
-    return Api().put(`videos/${id}/views`);
+    //return Api().put(`videos/${id}/views`);
   },
   uploadThumbnail(id, data) {
     console.log("uploadThumbnail");

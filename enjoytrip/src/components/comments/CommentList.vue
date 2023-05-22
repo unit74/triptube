@@ -148,7 +148,7 @@ import ReplyService from "@/services/ReplyService";
 export default {
   props: {
     videoId: {
-      type: String,
+      type: Number,
       required: true,
     },
   },

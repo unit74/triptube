@@ -18,20 +18,34 @@
         <v-col v-else cols="11" class="mx-auto">
           <v-row>
             <v-col cols="12" sm="12" md="8" lg="8">
-              <v-skeleton-loader type="card-avatar, article, actions" :loading="videoLoading" tile small>
+              <v-skeleton-loader type="card-avatar, article, actions" :loading="videoLoading" tile large>
                 <div ref="hello">
                   <v-responsive max-height="450">
+                    <!-- <v-img v-if="video.firstImage" :src="`${video.firstImage}`" max-width="100%" max-height="350" style="border-radius: 5%"></v-img>
+                    <v-img v-else :src="require(`@/assets/logo.png`)" max-width="100" x-height="350" style="border-radius: 5%"></v-img> -->
+
                     <!-- <video ref="videoPlayer" controls style="height: 100%; width: 100%">
-                      <source :src="`${url}/uploads/videos/${video.url}`" type="video/mp4" />
+                      <source :src="`${video.firstImage}`" type="video/mp4" />
                     </video> -->
-                    <img :src="video.firstImage" />
+                    <v-container class="grey lighten-5">
+                      <v-row>
+                        <v-col cols="6">
+                          <v-img v-if="video.firstImage" :src="`${video.firstImage}`" width="100%" height="350" style="border-radius: 5%"></v-img>
+                          <v-img v-else :src="require(`@/assets/logo.png`)" width="100%" height="350" style="border-radius: 5%"></v-img>
+                        </v-col>
+                        <v-col cols="6">
+                          <show-map :video="video" />
+                        </v-col>
+                      </v-row>
+                    </v-container>
                   </v-responsive>
+                  <!-- <show-map :video="video" /> -->
 
                   <v-card flat tile class="card">
                     <v-card-title class="pl-0 pb-0">{{ video.title }}</v-card-title>
                     <div class="d-flex flex-wrap justify-space-between" id="btns">
                       <v-card-subtitle class="pl-0 pt-0 pb-0 subtitle-1" style="line-height: 2.4em;">
-                        {{ video.readcount }} readcount<v-icon>mdi-circle-small</v-icon>{{ dateFormatter(video.createdAt) }}
+                        {{ video.readcount }} views<v-icon>mdi-circle-small</v-icon>{{ dateFormatter(video.createdAt) }}
                       </v-card-subtitle>
                       <v-card-actions class="pt-0 pl-0">
                         <v-btn text @click="createFeeling('like')"
@@ -42,11 +56,15 @@
                           ><v-icon :class="`pr-2${feeling !== 'dislike' ? ' grey--text text--darken-1' : ''}`">mdi-thumb-down</v-icon>
                           {{ video.dislikes }}</v-btn
                         >
-                        <!-- <v-btn :href="`${url}/uploads/videos/${video.url}`" text class="grey--text text--darken-1"
+                        <v-btn :href="`${url}/uploads/videos/${video.url}`" text class="grey--text text--darken-1"
                           ><v-icon>mdi-download</v-icon> Download</v-btn
+                        >
+                        <!-- <v-btn text class="grey--text text--darken-1"
+                          ><v-icon>mdi-share</v-icon> Share</v-btn
+                        >
+                        <v-btn text class="grey--text text--darken-1"
+                          ><v-icon>mdi-playlist-plus</v-icon> Save</v-btn
                         > -->
-                        <!-- <v-btn text class="grey--text text--darken-1"><v-icon>mdi-share</v-icon> Share</v-btn>
-                        <v-btn text class="grey--text text--darken-1"><v-icon>mdi-playlist-plus</v-icon> Save</v-btn> -->
                       </v-card-actions>
                     </div>
                   </v-card>
@@ -55,23 +73,24 @@
                     <v-col cols="12" sm="6" md="5" lg="5">
                       <v-card class="transparent" flat>
                         <v-list-item three-line>
-                          <v-list-item-avatar v-if="true" size="50">
-                            <img v-if="true" :src="video.firstImage" />
+                          <v-list-item-avatar v-if="`typeof video !== 'undefined'`" size="50">
+                            <img v-if="video.firstImage2" :src="`${video.firstImage2}`" :alt="`${video.title} avatar`" />
+
                             <v-avatar v-else color="red">
-                              <span class="white--text headline "> {{ video.title }}</span>
+                              <span class="white--text headline "> {{ video.title.split("")[0].toUpperCase() }}</span>
                             </v-avatar>
                           </v-list-item-avatar>
-                          <v-list-item-content v-if="true" class="align-self-auto">
+                          <v-list-item-content v-if="video" class="align-self-auto">
                             <v-list-item-title class="font-weight-medium mb-1">{{ video.title }}</v-list-item-title>
-                            <v-list-item-subtitle>{{ video.arrd1 }} subscribers </v-list-item-subtitle>
+                            <v-list-item-subtitle>{{ video.addr1 }} </v-list-item-subtitle>
                           </v-list-item-content>
                         </v-list-item>
                       </v-card>
                     </v-col>
                     <v-col cols="12" sm="6" md="4" lg="4">
-                      <div class="d-flex justify-end align-center" v-if="true">
+                      <div class="d-flex justify-end align-center" v-if="`typeof video !== 'undefined'`">
                         <v-btn
-                          v-if="false"
+                          v-if="showSubBtn"
                           :class="[
                             { 'red white--text': !subscribed },
                             {
@@ -86,50 +105,11 @@
                           @click="subscribe"
                           >{{ !subscribed ? "subscribe" : "subscribed" }}</v-btn
                         >
-
-                        <v-btn
-                          v-else-if="showSubBtn"
-                          :class="[
-                            { 'red white--text': !subscribed },
-                            {
-                              'grey grey--text lighten-3 text--darken-3': subscribed,
-                            },
-                            'mt-6',
-                          ]"
-                          tile
-                          large
-                          depressed
-                          :loading="subscribeLoading"
-                          @click="subscribe"
-                          >{{ !subscribed ? "subscribe" : "subscribed" }}</v-btn
-                        >
-
-                        <!-- <v-btn
-                          v-if="
-                            video.userId && video.userId._id !== currentUser._id
-                          "
-                          :class="[
-                            { 'red white--text': !subscribed },
-                            {
-                              'grey grey--text lighten-3 text--darken-3': subscribed
-                            },
-                            'mt-6'
-                          ]"
-                          tile
-                          large
-                          depressed
-                          :loading="subscribeLoading"
-                          @click="subscribe"
-                          >{{ !subscribed ? 'subscribe' : 'subscribed' }}</v-btn
-                        > -->
-                        <!-- <v-btn icon class="ml-5 mt-6"
-                          ><v-icon>mdi-bell</v-icon></v-btn
-                        > -->
                       </div>
                     </v-col>
                     <v-col class="pl-11" offset="1" cols="11" md="11">
                       <p>
-                        {{ truncate ? "간략" : "뭔지 모르겠지만 멘트인듯" }}
+                        {{ truncate ? truncateText(video.overview, 150) : video.overview }}
                       </p>
                       <v-btn text @click="show" class="remove-hover-bg">Show More</v-btn>
                     </v-col>
@@ -139,10 +119,10 @@
 
               <v-row>
                 <!-- <v-col v-if="video && video.status === 'public'"> -->
-                <v-col v-if="true">
+                <v-col v-if="video">
                   <p class="mb-0">{{ video.comments }} Comments</p>
 
-                  <AddComment @videoCommentLength="video.comments++" :videoId="video.contentId" />
+                  <AddComment :videoId="video.contentId" @videoCommentLength="video.comments++" />
                   <CommentList @videoCommentLength="video.comments--" :videoId="video.contentId" />
                 </v-col>
               </v-row>
@@ -157,7 +137,8 @@
                     <v-row no-gutters>
                       <v-col class="mx-auto" cols="12" sm="12" md="5" lg="5">
                         <!-- <v-responsive max-height="100%"> -->
-                        <v-img class="align-center" height="110" :src="`${video.firstImage}`"> </v-img>
+                        <v-img v-if="video.firstImage" class="align-center" height="110" :src="`${video.firstImage}`"> </v-img>
+                        <v-img v-else class="align-center" height="110" :src="require(`@/assets/logo.png`)"> </v-img>
                         <!-- </v-responsive> -->
                       </v-col>
                       <v-col>
@@ -189,7 +170,9 @@
                     <v-row align="center">
                       <v-col class="grow">
                         <div class="title">Error!</div>
-                        <div>Something went wrong, but don’t fret — let’s give it another shot.</div>
+                        <div>
+                          Something went wrong, but don’t fret — let’s give it another shot.
+                        </div>
                       </v-col>
                       <v-col class="shrink">
                         <v-btn @click="trigger">Take action</v-btn>
@@ -221,6 +204,7 @@ import HistoryService from "@/services/HistoryService";
 import SigninModal from "@/components/SigninModal";
 import AddComment from "@/components/comments/AddComment";
 import CommentList from "@/components/comments/CommentList";
+import ShowMap from "@/components/map/ShowMap";
 
 export default {
   data: () => ({
@@ -252,18 +236,16 @@ export default {
       this.video = {};
       try {
         const video = await VideoService.getById(id);
-        console.log("video");
-        console.log(video);
+
         if (!video) return this.$router.push("/");
         this.video = video.data.data;
-        this.video.comments = 3;
       } catch (err) {
         this.errored = true;
         console.log(err);
       } finally {
         this.videoLoading = false;
         // this.checkSubscription(this.video.userId._id);
-        //this.checkFeeling(this.video.contentId);
+        // this.checkFeeling(this.video.contentId);
       }
       // if (this.currentUser && this.currentUser._id === this.video.userId._id) {
       //   this.showSubBtn = false;
@@ -271,18 +253,9 @@ export default {
       //   this.showSubBtn = true;
       // }
 
-      if (this.currentUser && this.currentUser._id === this.video.userId._id) {
-        this.showSubBtn = false;
-      } else {
-        this.showSubBtn = true;
-      }
-
-      console.log("this.video");
-      console.log(this.video);
+      this.showSubBtn = true;
 
       if (!this.isAuthenticated) return;
-
-      if (this.video.userId._id.toString() !== this.currentUser._id.toString() && this.video.status !== "public") return this.$router.push("/");
 
       const data = {
         type: "watch",
@@ -302,14 +275,17 @@ export default {
           this.errored = true;
         })
         .finally(() => (this.loading = false));
-      console.log(videos);
+
       if (typeof videos === "undefined") return;
+
       if (videos.data.data.length) {
         this.page += 1;
+
         this.videos.push(...videos.data.data);
         if ($state) {
           $state.loaded();
         }
+
         this.loaded = true;
       } else {
         if ($state) {
@@ -321,7 +297,7 @@ export default {
       if (!this.isAuthenticated) return;
 
       this.loading = true;
-      const sub = await SubscriptionService.checkSubscription({ channelId: id })
+      const sub = await SubscriptionService.checkSubscription({ userId: id })
         .catch((err) => {
           console.log(err);
         })
@@ -338,7 +314,7 @@ export default {
       if (!this.isAuthenticated) return;
 
       this.loading = true;
-      const feeling = await FeelingService.checkFeeling({ videoId: id })
+      const feeling = await FeelingService.checkFeeling({ contentId: id })
         .catch((err) => {
           console.log(err);
         })
@@ -395,8 +371,8 @@ export default {
       }
 
       const feeling = await FeelingService.createFeeling({
-        videoId: this.video.contentId,
-        type,
+        contentId: this.video.contentId,
+        type: this.feeling.toUpperCase(),
       }).catch((err) => {
         console.log(err);
       });
@@ -414,7 +390,7 @@ export default {
       }
       this.subscribeLoading = true;
       const sub = await SubscriptionService.createSubscription({
-        channelId: this.video.userId._id,
+        channelId: this.video.contentId,
       })
         .catch((err) => console.log(err))
         .finally(() => {
@@ -425,17 +401,15 @@ export default {
 
       if (!sub.data.data._id) {
         this.subscribed = false;
-        this.video.userId.subscribers--;
       } else {
         this.subscribed = true;
-        this.video.userId.subscribers++;
       }
     },
-    async updatereadcount(id) {
-      const readcount = await VideoService.updatereadcount(id).catch((err) => {
+    async updateViews(id) {
+      const views = await VideoService.updateViews(id).catch((err) => {
         console.log(err);
       });
-      if (!readcount) return;
+      if (!views) return;
 
       this.video.readcount++;
     },
@@ -468,15 +442,14 @@ export default {
     AddComment,
     CommentList,
     SigninModal,
+    ShowMap,
     InfiniteLoading,
   },
   mounted() {
-    console.log("mounted");
     this.getVideo(this.$route.params.id);
-    //if (this.isAuthenticated) this.updatereadcount(this.$route.params.id);
+    if (this.isAuthenticated) this.updateViews(this.$route.params.id);
   },
   beforeRouteUpdate(to, from, next) {
-    console.log("beforeRouteUpdate 여긴 언제 오나?");
     this.page = 1;
     (this.loading = false), (this.loaded = false), (this.videos = []);
     this.infiniteId += 1;
