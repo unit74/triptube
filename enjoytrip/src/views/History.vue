@@ -10,7 +10,16 @@
             </template>
             <section>
               <div v-for="(history, i) in loading ? 12 : histories" :key="i" class="mb-5">
-                <v-skeleton-loader v-if="history.attractionInfo" class="mx-auto" type="list-item-avatar-three-line" :loading="loading" tile large>
+                <v-skeleton-loader
+                  v-if="history.attractionInfo"
+                  class="mx-auto"
+                  type="list-item-avatar-three-line"
+                  :loading="loading"
+                  tile
+                  large
+                  @click="movePage(history.attractionInfo.contentId)"
+                  style="cursor:Pointer"
+                >
                   <v-card class="card" v-if="history.attractionInfo.contentId" tile flat>
                     <v-row no-gutters>
                       <v-col class="mx-auto" cols="3" sm="3" md="5" lg="5">
@@ -187,6 +196,7 @@ export default {
     page: 1,
     infiniteId: +new Date(),
     clearLoading: false,
+    moveCheck: true,
   }),
   computed: {
     ...mapGetters(["currentUser", "getUrl"]),
@@ -247,6 +257,7 @@ export default {
     },
     async deleteHistory(id) {
       this.histories = this.histories.filter((history) => history.historyId.toString() !== id.toString());
+      this.moveCheck = false;
       await HistoryService.deleteById(id)
         .catch((err) => {
           console.log(err);
@@ -254,6 +265,7 @@ export default {
         .finally(() => {
           this.deleteMessage = "History Deleted Successfully";
           this.snackbar = true;
+          this.moveCheck = true;
         });
     },
     clickItem(item) {
@@ -264,6 +276,9 @@ export default {
     },
     dateFormatter(date) {
       return moment(date).fromNow();
+    },
+    movePage(id) {
+      if (this.moveCheck) this.$router.push(`/Watch/${id}`);
     },
   },
   components: {
