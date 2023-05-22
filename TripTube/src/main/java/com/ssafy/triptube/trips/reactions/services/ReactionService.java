@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.triptube.trips.attractions.dtos.AttractionInfoDto;
 import com.ssafy.triptube.trips.attractions.models.AttractionInfoEntity;
 import com.ssafy.triptube.trips.attractions.repositories.AttractionInfoRepository;
+import com.ssafy.triptube.trips.reactions.dtos.ReactionDto;
 import com.ssafy.triptube.trips.reactions.models.ReactionEntity;
 import com.ssafy.triptube.trips.reactions.repositories.ReactionRepository;
 import com.ssafy.triptube.users.models.UserEntity;
@@ -23,6 +24,21 @@ public class ReactionService {
 	private final AttractionInfoRepository attractionInfoRepository;
 
 	private final UserRepository userRepository;
+
+	public ReactionDto getReaction(Long userId, Integer contentId) {
+		ReactionDto reactionDto = new ReactionDto();
+
+		reactionDto.setContentId(contentId);
+
+		ReactionEntity reactionEntity = reactionRepository.findByUser_UserIdAndAttractionInfo_ContentId(userId,
+				contentId);
+
+		if (reactionEntity != null) {
+			reactionDto.setType(reactionEntity.getType().toString());
+		}
+
+		return reactionDto;
+	}
 
 	public void react(Long userId, Integer contentId, ReactionEntity.Type type) {
 		ReactionEntity reactionEntity = reactionRepository.findByUser_UserIdAndAttractionInfo_ContentId(userId,
