@@ -26,4 +26,5 @@ public class AttractionDescriptionEntity {
 
 	@Column(name = "telname")
 	private String telname;
+
 }
