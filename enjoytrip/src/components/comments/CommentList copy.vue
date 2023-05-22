@@ -96,13 +96,13 @@
                           :src="`${url}/uploads/avatars/${reply.userId.photoUrl}`"
                         ></v-img>
                         <v-avatar v-else color="red">
-                          <span class="white--text headline "> {{ reply.userId.channelName.split("")[0].toUpperCase() }}</span>
+                          <span class="white--text headline "> {{ reply.userId.name.split("")[0].toUpperCase() }}</span>
                         </v-avatar>
                       </v-list-item-avatar>
                       <v-list-item-content>
                         <div class="d-flex mb-0">
                           <v-list-item-title v-if="reply.userId" class="font-weight-medium caption mb-0 d-flex"
-                            >{{ reply.userId.channelName }}
+                            >{{ reply.userId.name }}
                             <span class="pl-2 font-weight-light grey--text"> {{ dateFormatter(reply.createdAt) }}</span>
                           </v-list-item-title>
                           <v-menu bottom left v-if="isAuthenticated">
@@ -148,7 +148,7 @@ import ReplyService from "@/services/ReplyService";
 export default {
   props: {
     videoId: {
-      type: String,
+      type: Number,
       required: true,
     },
   },
@@ -178,8 +178,15 @@ export default {
       // if (!comments) return
 
       // this.comments = this.$store.getters.getComments.data
+      let reply = {
+        userId: {
+          name: "이길동",
+          photoUrl: "no-photo.jpg",
+        },
+        text: "나도 왔다감",
+      };
       this.comments = [
-        { _id: 1, userId: { channelName: "길동이1", photoUrl: "no-photo.jpg" }, text: "활빈당 왔다감1" },
+        { _id: 1, userId: { channelName: "길동이1", photoUrl: "no-photo.jpg" }, text: "활빈당 왔다감1", replies: [reply, reply, reply] },
         { _id: 2, userId: { channelName: "길동이2", photoUrl: "http://tong.visitkorea.or.kr/cms/resource/00/2626200_image2_1.jpg" }, text: "활빈당 왔다감2" },
         { _id: 3, userId: { channelName: "길동이3", photoUrl: "http://tong.visitkorea.or.kr/cms/resource/00/2626200_image2_1.jpg" }, text: "활빈당 왔다감3" },
       ];

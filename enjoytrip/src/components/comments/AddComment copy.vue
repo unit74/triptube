@@ -49,7 +49,7 @@ export default {
       this.loading = true;
       const comment = await CommentService.createComment({
         text: this.comment,
-        contentId: this.videoId,
+        videoId: this.videoId,
       })
         .catch((err) => {
           console.log(err);
@@ -67,7 +67,7 @@ export default {
       this.$emit("videoCommentLength");
     },
     clickTextField() {
-      if (!this.isAuthenticated) return this.$router.push("/signin");
+      //if (!this.isAuthenticated) return this.$router.push("/signin");
       this.showCommentBtns = true;
     },
   },

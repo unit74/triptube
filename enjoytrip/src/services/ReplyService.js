@@ -1,10 +1,10 @@
-import Api from '@/services/Api'
+import Api from "@/services/Api";
 
 export default {
-  createReply(data) {
-    return Api().post('replies', data)
+  createReply(contentId, text) {
+    return Api().post(`/api/v1/private/trips/replies/${contentId}`, { text });
   },
   deleteById(id) {
-    return Api().delete(`replies/${id}`)
-  }
-}
+    return Api().delete(`replies/${id}`);
+  },
+};

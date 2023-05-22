@@ -111,8 +111,8 @@
                 <v-col v-if="video">
                   <p class="mb-0">{{ video.comments }} Comments</p>
 
-                  <AddComment @videoCommentLength="video.comments++" :videoId="video.contentId || 1" />
-                  <CommentList @videoCommentLength="video.comments--" :videoId="video.contentId || 1" />
+                  <AddComment v-if="video.contentId" @videoCommentLength="video.comments++" :videoId="video.contentId" />
+                  <CommentList v-if="video.contentId" @videoCommentLength="video.comments--" :videoId="video.contentId" />
                 </v-col>
               </v-row>
             </v-col>

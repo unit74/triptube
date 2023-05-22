@@ -2,13 +2,12 @@ import Api from "@/services/Api";
 
 export default {
   getCommentByVideoId(filters) {
-    console.log(filters);
-    // return Api().get(`comments/${filters}/videos`);
+    return Api().get(`/api/v1/public/trips/comments/${filters}`);
   },
   createComment(data) {
-    return Api().post("comments", data);
+    return Api().post(`/api/v1/private/trips/comments/${data.contentId}`, { text: data.text });
   },
-  deleteById(id) {
-    return Api().delete(`comments/${id}`);
+  deleteById(commentId) {
+    return Api().delete(`/api/v1/private/trips/comments/${commentId}`);
   },
 };

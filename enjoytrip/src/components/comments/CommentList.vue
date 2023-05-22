@@ -3,20 +3,20 @@
     <!-- <div v-if="!comments.length">
       <p>No comment yet, leave a comment</p>
     </div> -->
-    <div v-for="(comment, i) in loading ? 4 : comments" :key="comment._id">
+    <div v-for="(comment, i) in loading ? 4 : comments" :key="comment.commentId">
       <v-skeleton-loader type="list-item-avatar-two-line" :loading="loading">
         <v-card class="transparent" flat>
           <v-list-item three-line class="pl-0 mt-2">
-            <v-list-item-avatar v-if="typeof comment.userId !== 'undefined'" size="50">
-              <v-img v-if="comment.userId.photoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${comment.userId.photoUrl}`"></v-img>
+            <v-list-item-avatar v-if="typeof comment.user !== 'undefined'" size="50">
+              <v-img v-if="comment.user.profilePhotoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${comment.user.profilePhotoUrl}`"></v-img>
               <v-avatar v-else color="red">
-                <span class="white--text headline "> {{ comment.userId.channelName.split("")[0].toUpperCase() }}</span>
+                <span class="white--text headline "> {{ comment.user.name.split("")[0].toUpperCase() }}</span>
               </v-avatar>
             </v-list-item-avatar>
             <v-list-item-content>
               <div class="d-flex mb-0">
-                <v-list-item-title v-if="comment.userId" class="font-weight-medium caption mb-0 d-flex"
-                  >{{ comment.userId.channelName }}
+                <v-list-item-title v-if="comment.user" class="font-weight-medium caption mb-0 d-flex"
+                  >{{ comment.user.name }}
                   <span class="pl-2 font-weight-light grey--text"> {{ dateFormatter(comment.createdAt) }}</span>
                 </v-list-item-title>
                 <v-menu bottom left>
@@ -26,9 +26,8 @@
                     </v-btn>
                   </template>
 
-                  <!-- <v-list v-if="isAuthenticated"> -->
                   <v-list v-if="isAuthenticated">
-                    <v-list-item @click="deleteComment(comment._id)">
+                    <v-list-item @click="deleteComment(comment.commentId, comment.user)">
                       <v-list-item-title><v-icon>mdi-trash</v-icon>Delete</v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -37,34 +36,34 @@
               <v-list-item-subtitle class="mt-n2 black--text text--darken-4 caption">{{ comment.text }}</v-list-item-subtitle>
 
               <div>
-                <v-btn text small :ripple="false" @click.stop="showReply(`${'reply' + comment._id}`)">Reply</v-btn>
+                <v-btn text small :ripple="false" @click.stop="showReply(`${'reply' + comment.commentId}`)">Reply</v-btn>
               </div>
-              <div class="d-none" :ref="`${'reply' + comment._id}`">
+              <div class="d-none" :ref="`${'reply' + comment.commentId}`">
                 <v-list-item three-line class="pl-0">
-                  <v-list-item-avatar v-if="typeof comment.userId !== 'undefined'" class="mt-2" size="40">
+                  <v-list-item-avatar v-if="typeof comment.user !== 'undefined'" class="mt-2" size="40">
                     <v-avatar v-if="!isAuthenticated" color="primary">
                       <v-icon class="white--text">mdi-account</v-icon>
                     </v-avatar>
                     <template v-else>
-                      <v-img v-if="currentUser.photoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${url}/uploads/avatars/${currentUser.photoUrl}`"></v-img>
+                      <v-img v-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${currentUser.profilePhotoUrl}`"></v-img>
                       <v-avatar v-else color="red">
-                        <span class="white--text headline "> {{ currentUser.channelName.split("")[0].toUpperCase() }}</span>
+                        <span class="white--text headline "> {{ currentUser.name.split("")[0].toUpperCase() }}</span>
                       </v-avatar>
                     </template>
                   </v-list-item-avatar>
                   <v-list-item-content class="align-self-auto mt-0 pt-0">
-                    <v-form :ref="`form${comment._id}`">
+                    <v-form :ref="`form${comment.commentId}`">
                       <v-text-field
-                        :ref="`${'input' + comment._id}`"
+                        :ref="`${'input' + comment.commentId}`"
                         class="pt-0 mt-0 body-2"
                         placeholder="Add a public comment..."
                         @click="clickTextField"
-                        :value="repliesInput[`input${comment._id}`]"
+                        :value="repliesInput[`input${comment.commentId}`]"
                       >
                       </v-text-field>
                     </v-form>
-                    <div :ref="comment._id + 'btns'" class="d-inline-block text-right" v-if="isAuthenticated">
-                      <v-btn text @click="hideReply(comment._id)" small>Cancel</v-btn>
+                    <div :ref="comment.commentId + 'btns'" class="d-inline-block text-right" v-if="isAuthenticated">
+                      <v-btn text @click="hideReply(comment.commentId)" small>Cancel</v-btn>
                       <v-btn
                         class="blue darken-3 white--text"
                         depressed
@@ -73,7 +72,7 @@
                         :loading="btnLoading && i == index"
                         @click="
                           index = i;
-                          addReply($event, comment._id);
+                          addReply($event, comment.commentId);
                         "
                         >Reply</v-btn
                       >
@@ -90,19 +89,15 @@
                   <v-expansion-panel-content>
                     <v-list-item three-line class="pl-0 mt-2" v-for="reply in comment.replies" :key="reply._id">
                       <v-list-item-avatar v-if="typeof reply !== 'undefined'" size="50">
-                        <v-img
-                          v-if="reply.userId.photoUrl !== 'no-photo.jpg'"
-                          class="elevation-6"
-                          :src="`${url}/uploads/avatars/${reply.userId.photoUrl}`"
-                        ></v-img>
+                        <v-img v-if="reply.user.profilePhotoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${reply.user.profilePhotoUrl}`"></v-img>
                         <v-avatar v-else color="red">
-                          <span class="white--text headline "> {{ reply.userId.name.split("")[0].toUpperCase() }}</span>
+                          <span class="white--text headline "> {{ reply.user.name.split("")[0].toUpperCase() }}</span>
                         </v-avatar>
                       </v-list-item-avatar>
                       <v-list-item-content>
                         <div class="d-flex mb-0">
-                          <v-list-item-title v-if="reply.userId" class="font-weight-medium caption mb-0 d-flex"
-                            >{{ reply.userId.name }}
+                          <v-list-item-title v-if="reply.user.name" class="font-weight-medium caption mb-0 d-flex"
+                            >{{ reply.user.name }}
                             <span class="pl-2 font-weight-light grey--text"> {{ dateFormatter(reply.createdAt) }}</span>
                           </v-list-item-title>
                           <v-menu bottom left v-if="isAuthenticated">
@@ -113,7 +108,7 @@
                             </template>
 
                             <v-list>
-                              <v-list-item @click="deleteReply(comment._id, reply._id)">
+                              <v-list-item @click="deleteReply(comment.commentId, reply._id)">
                                 <v-list-item-title><v-icon>mdi-trash</v-icon>Delete</v-list-item-title>
                               </v-list-item>
                             </v-list>
@@ -133,6 +128,12 @@
     <v-snackbar v-model="snackbar">
       Comment deleted successfully
       <v-btn color="white" text @click="snackbar = false" icon>
+        <v-icon>mdi-close-circle</v-icon>
+      </v-btn>
+    </v-snackbar>
+    <v-snackbar v-model="snackbarFail">
+      Comment deleted fail
+      <v-btn color="white" text @click="snackbarFail = false" icon>
         <v-icon>mdi-close-circle</v-icon>
       </v-btn>
     </v-snackbar>
@@ -162,6 +163,7 @@ export default {
       url: process.env.VUE_APP_URL,
       snackbar: false,
       loading: false,
+      snackbarFail: false,
     };
   },
   computed: {
@@ -169,40 +171,35 @@ export default {
   },
   methods: {
     async getComments() {
-      // this.loading = true
-      // const comments = await this.$store
-      //   .dispatch('setComments', this.videoId)
-      //   .catch((err) => console.log(err))
-      //   .finally(() => (this.loading = false))
-      // // console.log(this.loading)
-      // if (!comments) return
+      this.loading = true;
+      const comments = await this.$store
+        .dispatch("setComments", this.videoId)
+        .catch((err) => console.log(err))
+        .finally(() => (this.loading = false));
+      // console.log(this.loading)
+      if (!comments) return;
 
-      // this.comments = this.$store.getters.getComments.data
-      let reply = {
-        userId: {
-          name: "이길동",
-          photoUrl: "no-photo.jpg",
-        },
-        text: "나도 왔다감",
-      };
-      this.comments = [
-        { _id: 1, userId: { channelName: "길동이1", photoUrl: "no-photo.jpg" }, text: "활빈당 왔다감1", replies: [reply, reply, reply] },
-        { _id: 2, userId: { channelName: "길동이2", photoUrl: "http://tong.visitkorea.or.kr/cms/resource/00/2626200_image2_1.jpg" }, text: "활빈당 왔다감2" },
-        { _id: 3, userId: { channelName: "길동이3", photoUrl: "http://tong.visitkorea.or.kr/cms/resource/00/2626200_image2_1.jpg" }, text: "활빈당 왔다감3" },
-      ];
+      this.comments = this.$store.getters.getComments.data;
       // console.log(this.comments.length)
       // this.loading = false
       // console.log(this.$store.getters.getComments.data)
     },
-    async deleteComment(id) {
+    async deleteComment(commentId) {
       if (!this.isAuthenticated) return;
       // this.$store.dispatch('deleteComment', id)
-      this.comments = this.comments.filter((comment) => comment._id.toString() !== id.toString());
 
-      this.snackbar = true;
-      await CommentService.deleteById(id).catch((err) => {
+      const result = await CommentService.deleteById(commentId).catch((err) => {
         console.log(err);
       });
+      if (!result.data.success) {
+        this.snackbarFail = true;
+        return;
+      }
+
+      console.log("????");
+      this.comments = this.comments.filter((comment) => comment.commentId.toString() !== commentId.toString());
+
+      this.snackbar = true;
 
       await this.$store.dispatch("setComments", this.videoId).catch((err) => console.log(err));
       this.comments = this.$store.getters.getComments.data;
@@ -231,7 +228,7 @@ export default {
       reply.data.data.userId = this.$store.getters.currentUser;
       // this.$store.dispatch('addComment', reply.data.data)
       // console.log(this.$store.getters.getComments.data)
-      let comment = this.comments.find((comment) => comment._id.toString() === id.toString());
+      let comment = this.comments.find((comment) => comment.commentId.toString() === id.toString());
       // console.log(comment)
       if (!comment.replies) {
         // console.log('1')
@@ -241,17 +238,17 @@ export default {
         // console.log('2')
         comment.replies.unshift(reply.data.data);
         // this.comments
-        //   .find((comment) => comment._id === id)
+        //   .find((comment) => comment.commentId === id)
         //   .replies.unshift(reply.data.data)
       }
 
       // console.log(
       //   this.$store.getters.getComments.data.find(
-      //     (comment) => comment._id === id
+      //     (comment) => comment.commentId === id
       //   )
       // )
       // this.comments
-      //   .find((comment) => comment._id === id)
+      //   .find((comment) => comment.commentId === id)
       //   .replies.unshift(reply.data.data)
     },
     clickTextField() {
