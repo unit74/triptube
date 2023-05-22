@@ -51,7 +51,7 @@ public class UserEntity {
 
 	@PrePersist
 	public void createTimeStamps() {
-		profilePhotoUrl = "";
+		profilePhotoUrl = "no-photo.jpg";
 		updatedAt = LocalDateTime.now();
 		createdAt = LocalDateTime.now();
 	}
