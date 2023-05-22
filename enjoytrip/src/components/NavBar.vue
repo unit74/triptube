@@ -164,7 +164,7 @@
 <script>
 import { mapGetters } from "vuex";
 //import SubscriptionService from "@/services/SubscriptionService";
-import HistoryService from "@/services/HistoryService";
+// import HistoryService from "@/services/HistoryService";
 
 export default {
   data: () => ({
@@ -288,16 +288,26 @@ export default {
       // console.log(this.searchText == this.$route.query['search-query'])
       if (this.searchText == this.$route.query["search-query"]) return;
       // this.searchText = this.$route.query['search-query']
-      const data = {
-        type: "search",
-        searchText: this.searchText,
-      };
+      // const data = {
+      //   type: "search",
+      //   searchText: this.searchText,
+      // };
 
-      if (this.isAuthenticated) await HistoryService.createHistory(data).catch((err) => console.log(err));
+      // if (this.isAuthenticated) await HistoryService.createHistory(data).catch((err) => console.log(err));
 
       this.$router.push({
         name: "Search",
-        query: { "search-query": this.searchText },
+        query: {
+          "search-query": this.searchText,
+          searchParams: {
+            searchText: this.searchText,
+            cat1Code: "A01",
+            cat2Code: "A0101",
+            cat3Code: "A01010100",
+            sidoCode: "",
+            gugunCode: "",
+          },
+        },
       });
     },
     // async getSubscribedChannels() {

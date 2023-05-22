@@ -7,8 +7,7 @@
             <v-col class="grow">
               <div class="title">Error!</div>
               <div>
-                Something went wrong, but don’t fret — let’s give it another
-                shot.
+                Something went wrong, but don’t fret — let’s give it another shot.
               </div>
             </v-col>
             <v-col class="shrink">
@@ -20,64 +19,33 @@
           <template v-if="results.length === 0">
             <p class="text-center">Ops! No search results</p>
           </template>
-          <div
-            v-else
-            v-for="(result, i) in loading ? 5 : results"
-            :key="i"
-            class="mb-5"
-          >
-            <v-skeleton-loader
-              class="mx-auto"
-              type="list-item-avatar-three-line"
-              :loading="loading"
-              tile
-              large
-            >
-              <v-card
-                :to="`/channels/${result._id}`"
-                class="card mb-10"
-                v-if="typeof result.channelName !== 'undefined'"
-                tile
-                flat
-              >
+          <div v-else v-for="(result, i) in loading ? 5 : results" :key="i" class="mb-5">
+            <v-skeleton-loader class="mx-auto" type="list-item-avatar-three-line" :loading="loading" tile large>
+              <v-card :to="`/Watch/${result.contentId}`" class="card mb-10" v-if="typeof result.title !== 'undefined'" tile flat>
                 <v-row no-gutters justify="center">
                   <v-col cols="10" sm="10" md="3" lg="3" class="d-flex">
                     <!-- <v-responsive max-height="100%"> -->
 
                     <v-avatar size="120" max-width="150" class="mx-auto red">
-                      <img
-                        v-if="result.photoUrl !== 'no-photo.jpg'"
-                        :src="`${getUrl}/uploads/avatars/${result.photoUrl}`"
-                        :alt="`${result.channelName} avatar`"
-                      />
+                      <img v-if="result.firstImage2" :src="`${result.firstImage2}`" :alt="`${result.title} avatar`" />
                       <template v-else color="red">
-                        <span class="white--text display-1">
-                          {{
-                            result.channelName.split('')[0].toUpperCase()
-                          }}</span
-                        >
+                        <span class="white--text display-1"> {{ result.title.split("")[0].toUpperCase() }}</span>
                       </template>
                     </v-avatar>
                     <!-- </v-responsive> -->
                   </v-col>
                   <v-col cols="10" sm="10" md="6" lg="6" class="justify-center">
                     <!-- <div class="ml-2"> -->
-                    <v-card-title
-                      class="pl-2 pt-0 subtitle-1 font-weight-bold align-center"
-                    >
-                      {{ result.channelName }}
+                    <v-card-title class="pl-2 pt-0 subtitle-1 font-weight-bold align-center">
+                      {{ result.title }}
                     </v-card-title>
 
-                    <v-card-subtitle
-                      class="pl-2 pt-2 pb-0"
-                      style="line-height: 1.2"
-                    >
-                      {{ result.subscribers }}
-                      subscribers<v-icon>mdi-circle-small</v-icon
-                      >{{ result.videos }} videos
+                    <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1.2">
+                      {{ result.readcount }} views
+                      <!-- subscribers<v-icon>mdi-circle-small</v-icon>{{ result.videos }} videos -->
                     </v-card-subtitle>
                     <v-card-subtitle class="pl-2 pt-2 pb-0">
-                      {{ result.description }}
+                      {{ result.addr1 }}
                     </v-card-subtitle>
                     <!-- </div> -->
                   </v-col>
@@ -92,36 +60,19 @@
                   </v-col> -->
                 </v-row>
               </v-card>
-              <v-card
-                :to="`/watch/${result._id}`"
-                class="card mb-10"
-                tile
-                flat
-                v-else
-              >
+              <v-card :to="`/watch/${result._id}`" class="card mb-10" tile flat v-else>
                 <v-row no-gutters v-if="result.userId">
                   <v-col cols="5" sm="3" md="3" lg="3">
-                    <v-img
-                      class="align-center"
-                      :src="
-                        `${getUrl}/uploads/thumbnails/${result.thumbnailUrl}`
-                      "
-                      :alt="`${result.userId.channelName} avatar`"
-                    >
+                    <v-img class="align-center" :src="`${getUrl}/uploads/thumbnails/${result.thumbnailUrl}`" :alt="`${result.userId.channelName} avatar`">
                     </v-img>
                   </v-col>
                   <v-col cols="7" sm="7" md="8" lg="8">
                     <div class="ml-2">
-                      <v-card-title
-                        class="pl-2 pt-0 subtitle-1 font-weight-bold"
-                      >
+                      <v-card-title class="pl-2 pt-0 subtitle-1 font-weight-bold">
                         {{ result.title }}
                       </v-card-title>
 
-                      <v-card-subtitle
-                        class="pl-2 pt-2 pb-0"
-                        style="line-height: 1.2"
-                      >
+                      <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1.2">
                         {{ result.userId.channelName }}<br />
                         {{ result.views }}
                         views<v-icon>mdi-circle-small</v-icon>6 hours ago
@@ -135,15 +86,9 @@
               </v-card>
             </v-skeleton-loader>
           </div>
-          <infinite-loading
-            :identifier="infiniteId"
-            @infinite="getSearchResults"
-          >
+          <infinite-loading :identifier="infiniteId" @infinite="getSearchResults">
             <div slot="spinner">
-              <v-progress-circular
-                indeterminate
-                color="red"
-              ></v-progress-circular>
+              <v-progress-circular indeterminate color="red"></v-progress-circular>
             </div>
             <div slot="no-results"></div>
             <span slot="no-more"></span>
@@ -153,8 +98,7 @@
                   <v-col class="grow">
                     <div class="title">Error!</div>
                     <div>
-                      Something went wrong, but don’t fret — let’s give it
-                      another shot.
+                      Something went wrong, but don’t fret — let’s give it another shot.
                     </div>
                   </v-col>
                   <v-col class="shrink">
@@ -171,9 +115,9 @@
 </template>
 
 <script>
-import InfiniteLoading from 'vue-infinite-loading'
-import { mapGetters } from 'vuex'
-import SearchService from '@/services/SearchService'
+import InfiniteLoading from "vue-infinite-loading";
+import { mapGetters } from "vuex";
+import SearchService from "@/services/SearchService";
 
 export default {
   data: () => ({
@@ -182,64 +126,73 @@ export default {
     loaded: false,
     page: 1,
     results: [],
-    text: '',
-    infiniteId: +new Date()
+    text: "",
+    infiniteId: +new Date(),
+    searchParams: {
+      searchText: "",
+      cat1Code: "",
+      cat2Code: "",
+      cat3Code: "",
+      sidoCode: "",
+      gugunCode: "",
+    },
   }),
   computed: {
-    ...mapGetters(['getUrl'])
+    ...mapGetters(["getUrl"]),
   },
   methods: {
     async getSearchResults($state) {
-      this.errored = false
+      this.errored = false;
       if (!this.loaded) {
-        this.loading = true
+        this.loading = true;
       }
-      const results = await SearchService.search(this.page, {
-        text: this.text
-      })
+      const results = await SearchService.search(this.page, this.searchParams)
         .catch((err) => {
-          console.log(err)
-          this.errored = true
+          console.log(err);
+          this.errored = true;
         })
         .finally(() => {
-          this.loading = false
-        })
+          this.loading = false;
+        });
 
-      if (!results) return
-      // console.log(results)
+      if (!results) return;
+      console.log("results");
+      console.log(results);
       if (results.data.data.length) {
-        this.page += 1
+        this.page += 1;
 
-        this.results.push(...results.data.data)
+        this.results.push(...results.data.data);
         if ($state) {
-          $state.loaded()
+          $state.loaded();
         }
 
-        this.loaded = true
+        this.loaded = true;
       } else {
         if ($state) {
-          $state.complete()
+          $state.complete();
         }
       }
-    }
+    },
   },
   components: {
-    InfiniteLoading
+    InfiniteLoading,
   },
   beforeRouteUpdate(to, from, next) {
     // console.log(to.query['search-query'])
-    if (to.query['search-query'] === '') return
-    this.text = to.query['search-query']
-    this.page = 1
-    this.results = []
-    this.infiniteId += 1
+    if (to.query["search-query"] === "") return;
+    this.text = to.query["search-query"];
+    this.searchParams = to.query.searchParams;
+    this.page = 1;
+    this.results = [];
+    this.infiniteId += 1;
 
-    next()
+    next();
   },
   mounted() {
-    this.text = this.$route.query['search-query']
-  }
-}
+    this.text = this.$route.query["search-query"];
+    this.searchParams = this.$route.query.searchParams;
+  },
+};
 </script>
 
 <style></style>
