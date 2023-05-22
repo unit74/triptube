@@ -1,5 +1,7 @@
 package com.ssafy.triptube.trips.reactions.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ssafy.triptube.trips.reactions.models.ReactionEntity;
@@ -10,4 +12,6 @@ public interface ReactionRepository extends JpaRepository<ReactionEntity, Long> 
 	ReactionEntity findByUser_UserIdAndAttractionInfo_ContentId(Long userId, Integer contentId);
 
 	void deleteByUser_UserIdAndAttractionInfo_ContentId(Long userId, Integer contentId);
+
+	List<ReactionEntity> findAllByUser_UserId(Long userId);
 }

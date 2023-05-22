@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.triptube.trips.attractions.dtos.AttractionInfoDto;
 import com.ssafy.triptube.trips.attractions.models.AttractionDescriptionEntity;
@@ -46,10 +47,14 @@ public class AttractionService {
 		return attractionInfoDtos;
 	}
 
+	@Transactional
 	public AttractionInfoDto getAttractionDetail(Integer contentId) {
+		AttractionInfoEntity attractionInfoEntity = attractionInfoRepository.findById(contentId).get();
+		attractionInfoEntity.setReadcount(attractionInfoEntity.getReadcount() + 1);
+		attractionInfoEntity = attractionInfoRepository.save(attractionInfoEntity);
+
 		AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
 
-		AttractionInfoEntity attractionInfoEntity = attractionInfoRepository.findById(contentId).get();
 		attractionInfoDto.setContentId(attractionInfoEntity.getContentId());
 		attractionInfoDto.setTitle(attractionInfoEntity.getTitle());
 		attractionInfoDto.setAddr1(attractionInfoEntity.getAddr1());
@@ -71,5 +76,28 @@ public class AttractionService {
 		attractionInfoDto.setComments(1L);
 
 		return attractionInfoDto;
+	}
+
+	public List<AttractionInfoDto> getLikeAttractions(Long userId) {
+		List<AttractionInfoDto> attractionInfoDtos = new ArrayList<>();
+
+		List<ReactionEntity> reactionEntities = reactionRepository.findAllByUser_UserId(userId);
+
+		for (ReactionEntity reactionEntity : reactionEntities) {
+			AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
+
+			AttractionInfoEntity attractionInfoEntity = reactionEntity.getAttractionInfo();
+
+			attractionInfoDto.setContentId(attractionInfoEntity.getContentId());
+			attractionInfoDto.setTitle(attractionInfoEntity.getTitle());
+			attractionInfoDto.setAddr1(attractionInfoEntity.getAddr1());
+			attractionInfoDto.setFirstImage(attractionInfoEntity.getFirstImage());
+			attractionInfoDto.setFirstImage2(attractionInfoEntity.getFirstImage2());
+			attractionInfoDto.setReadcount(attractionInfoEntity.getReadcount());
+
+			attractionInfoDtos.add(attractionInfoDto);
+		}
+
+		return attractionInfoDtos;
 	}
 }
