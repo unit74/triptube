@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.triptube.trips.categories.services.Cat1Service;
 import com.ssafy.triptube.trips.categories.services.Cat2Service;
 import com.ssafy.triptube.trips.categories.services.Cat3Service;
+import com.ssafy.triptube.trips.categories.services.GugunService;
+import com.ssafy.triptube.trips.categories.services.SidoService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +26,10 @@ public class CategoryPublicController {
 	private final Cat2Service cat2Service;
 
 	private final Cat3Service cat3Service;
+
+	private final GugunService gugunService;
+
+	private final SidoService sidoService;
 
 	@GetMapping("/cat1")
 	public ResponseEntity<?> getCat1s() {
@@ -39,4 +45,15 @@ public class CategoryPublicController {
 	public ResponseEntity<?> getCat3s(@RequestParam String cat2Code) {
 		return createResponse(true, "소분류 가져오기", cat3Service.getCat3s(cat2Code));
 	}
+
+	@GetMapping("/guguns")
+	public ResponseEntity<?> getGuguns() {
+		return createResponse(true, "소분류 가져오기", gugunService.getGuguns());
+	}
+
+	@GetMapping("/sidos")
+	public ResponseEntity<?> getSidos() {
+		return createResponse(true, "소분류 가져오기", sidoService.getSidos());
+	}
+
 }
