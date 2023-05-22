@@ -23,4 +23,5 @@ public class AttractionPrivateController {
 	public ResponseEntity<?> getLikeAttractions(Integer page) {
 		return createResponse(true, "좋아요한 관광지", attractionInfoService.getLikeAttractions(getLoginUserId(), page));
 	}
+
 }

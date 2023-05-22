@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.triptube.trips.attractions.dtos.AttractionInfoDto;
 import com.ssafy.triptube.trips.attractions.models.AttractionInfoEntity;
 import com.ssafy.triptube.trips.attractions.repositories.AttractionInfoRepository;
+import com.ssafy.triptube.trips.comments.repositories.CommentRepository;
 import com.ssafy.triptube.trips.reactions.models.ReactionEntity;
 import com.ssafy.triptube.trips.reactions.repositories.ReactionRepository;
 
@@ -23,6 +24,8 @@ public class AttractionService {
 	private final AttractionInfoRepository attractionInfoRepository;
 
 	private final ReactionRepository reactionRepository;
+
+	private final CommentRepository commentRepository;
 
 	public List<AttractionInfoDto> getRandomAttractions() {
 		List<AttractionInfoEntity> attractionInfoEntities = attractionInfoRepository.findRandomAttractionInfos();
@@ -69,7 +72,7 @@ public class AttractionService {
 		attractionInfoDto.setDislikes(
 				reactionRepository.countByTypeAndAttractionInfo_ContentId(ReactionEntity.Type.DISLIKE, contentId));
 
-		attractionInfoDto.setComments(1L);
+		attractionInfoDto.setComments(commentRepository.countByContentId(contentId));
 
 		return attractionInfoDto;
 	}

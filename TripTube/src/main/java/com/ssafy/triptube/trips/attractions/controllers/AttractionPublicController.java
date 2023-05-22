@@ -59,4 +59,5 @@ public class AttractionPublicController {
 	public ResponseEntity<?> getHotAttractions(Integer page) {
 		return createResponse(true, "핫플레이스", attractionInfoService.getHotAttractions(page));
 	}
+
 }
