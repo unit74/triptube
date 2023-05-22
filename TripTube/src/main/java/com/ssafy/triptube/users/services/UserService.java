@@ -34,6 +34,7 @@ public class UserService {
 		LoginInfoDto loginInfoDto = new LoginInfoDto();
 
 		loginInfoDto.setToken(jwtTokenProvider.createToken(userEntity.getEmail()));
+		loginInfoDto.setEmail(userEntity.getEmail());
 		loginInfoDto.setName(userEntity.getName());
 		loginInfoDto.setProfilePhotoUrl(userEntity.getProfilePhotoUrl());
 
@@ -57,6 +58,7 @@ public class UserService {
 		LoginInfoDto loginInfoDto = new LoginInfoDto();
 
 		loginInfoDto.setToken(jwtTokenProvider.createToken(userEntity.getEmail()));
+		loginInfoDto.setEmail(userEntity.getEmail());
 		loginInfoDto.setName(userEntity.getName());
 		loginInfoDto.setProfilePhotoUrl(userEntity.getProfilePhotoUrl());
 
