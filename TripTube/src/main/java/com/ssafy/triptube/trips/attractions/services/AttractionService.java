@@ -3,13 +3,13 @@ package com.ssafy.triptube.trips.attractions.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.triptube.trips.attractions.dtos.AttractionInfoDto;
-import com.ssafy.triptube.trips.attractions.models.AttractionDescriptionEntity;
 import com.ssafy.triptube.trips.attractions.models.AttractionInfoEntity;
-import com.ssafy.triptube.trips.attractions.repositories.AttractionDescriptionRepository;
 import com.ssafy.triptube.trips.attractions.repositories.AttractionInfoRepository;
 import com.ssafy.triptube.trips.reactions.models.ReactionEntity;
 import com.ssafy.triptube.trips.reactions.repositories.ReactionRepository;
@@ -22,11 +22,9 @@ public class AttractionService {
 
 	private final AttractionInfoRepository attractionInfoRepository;
 
-	private final AttractionDescriptionRepository attractionDescriptionRepository;
-
 	private final ReactionRepository reactionRepository;
 
-	public List<AttractionInfoDto> findRandomAttractionInfos() {
+	public List<AttractionInfoDto> getRandomAttractions() {
 		List<AttractionInfoEntity> attractionInfoEntities = attractionInfoRepository.findRandomAttractionInfos();
 
 		List<AttractionInfoDto> attractionInfoDtos = new ArrayList<>();
@@ -64,9 +62,7 @@ public class AttractionService {
 		attractionInfoDto.setLatitude(attractionInfoEntity.getLatitude());
 		attractionInfoDto.setLongitude(attractionInfoEntity.getLongitude());
 
-		AttractionDescriptionEntity attrationDescriptionEntity = attractionDescriptionRepository.findById(contentId)
-				.get();
-		attractionInfoDto.setOverview(attrationDescriptionEntity.getOverview());
+		attractionInfoDto.setOverview(attractionInfoEntity.getAttractionDescription().getOverview());
 
 		attractionInfoDto.setLikes(
 				reactionRepository.countByTypeAndAttractionInfo_ContentId(ReactionEntity.Type.LIKE, contentId));
@@ -78,12 +74,64 @@ public class AttractionService {
 		return attractionInfoDto;
 	}
 
-	public List<AttractionInfoDto> getLikeAttractions(Long userId) {
+	public List<AttractionInfoDto> getSearchAttractions(String searchText, Integer page) {
 		List<AttractionInfoDto> attractionInfoDtos = new ArrayList<>();
 
-		List<ReactionEntity> reactionEntities = reactionRepository.findAllByUser_UserId(userId);
+		PageRequest pageRequest = PageRequest.of(page - 1, 12);
+		String title = "%" + searchText + "%";
 
-		for (ReactionEntity reactionEntity : reactionEntities) {
+		Slice<AttractionInfoEntity> attractionInfoEntitySlice = attractionInfoRepository.findByTitleLike(title,
+				pageRequest);
+
+		for (AttractionInfoEntity attractionInfoEntity : attractionInfoEntitySlice.getContent()) {
+			AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
+
+			attractionInfoDto.setContentId(attractionInfoEntity.getContentId());
+			attractionInfoDto.setTitle(attractionInfoEntity.getTitle());
+			attractionInfoDto.setAddr1(attractionInfoEntity.getAddr1());
+			attractionInfoDto.setFirstImage(attractionInfoEntity.getFirstImage());
+			attractionInfoDto.setFirstImage2(attractionInfoEntity.getFirstImage2());
+			attractionInfoDto.setReadcount(attractionInfoEntity.getReadcount());
+
+			attractionInfoDtos.add(attractionInfoDto);
+		}
+
+		return attractionInfoDtos;
+	}
+
+	public List<AttractionInfoDto> getHotAttractions(Integer page) {
+		List<AttractionInfoDto> attractionInfoDtos = new ArrayList<>();
+
+		PageRequest pageRequest = PageRequest.of(page - 1, 12);
+
+		Slice<AttractionInfoEntity> attractionInfoEntitySlice = attractionInfoRepository
+				.findAllByOrderByReadcountDesc(pageRequest);
+
+		for (AttractionInfoEntity attractionInfoEntity : attractionInfoEntitySlice.getContent()) {
+			AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
+
+			attractionInfoDto.setContentId(attractionInfoEntity.getContentId());
+			attractionInfoDto.setTitle(attractionInfoEntity.getTitle());
+			attractionInfoDto.setAddr1(attractionInfoEntity.getAddr1());
+			attractionInfoDto.setFirstImage(attractionInfoEntity.getFirstImage());
+			attractionInfoDto.setFirstImage2(attractionInfoEntity.getFirstImage2());
+			attractionInfoDto.setReadcount(attractionInfoEntity.getReadcount());
+			attractionInfoDto.setOverview(attractionInfoEntity.getAttractionDescription().getOverview());
+
+			attractionInfoDtos.add(attractionInfoDto);
+		}
+
+		return attractionInfoDtos;
+	}
+
+	public List<AttractionInfoDto> getLikeAttractions(Long userId, Integer page) {
+		List<AttractionInfoDto> attractionInfoDtos = new ArrayList<>();
+
+		PageRequest pageRequest = PageRequest.of(page - 1, 12);
+
+		Slice<ReactionEntity> reactionEntitySlice = reactionRepository.findByUser_UserId(userId, pageRequest);
+
+		for (ReactionEntity reactionEntity : reactionEntitySlice.getContent()) {
 			AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
 
 			AttractionInfoEntity attractionInfoEntity = reactionEntity.getAttractionInfo();
