@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.triptube.trips.categories.services.Cat1Service;
 import com.ssafy.triptube.trips.categories.services.Cat2Service;
 import com.ssafy.triptube.trips.categories.services.Cat3Service;
+import com.ssafy.triptube.trips.categories.services.ContentTypeService;
 import com.ssafy.triptube.trips.categories.services.GugunService;
 import com.ssafy.triptube.trips.categories.services.SidoService;
 
@@ -30,6 +31,8 @@ public class CategoryPublicController {
 	private final GugunService gugunService;
 
 	private final SidoService sidoService;
+
+	private final ContentTypeService contentTypeService;
 
 	@GetMapping("/cat1")
 	public ResponseEntity<?> getCat1s() {
@@ -54,6 +57,11 @@ public class CategoryPublicController {
 	@GetMapping("/sidos")
 	public ResponseEntity<?> getSidos() {
 		return createResponse(true, "소분류 가져오기", sidoService.getSidos());
+	}
+
+	@GetMapping("/contents")
+	public ResponseEntity<?> getContentTypes() {
+		return createResponse(true, "소분류 가져오기", contentTypeService.getContentTypes());
 	}
 
 }
