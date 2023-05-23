@@ -18,13 +18,13 @@ public class GugunEntity {
 
 	@Id
 	@Column(name = "gugun_code")
-	private Integer gugunCode;
+	private Integer gugun;
 
 	@Column(name = "gugun_name")
 	private String gugunName;
 
 	@Id
 	@Column(name = "sido_code")
-	private Integer sidoCode;
+	private Integer sido;
 
 }

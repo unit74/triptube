@@ -15,7 +15,7 @@ public class GugunService {
 
 	private final GugunRepository gugunRepository;
 
-	public List<GugunEntity> getGuguns(Integer sidoCode) {
-		return gugunRepository.findAllBySidoCode(sidoCode);
+	public List<GugunEntity> getGuguns(Integer sido) {
+		return gugunRepository.findAllBySido(sido);
 	}
 }

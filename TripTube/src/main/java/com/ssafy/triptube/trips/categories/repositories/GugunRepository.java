@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.ssafy.triptube.trips.categories.models.GugunEntity;
 
 public interface GugunRepository extends JpaRepository<GugunEntity, Long> {
-	List<GugunEntity> findAllBySidoCode(Integer sidoCode);
+	List<GugunEntity> findAllBySido(Integer sido);
 }

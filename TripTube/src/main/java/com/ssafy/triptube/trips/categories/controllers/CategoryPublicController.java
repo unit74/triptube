@@ -39,18 +39,18 @@ public class CategoryPublicController {
 	}
 
 	@GetMapping("/cat2")
-	public ResponseEntity<?> getCat2s(String cat1Code) {
-		return createResponse(true, "중분류 가져오기", cat2Service.getCat2s(cat1Code));
+	public ResponseEntity<?> getCat2s(String cat1) {
+		return createResponse(true, "중분류 가져오기", cat2Service.getCat2s(cat1));
 	}
 
 	@GetMapping("/cat3")
-	public ResponseEntity<?> getCat3s(String cat2Code) {
-		return createResponse(true, "소분류 가져오기", cat3Service.getCat3s(cat2Code));
+	public ResponseEntity<?> getCat3s(String cat2) {
+		return createResponse(true, "소분류 가져오기", cat3Service.getCat3s(cat2));
 	}
 
 	@GetMapping("/guguns")
-	public ResponseEntity<?> getGuguns(Integer sidoCode) {
-		return createResponse(true, "구군 가져오기", gugunService.getGuguns(sidoCode));
+	public ResponseEntity<?> getGuguns(Integer sido) {
+		return createResponse(true, "구군 가져오기", gugunService.getGuguns(sido));
 	}
 
 	@GetMapping("/sidos")

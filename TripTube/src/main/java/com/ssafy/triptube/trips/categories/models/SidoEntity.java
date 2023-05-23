@@ -16,7 +16,7 @@ public class SidoEntity {
 
 	@Id
 	@Column(name = "sido_code")
-	private Integer sidoCode;
+	private Integer sido;
 
 	@Column(name = "sido_name")
 	private String sidoName;

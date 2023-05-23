@@ -16,7 +16,7 @@ public class ContentTypeEntity {
 
 	@Id
 	@Column(name = "content_type_id")
-	private Integer contentTypeId;
+	private Integer contentType;
 
 	@Column(name = "contentTypeName")
 	private String contentTypeName;
