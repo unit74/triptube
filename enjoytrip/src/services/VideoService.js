@@ -7,11 +7,8 @@ export default {
     // console.log(Api.get(`/videos`));
     return Api().get(`/api/v1/public/trips/attractions`);
   },
-  getHotplace() {
-    console.log();
-    // console.log("Api.get(`/videos`)");
-    // console.log(Api.get(`/videos`));
-    return Api().get(`/api/v1/trip/hot`);
+  getHotplace(page) {
+    return Api().get(`/api/v1/public/trips/attractions/hots`, { params: page });
   },
   async getById(id) {
     const token = localStorage.getItem("token");

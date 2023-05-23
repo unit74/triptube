@@ -14,7 +14,7 @@
       </v-alert>
 
       <main v-else>
-        <h3 class="headline font-weight-medium">Recommended</h3>
+        <h3 class="headline font-weight-medium">Attractions</h3>
         <v-row>
           <v-col cols="12" sm="6" md="4" lg="3" v-for="(video, i) in loading ? 12 : videos" :key="i" class="mx-xs-auto">
             <v-skeleton-loader type="card-avatar" :loading="loading">
