@@ -51,4 +51,5 @@ public class AttractionInfoDto {
 	private Long dislikes;
 
 	private Long comments;
+
 }

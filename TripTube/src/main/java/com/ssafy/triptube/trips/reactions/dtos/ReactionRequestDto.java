@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReactionDto {
+public class ReactionRequestDto {
 	private Integer contentId;
 	private String type;
 }

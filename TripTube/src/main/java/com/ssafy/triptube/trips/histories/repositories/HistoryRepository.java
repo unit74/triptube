@@ -13,4 +13,6 @@ public interface HistoryRepository extends JpaRepository<HistoryEntity, Long> {
 
 	Slice<HistoryEntity> findByUser_UserIdAndTypeOrderByUpdatedAtDesc(Long userId, HistoryEntity.Type type,
 			Pageable pageable);
+
+	void deleteAllByUser_UserIdAndType(Long userId, HistoryEntity.Type type);
 }

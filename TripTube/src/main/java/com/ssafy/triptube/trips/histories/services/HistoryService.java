@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.triptube.trips.attractions.dtos.AttractionInfoDto;
 import com.ssafy.triptube.trips.attractions.repositories.AttractionInfoRepository;
@@ -70,14 +71,16 @@ public class HistoryService {
 			historyDto.setHistoryId(historyEntity.getHistoryId());
 			historyDto.setSearchText(historyEntity.getSearchText());
 
-			AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
-			attractionInfoDto.setContentId(historyEntity.getAttractionInfo().getContentId());
-			attractionInfoDto.setTitle(historyEntity.getAttractionInfo().getTitle());
-			attractionInfoDto.setAddr1(historyEntity.getAttractionInfo().getAddr1());
-			attractionInfoDto.setFirstImage(historyEntity.getAttractionInfo().getFirstImage());
-			attractionInfoDto.setFirstImage2(historyEntity.getAttractionInfo().getFirstImage2());
-			attractionInfoDto.setReadcount(historyEntity.getAttractionInfo().getReadcount());
-			historyDto.setAttractionInfo(attractionInfoDto);
+			if (type.equals(HistoryEntity.Type.VISIT)) {
+				AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
+				attractionInfoDto.setContentId(historyEntity.getAttractionInfo().getContentId());
+				attractionInfoDto.setTitle(historyEntity.getAttractionInfo().getTitle());
+				attractionInfoDto.setAddr1(historyEntity.getAttractionInfo().getAddr1());
+				attractionInfoDto.setFirstImage(historyEntity.getAttractionInfo().getFirstImage());
+				attractionInfoDto.setFirstImage2(historyEntity.getAttractionInfo().getFirstImage2());
+				attractionInfoDto.setReadcount(historyEntity.getAttractionInfo().getReadcount());
+				historyDto.setAttractionInfo(attractionInfoDto);
+			}
 
 			historyDto.setCreatedAt(historyEntity.getCreatedAt());
 			historyDto.setUpdatedAt(historyEntity.getUpdatedAt());
@@ -90,5 +93,10 @@ public class HistoryService {
 
 	public void deleteHistory(Long historyId) {
 		historyRepository.deleteById(historyId);
+	}
+
+	@Transactional
+	public void deleteHistories(Long userId, HistoryEntity.Type type) {
+		historyRepository.deleteAllByUser_UserIdAndType(userId, type);
 	}
 }

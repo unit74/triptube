@@ -1,4 +1,4 @@
-package com.ssafy.triptube.trips.histories.dtos;
+package com.ssafy.triptube.trips.reactions.dtos;
 
 import java.time.LocalDateTime;
 
@@ -13,15 +13,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class HistoryDto {
+public class ReactionResponseDto {
 
-	private Long historyId;
+	private Long reactionId;
 
-	private String searchText;
+	private Integer contentId;
 
-	private AttractionInfoDto attractionInfo;
+	private String type;
+
+	private LocalDateTime updatedAt;
 
 	private LocalDateTime createdAt;
 
-	private LocalDateTime updatedAt;
+	private AttractionInfoDto attractionInfo;
+
 }

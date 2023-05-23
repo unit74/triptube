@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.triptube.trips.reactions.dtos.ReactionDto;
+import com.ssafy.triptube.trips.reactions.dtos.ReactionRequestDto;
 import com.ssafy.triptube.trips.reactions.models.ReactionEntity;
 import com.ssafy.triptube.trips.reactions.services.ReactionService;
 
@@ -31,19 +31,20 @@ public class ReactionPrivateController {
 	}
 
 	@PostMapping("")
-	public ResponseEntity<?> react(@RequestBody ReactionDto reactionDto) {
-		if (!("LIKE".equals(reactionDto.getType()) || "DISLIKE".equals(reactionDto.getType()))) {
+	public ResponseEntity<?> react(@RequestBody ReactionRequestDto reactionRequestDto) {
+		if (!("LIKE".equals(reactionRequestDto.getType()) || "DISLIKE".equals(reactionRequestDto.getType()))) {
 			return createResponse(false, "리액션은 LIKE, DISLIKE만 가능");
 		}
 
-		reactionService.react(getLoginUserId(), reactionDto.getContentId(),
-				ReactionEntity.Type.valueOf(reactionDto.getType()));
+		reactionService.react(getLoginUserId(), reactionRequestDto.getContentId(),
+				ReactionEntity.Type.valueOf(reactionRequestDto.getType()));
 
-		return createResponse(true, reactionDto.getType());
+		return createResponse(true, reactionRequestDto.getType());
 	}
 
 	@DeleteMapping("/{contentId}")
 	public ResponseEntity<?> cancelReaction(@PathVariable Integer contentId) {
 		return createResponse(true, "리액션 취소", reactionService.cancelReaction(getLoginUserId(), contentId));
 	}
+
 }

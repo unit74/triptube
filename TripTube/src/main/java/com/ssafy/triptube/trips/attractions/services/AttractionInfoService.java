@@ -3,8 +3,6 @@ package com.ssafy.triptube.trips.attractions.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -20,7 +18,10 @@ import com.ssafy.triptube.trips.comments.repositories.CommentRepository;
 import com.ssafy.triptube.trips.reactions.models.ReactionEntity;
 import com.ssafy.triptube.trips.reactions.repositories.ReactionRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class AttractionInfoService {
 
 	private final AttractionInfoRepository attractionInfoRepository;
@@ -32,14 +33,6 @@ public class AttractionInfoService {
 	private final JPAQueryFactory queryFactory;
 
 	private final QAttractionInfoEntity attraction = QAttractionInfoEntity.attractionInfoEntity;
-
-	public AttractionInfoService(AttractionInfoRepository attractionInfoRepository,
-			ReactionRepository reactionRepository, CommentRepository commentRepository, EntityManager em) {
-		this.attractionInfoRepository = attractionInfoRepository;
-		this.reactionRepository = reactionRepository;
-		this.commentRepository = commentRepository;
-		this.queryFactory = new JPAQueryFactory(em);
-	}
 
 	public List<AttractionInfoDto> getRandomAttractions() {
 		List<AttractionInfoEntity> attractionInfoEntities = attractionInfoRepository.findRandomAttractionInfos();
@@ -154,28 +147,4 @@ public class AttractionInfoService {
 		return attractionInfoDtos;
 	}
 
-	public List<AttractionInfoDto> getLikeAttractions(Long userId, Integer page) {
-		List<AttractionInfoDto> attractionInfoDtos = new ArrayList<>();
-
-		PageRequest pageRequest = PageRequest.of(page - 1, 12);
-
-		Slice<ReactionEntity> reactionEntitySlice = reactionRepository.findByUser_UserId(userId, pageRequest);
-
-		for (ReactionEntity reactionEntity : reactionEntitySlice.getContent()) {
-			AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
-
-			AttractionInfoEntity attractionInfoEntity = reactionEntity.getAttractionInfo();
-
-			attractionInfoDto.setContentId(attractionInfoEntity.getContentId());
-			attractionInfoDto.setTitle(attractionInfoEntity.getTitle());
-			attractionInfoDto.setAddr1(attractionInfoEntity.getAddr1());
-			attractionInfoDto.setFirstImage(attractionInfoEntity.getFirstImage());
-			attractionInfoDto.setFirstImage2(attractionInfoEntity.getFirstImage2());
-			attractionInfoDto.setReadcount(attractionInfoEntity.getReadcount());
-
-			attractionInfoDtos.add(attractionInfoDto);
-		}
-
-		return attractionInfoDtos;
-	}
 }
