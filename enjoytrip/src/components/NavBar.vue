@@ -204,7 +204,7 @@ export default {
 
           {
             title: "좋아요 표시한 관광지",
-            link: "#lt",
+            link: "/liked",
             icon: "mdi-thumb-up",
           },
         ],

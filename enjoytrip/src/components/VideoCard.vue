@@ -23,7 +23,11 @@
         <v-card-subtitle class="pl-2 pb-0">
           {{ video.addr1 }}
         </v-card-subtitle>
-        <v-card-subtitle class="pl-2 pt-0"> {{ video.readcount }} views<v-icon>mdi-circle-small</v-icon>{{ dateFormatter(video.createdAt) }} </v-card-subtitle>
+        <v-card-subtitle class="pl-2 pt-0" v-if="video.updatedAt">
+          {{ video.readcount }} views<v-icon>mdi-circle-small</v-icon>
+          {{ dateFormatter(video.updatedAt) }}
+        </v-card-subtitle>
+        <v-card-subtitle class="pl-2 pt-0" v-else> {{ video.readcount }} views<v-icon>mdi-circle-small</v-icon> </v-card-subtitle>
       </v-col>
     </v-row>
   </v-card>

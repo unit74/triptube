@@ -3,7 +3,7 @@ import Api from "@/services/Api";
 export default {
   getAll(params) {
     console.log(params);
-    return Api().get("/api/v1/private/trips/histories", { params: params });
+    return Api().get("/api/v1/private/trips/attractions/histories", { params: params });
   },
   // createHistory(data) {
   //   return Api().post("histories", data);
