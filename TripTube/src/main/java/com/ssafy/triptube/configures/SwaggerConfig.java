@@ -1,4 +1,4 @@
-package com.ssafy.triptube.configures.swagger;
+package com.ssafy.triptube.configures;
 
 import java.util.Arrays;
 import java.util.List;
