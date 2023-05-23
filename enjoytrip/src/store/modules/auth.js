@@ -141,7 +141,7 @@ const actions = {
       AuthenticationService.signUp(credentials)
         .then(({ data }) => {
           localStorage.setItem("token", data.data.token);
-          localStorage.setItem("user", JSON.stringify({ name: data.data.name, profilePhotoUrl: data.data.profilePhotoUrl }));
+          localStorage.setItem("user", JSON.stringify({ name: data.data.name, profilePhotoUrl: data.data.profilePhotoUrl, email: data.data.email }));
           commit("SET_USER_DATA", data.data);
           commit("SET_TOKEN", data.data.token);
           resolve(data);
@@ -155,7 +155,7 @@ const actions = {
       AuthenticationService.signIn(credentials)
         .then(({ data }) => {
           localStorage.setItem("token", data.data.token);
-          localStorage.setItem("user", JSON.stringify({ name: data.data.name, profilePhotoUrl: data.data.profilePhotoUrl }));
+          localStorage.setItem("user", JSON.stringify({ name: data.data.name, profilePhotoUrl: data.data.profilePhotoUrl, email: data.data.email }));
           commit("SET_USER_DATA", data.data);
           commit("SET_TOKEN", data.data.token);
 

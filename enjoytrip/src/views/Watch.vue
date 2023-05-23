@@ -138,7 +138,7 @@
 
                           <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1">
                             <!-- {{ video.userId.channelName }}<br /> -->
-                            {{ video.readcount }} readcount<v-icon>mdi-circle-small</v-icon>
+                            {{ video.readcount }} views<v-icon>mdi-circle-small</v-icon>
                             {{ dateFormatter(video.createdAt) }}
                           </v-card-subtitle>
                         </div>

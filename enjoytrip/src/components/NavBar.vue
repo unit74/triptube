@@ -297,17 +297,7 @@ export default {
 
       this.$router.push({
         name: "Search",
-        query: {
-          "search-query": this.searchText,
-          searchParams: {
-            searchText: this.searchText,
-            cat1Code: "A01",
-            cat2Code: "A0101",
-            cat3Code: "A01010100",
-            sidoCode: "",
-            gugunCode: "",
-          },
-        },
+        query: { "search-query": this.searchText },
       });
     },
     // async getSubscribedChannels() {

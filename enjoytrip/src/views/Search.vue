@@ -21,50 +21,12 @@
           </template>
           <div v-else v-for="(result, i) in loading ? 5 : results" :key="i" class="mb-5">
             <v-skeleton-loader class="mx-auto" type="list-item-avatar-three-line" :loading="loading" tile large>
-              <v-card :to="`/Watch/${result.contentId}`" class="card mb-10" v-if="typeof result.title !== 'undefined'" tile flat>
-                <v-row no-gutters justify="center">
-                  <v-col cols="10" sm="10" md="3" lg="3" class="d-flex">
-                    <!-- <v-responsive max-height="100%"> -->
-
-                    <v-avatar size="120" max-width="150" class="mx-auto red">
-                      <img v-if="result.firstImage2" :src="`${result.firstImage2}`" :alt="`${result.title} avatar`" />
-                      <template v-else color="red">
-                        <span class="white--text display-1"> {{ result.title.split("")[0].toUpperCase() }}</span>
-                      </template>
-                    </v-avatar>
-                    <!-- </v-responsive> -->
-                  </v-col>
-                  <v-col cols="10" sm="10" md="6" lg="6" class="justify-center">
-                    <!-- <div class="ml-2"> -->
-                    <v-card-title class="pl-2 pt-0 subtitle-1 font-weight-bold align-center">
-                      {{ result.title }}
-                    </v-card-title>
-
-                    <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1.2">
-                      {{ result.readcount }} views
-                      <!-- subscribers<v-icon>mdi-circle-small</v-icon>{{ result.videos }} videos -->
-                    </v-card-subtitle>
-                    <v-card-subtitle class="pl-2 pt-2 pb-0">
-                      {{ result.addr1 }}
-                    </v-card-subtitle>
-                    <!-- </div> -->
-                  </v-col>
-
-                  <!-- <v-col cols="10" sm="10" md="3" lg="3">
-                    <v-btn class="red white--text mt-6" tile depressed
-                      >Subscribed</v-btn
-                    >
-                    <v-btn icon class="ml-5 mt-6"
-                      ><v-icon>mdi-bell</v-icon></v-btn
-                    >
-                  </v-col> -->
-                </v-row>
-              </v-card>
-              <v-card :to="`/watch/${result._id}`" class="card mb-10" tile flat v-else>
-                <v-row no-gutters v-if="result.userId">
+              <v-card :to="`/watch/${result.contentId}`" class="card mb-10" tile flat>
+                <v-row no-gutters>
                   <v-col cols="5" sm="3" md="3" lg="3">
-                    <v-img class="align-center" :src="`${getUrl}/uploads/thumbnails/${result.thumbnailUrl}`" :alt="`${result.userId.channelName} avatar`">
+                    <v-img v-if="result.firstImage" class="align-center" :src="`${result.firstImage}`" :alt="`${result.title} avatar`" max-height="200">
                     </v-img>
+                    <v-img v-else class="align-center" :src="require(`@/assets/logo.png`)" :alt="`${result.title} avatar`" max-height="200"> </v-img>
                   </v-col>
                   <v-col cols="7" sm="7" md="8" lg="8">
                     <div class="ml-2">
@@ -73,12 +35,12 @@
                       </v-card-title>
 
                       <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1.2">
-                        {{ result.userId.channelName }}<br />
-                        {{ result.views }}
+                        {{ result.title }}<br />
+                        {{ result.readcount }}
                         views<v-icon>mdi-circle-small</v-icon>6 hours ago
                       </v-card-subtitle>
                       <v-card-subtitle class="pl-2 pt-2 pb-0">
-                        {{ result.description }}
+                        {{ result.addr1 }}
                       </v-card-subtitle>
                     </div>
                   </v-col>
@@ -126,16 +88,8 @@ export default {
     loaded: false,
     page: 1,
     results: [],
-    text: "",
+    searchText: "",
     infiniteId: +new Date(),
-    searchParams: {
-      searchText: "",
-      cat1Code: "",
-      cat2Code: "",
-      cat3Code: "",
-      sidoCode: "",
-      gugunCode: "",
-    },
   }),
   computed: {
     ...mapGetters(["getUrl"]),
@@ -146,7 +100,7 @@ export default {
       if (!this.loaded) {
         this.loading = true;
       }
-      const results = await SearchService.search(this.page, this.searchParams)
+      const results = await SearchService.search({ page: this.page, searchText: this.searchText })
         .catch((err) => {
           console.log(err);
           this.errored = true;
@@ -180,7 +134,7 @@ export default {
   beforeRouteUpdate(to, from, next) {
     // console.log(to.query['search-query'])
     if (to.query["search-query"] === "") return;
-    this.text = to.query["search-query"];
+    this.searchText = to.query["search-query"];
     this.searchParams = to.query.searchParams;
     this.page = 1;
     this.results = [];
@@ -189,7 +143,7 @@ export default {
     next();
   },
   mounted() {
-    this.text = this.$route.query["search-query"];
+    this.searchText = this.$route.query["search-query"];
     this.searchParams = this.$route.query.searchParams;
   },
 };

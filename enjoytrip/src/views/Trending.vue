@@ -22,8 +22,9 @@
                       {{ video.addr1 }}
                       <v-icon>mdi-circle-small</v-icon>{{ video.readcount }} views<v-icon>mdi-circle-small</v-icon>{{ dateFormatter(video.createdAt) }}
                     </v-card-subtitle>
+                    <br />
                     <v-card-subtitle class="pl-2 pt-0">
-                      {{ truncateText(video.overview, 200) }}
+                      {{ truncateText(video.overview, 100) }}
                     </v-card-subtitle>
                   </div>
                 </v-col>
@@ -89,9 +90,8 @@ export default {
         this.loading = true;
       }
 
-      const videos = await VideoService.getAll("public", {
+      const videos = await VideoService.getHotplace({
         page: this.page,
-        sort: "-views",
       })
         .catch((err) => {
           console.log(err);

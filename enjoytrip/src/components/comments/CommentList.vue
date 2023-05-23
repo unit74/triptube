@@ -108,7 +108,7 @@
                             </template>
 
                             <v-list>
-                              <v-list-item @click="deleteReply(comment.commentId, reply._id)">
+                              <v-list-item @click="deleteReply(comment.commentId, reply.replyId)">
                                 <v-list-item-title><v-icon>mdi-trash</v-icon>Delete</v-list-item-title>
                               </v-list-item>
                             </v-list>
@@ -214,10 +214,7 @@ export default {
       this.$refs[`form${id}`][0].reset();
       // console.log(this.$refs[`input${id}`][0].$refs.input.value)
 
-      const reply = await ReplyService.createReply({
-        commentId: id,
-        text: this.$refs[`input${id}`][0].$refs.input.value,
-      })
+      const reply = await ReplyService.createReply(id, this.$refs[`input${id}`][0].$refs.input.value)
         .catch((err) => {
           console.log(err);
         })
@@ -250,6 +247,24 @@ export default {
       // this.comments
       //   .find((comment) => comment.commentId === id)
       //   .replies.unshift(reply.data.data)
+    },
+    async deleteReply(commentId, replyId) {
+      if (!this.isAuthenticated) return;
+
+      const result = await ReplyService.deleteById(replyId).catch((err) => {
+        console.log(err);
+      });
+      if (!result.data.success) {
+        this.snackbarFail = true;
+        return;
+      }
+
+      this.comments = this.comments.filter((comment) => comment.commentId.toString() !== commentId.toString());
+
+      this.snackbar = true;
+
+      await this.$store.dispatch("setComments", this.videoId).catch((err) => console.log(err));
+      this.comments = this.$store.getters.getComments.data;
     },
     clickTextField() {
       if (!this.isAuthenticated) return this.$router.push("/signin");
