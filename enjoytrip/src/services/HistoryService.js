@@ -12,6 +12,6 @@ export default {
     return Api().delete(`/api/v1/private/trips/histories/${historyId}`);
   },
   deleteAll(type) {
-    return Api().delete(`histories/${type}/all`);
+    return Api().delete(`/api/v1/private/trips/histories`, { params: { type } });
   },
 };

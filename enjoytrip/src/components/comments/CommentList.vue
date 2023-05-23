@@ -4,7 +4,7 @@
       <p>No comment yet, leave a comment</p>
     </div> -->
     <div v-for="(comment, i) in loading ? 4 : comments" :key="comment.commentId">
-      <v-skeleton-loader type="list-item-avatar-two-line" :loading="loading">
+      <v-skeleton-loader type="list-item-avatar-two-line" :loading="loading" :id="'a' + `${comment.commentId}`">
         <v-card class="transparent" flat>
           <v-list-item three-line class="pl-0 mt-2">
             <v-list-item-avatar v-if="typeof comment.user !== 'undefined'" size="50">
@@ -27,6 +27,9 @@
                   </template>
 
                   <v-list v-if="isAuthenticated">
+                    <v-list-item @click="updateTextField(comment.commentId, comment.text)">
+                      <v-list-item-title><v-icon>mdi-trash</v-icon>Update</v-list-item-title>
+                    </v-list-item>
                     <v-list-item @click="deleteComment(comment.commentId, comment.user)">
                       <v-list-item-title><v-icon>mdi-trash</v-icon>Delete</v-list-item-title>
                     </v-list-item>
@@ -124,6 +127,47 @@
           </v-list-item>
         </v-card>
       </v-skeleton-loader>
+      <!-------------------------여기가 업데이트------------------------------------------------------>
+      <v-skeleton-loader type="list-item-avatar-two-line" :loading="loading" :id="'b' + `${comment.commentId}`" style="display:none;">
+        <v-card class="transparent" flat>
+          <v-list-item three-line class="pl-0 mt-2">
+            <v-list-item-avatar v-if="typeof comment.user !== 'undefined'" size="50">
+              <v-img v-if="comment.user.profilePhotoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${comment.user.profilePhotoUrl}`"></v-img>
+              <v-avatar v-else color="red">
+                <span class="white--text headline "> {{ comment.user.name.split("")[0].toUpperCase() }}</span>
+              </v-avatar>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <div class="d-flex mb-0">
+                <v-list-item-title v-if="comment.user" class="font-weight-medium caption mb-0 d-flex"
+                  >{{ comment.user.name }}
+                  <span class="pl-2 font-weight-light grey--text"> {{ dateFormatter(comment.createdAt) }}</span>
+                </v-list-item-title>
+                <v-menu bottom left>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </template>
+                </v-menu>
+              </div>
+              <v-text-field v-model="updateText" @click="clickTextField2"> </v-text-field>
+              <div v-if="showCommentBtns" class="d-inline-block text-right">
+                <v-btn text @click="finishUpdate(comment.commentId)">Cancel</v-btn>
+                <v-btn
+                  class="blue darken-3 white--text"
+                  depressed
+                  tile
+                  :loading="loading"
+                  :disabled="comment === ''"
+                  @click="updateComment(comment.commentId, i)"
+                  >Comment</v-btn
+                >
+              </div>
+            </v-list-item-content>
+          </v-list-item>
+        </v-card>
+      </v-skeleton-loader>
     </div>
     <v-snackbar v-model="snackbar">
       Comment deleted successfully
@@ -164,6 +208,9 @@ export default {
       snackbar: false,
       loading: false,
       snackbarFail: false,
+      commentUpdateCheck: this.$store.getters.getCommentUpdateCheck,
+      showCommentBtns: false,
+      updateText: "",
     };
   },
   computed: {
@@ -180,9 +227,43 @@ export default {
       if (!comments) return;
 
       this.comments = this.$store.getters.getComments.data;
+      this.commentUpdateCheck = this.$store.getters.getCommentUpdateCheck;
+
+      console.log("this.commentUpdateCheck");
+      console.log(this.commentUpdateCheck);
       // console.log(this.comments.length)
       // this.loading = false
       // console.log(this.$store.getters.getComments.data)
+    },
+
+    updateTextField(commentId, commentText) {
+      // console.log(this.commentUpdateCheck);
+      //this.commentUpdateCheck[i] = true;
+      //console.log(this.commentUpdateCheck);
+      this.updateText = commentText;
+      document.querySelector("#a" + commentId).style.display = "none";
+      document.querySelector("#b" + commentId).style.display = "block";
+      console.log(document.querySelector("#a" + commentId));
+      console.log(document.querySelector("#b" + commentId));
+
+      // document.querySelector("#b" + commentId).show();
+    },
+    async updateComment(commentId, i) {
+      console.log(i);
+      if (!this.isAuthenticated) return;
+      const result = await CommentService.updateComment(commentId, this.updateText).catch((err) => {
+        console.log(err);
+      });
+
+      if (result.data.success) {
+        this.comments[i].text = this.updateText;
+      }
+
+      this.finishUpdate(commentId);
+      if (!result.data.success) {
+        this.snackbarFail = true;
+        return;
+      }
     },
     async deleteComment(commentId) {
       if (!this.isAuthenticated) return;
@@ -196,7 +277,6 @@ export default {
         return;
       }
 
-      console.log("????");
       this.comments = this.comments.filter((comment) => comment.commentId.toString() !== commentId.toString());
 
       this.snackbar = true;
@@ -269,6 +349,10 @@ export default {
     clickTextField() {
       if (!this.isAuthenticated) return this.$router.push("/signin");
     },
+    clickTextField2() {
+      if (!this.isAuthenticated) return this.$router.push("/signin");
+      this.showCommentBtns = true;
+    },
     showReply(id) {
       this.$refs[id][0].classList.toggle("d-none");
     },
@@ -278,6 +362,11 @@ export default {
     },
     dateFormatter(date) {
       return moment(date).fromNow();
+    },
+    finishUpdate(commentId) {
+      this.commentText = "";
+      document.querySelector("#a" + commentId).style.display = "block";
+      document.querySelector("#b" + commentId).style.display = "none";
     },
   },
 

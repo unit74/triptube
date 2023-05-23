@@ -92,10 +92,10 @@
                   <v-card class="card d-flex pl-0" flat>
                     <v-card-text class="pl-0 py-0">
                       <v-card-title class="pl-0 black--text text--lighten-5 subtitle-1 font-weight-medium">{{ history.searchText }}</v-card-title>
-                      <v-card-subtitle class="pl-0 pb-0">{{ dateFormatter(history.createdAt) }}</v-card-subtitle>
+                      <v-card-subtitle class="pl-0 pb-0">{{ dateFormatter(history.updatedAt) }}</v-card-subtitle>
                     </v-card-text>
                     <v-card-actions
-                      ><v-btn text class="grey--text" fab @click="deleteHistory(history._id)">
+                      ><v-btn text class="grey--text" fab @click="deleteHistory(history.historyId)">
                         <v-icon>mdi-close</v-icon>
                       </v-btn></v-card-actions
                     >
@@ -233,6 +233,8 @@ export default {
           $state.loaded();
         }
 
+        console.log(this.histories);
+
         this.loaded = true;
       } else {
         if ($state) {
@@ -243,14 +245,14 @@ export default {
     async clearHistory() {
       this.clearLoading = true;
 
-      const type = this.historyType === "Watch History" ? "watch" : "search";
+      const type = this.historyType === "Watch History" ? "VISIT" : "SEARCH";
 
       await HistoryService.deleteAll(type)
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
-          this.histories = this.histories.filter((history) => history.type !== type);
+          this.histories = [];
 
           this.clearLoading = false;
           this.deleteMessage = `${this.historyType} Cleared Successfully`;
@@ -258,6 +260,8 @@ export default {
         });
     },
     async deleteHistory(id) {
+      console.log("delete");
+      console.log(this.histories, id);
       this.histories = this.histories.filter((history) => history.historyId.toString() !== id.toString());
       this.moveCheck = false;
       await HistoryService.deleteById(id)

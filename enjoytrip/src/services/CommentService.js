@@ -7,6 +7,9 @@ export default {
   createComment(data) {
     return Api().post(`/api/v1/private/trips/comments/${data.contentId}`, { text: data.text });
   },
+  updateComment(commentId, text) {
+    return Api().put(`/api/v1/private/trips/comments/${commentId}`, { text });
+  },
   deleteById(commentId) {
     return Api().delete(`/api/v1/private/trips/comments/${commentId}`);
   },
