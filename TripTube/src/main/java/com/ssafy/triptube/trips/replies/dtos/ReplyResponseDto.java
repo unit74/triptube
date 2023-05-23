@@ -23,6 +23,8 @@ public class ReplyResponseDto {
 
 	private Long commentId;
 
+	private Integer contentId;
+
 	private LocalDateTime createdAt;
 
 	private LocalDateTime updatedAt;

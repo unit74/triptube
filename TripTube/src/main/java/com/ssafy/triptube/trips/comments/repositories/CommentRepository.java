@@ -9,5 +9,7 @@ import com.ssafy.triptube.trips.comments.models.CommentEntity;
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 	List<CommentEntity> findAllByContentId(Integer contentId);
 
+	List<CommentEntity> findAllByUser_UserId(Long userId);
+
 	Long countByContentId(Integer contentId);
 }

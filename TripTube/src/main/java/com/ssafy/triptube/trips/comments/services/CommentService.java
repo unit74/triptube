@@ -94,4 +94,51 @@ public class CommentService {
 
 		return true;
 	}
+
+	public List<CommentResponseDto> getComments(Long userId) {
+		List<CommentResponseDto> commentResponseDtos = new ArrayList<>();
+
+		List<CommentEntity> commentEntities = commentRepository.findAllByUser_UserId(userId);
+
+		for (CommentEntity commentEntity : commentEntities) {
+			CommentResponseDto commentResponseDto = new CommentResponseDto();
+
+			commentResponseDto.setCommentId(commentEntity.getCommentId());
+			commentResponseDto.setText(commentEntity.getText());
+			commentResponseDto.setContentId(commentEntity.getContentId());
+			commentResponseDto.setCreatedAt(commentEntity.getCreatedAt());
+			commentResponseDto.setUpdatedAt(commentEntity.getUpdatedAt());
+
+			commentResponseDtos.add(commentResponseDto);
+		}
+
+		return commentResponseDtos;
+	}
+
+	public CommentResponseDto updateComment(Long userId, Long commentId, String text) {
+		CommentEntity commentEntity = commentRepository.findById(commentId).get();
+
+		if (commentEntity.getUser().getUserId() != userId) {
+			return null;
+		}
+
+		if (text == null) {
+			return null;
+		}
+
+		commentEntity.setText(text);
+		commentEntity.setUpdatedAt(null);
+
+		commentEntity = commentRepository.save(commentEntity);
+
+		CommentResponseDto commentResponseDto = new CommentResponseDto();
+
+		commentResponseDto.setCommentId(commentEntity.getCommentId());
+		commentResponseDto.setText(commentEntity.getText());
+		commentResponseDto.setContentId(commentEntity.getContentId());
+		commentResponseDto.setCreatedAt(commentEntity.getCreatedAt());
+		commentResponseDto.setUpdatedAt(commentEntity.getUpdatedAt());
+
+		return commentResponseDto;
+	}
 }

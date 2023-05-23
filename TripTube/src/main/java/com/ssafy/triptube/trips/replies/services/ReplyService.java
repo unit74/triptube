@@ -1,6 +1,10 @@
 package com.ssafy.triptube.trips.replies.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.triptube.trips.comments.repositories.CommentRepository;
 import com.ssafy.triptube.trips.replies.dtos.ReplyResponseDto;
@@ -42,6 +46,7 @@ public class ReplyService {
 		return replyDto;
 	}
 
+	@Transactional
 	public boolean deleteReply(Long userId, Long replyId) {
 		ReplyEntity replyEntity = replyRepository.findById(replyId).get();
 
@@ -52,5 +57,53 @@ public class ReplyService {
 		replyRepository.deleteById(replyId);
 
 		return true;
+	}
+
+	public List<ReplyResponseDto> getReplies(Long userId) {
+		List<ReplyResponseDto> replyResponseDtos = new ArrayList<>();
+
+		List<ReplyEntity> replyEntities = replyRepository.findAllByUser_UserId(userId);
+
+		for (ReplyEntity replyEntity : replyEntities) {
+			ReplyResponseDto replyResponseDto = new ReplyResponseDto();
+
+			replyResponseDto.setReplyId(replyEntity.getReplyId());
+			replyResponseDto.setText(replyEntity.getText());
+			replyResponseDto.setContentId(replyEntity.getComment().getContentId());
+			replyResponseDto.setCreatedAt(replyEntity.getCreatedAt());
+			replyResponseDto.setUpdatedAt(replyEntity.getUpdatedAt());
+
+			replyResponseDtos.add(replyResponseDto);
+		}
+
+		return replyResponseDtos;
+	}
+
+	@Transactional
+	public ReplyResponseDto updateReply(Long userId, Long replyId, String text) {
+		ReplyEntity replyEntity = replyRepository.findById(replyId).get();
+
+		if (replyEntity.getUser().getUserId() != userId) {
+			return null;
+		}
+
+		if (text == null) {
+			return null;
+		}
+
+		replyEntity.setText(text);
+		replyEntity.setUpdatedAt(null);
+
+		replyEntity = replyRepository.save(replyEntity);
+
+		ReplyResponseDto replyResponseDto = new ReplyResponseDto();
+
+		replyResponseDto.setReplyId(replyEntity.getReplyId());
+		replyResponseDto.setText(replyEntity.getText());
+		replyResponseDto.setContentId(replyEntity.getComment().getContentId());
+		replyResponseDto.setCreatedAt(replyEntity.getCreatedAt());
+		replyResponseDto.setUpdatedAt(replyEntity.getUpdatedAt());
+
+		return replyResponseDto;
 	}
 }
