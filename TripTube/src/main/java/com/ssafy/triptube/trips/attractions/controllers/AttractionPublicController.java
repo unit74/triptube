@@ -9,10 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.triptube.trips.attractions.dtos.AttractionInfoDto;
-import com.ssafy.triptube.trips.attractions.services.AttractionService;
+import com.ssafy.triptube.trips.attractions.services.AttractionInfoService;
 import com.ssafy.triptube.trips.histories.services.HistoryService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AttractionPublicController {
 
-	private final AttractionService attractionInfoService;
+	private final AttractionInfoService attractionInfoService;
 
 	private final HistoryService historyService;
 
@@ -33,10 +34,7 @@ public class AttractionPublicController {
 
 	@GetMapping("/{contentId}")
 	public ResponseEntity<?> getAttractionDetail(@PathVariable Integer contentId) {
-
-		System.out.println("contentId : "+contentId);
 		AttractionInfoDto attractionInfoDto = attractionInfoService.getAttractionDetail(contentId);
-		
 
 		Long userId = getLoginUserId();
 		if (userId != null) {
@@ -47,8 +45,16 @@ public class AttractionPublicController {
 	}
 
 	@GetMapping("/searches")
-	public ResponseEntity<?> getSearchAttractions(String searchText, Integer page) {
-		List<AttractionInfoDto> attractionInfoDto = attractionInfoService.getSearchAttractions(searchText, page);
+	public ResponseEntity<?> getSearchAttractions(String searchText, @RequestParam(required = false) Integer gugun,
+			@RequestParam(required = false) Integer sido, @RequestParam(required = false) Integer contentType,
+			@RequestParam(required = false) Integer page) {
+		System.out.println(searchText);
+		System.out.println(gugun);
+		System.out.println(sido);
+		System.out.println(contentType);
+
+		List<AttractionInfoDto> attractionInfoDto = attractionInfoService.getSearchAttractions(searchText, gugun, sido,
+				contentType, page);
 
 		Long userId = getLoginUserId();
 		if (userId != null) {

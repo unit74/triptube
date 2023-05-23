@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.triptube.trips.attractions.services.AttractionService;
+import com.ssafy.triptube.trips.attractions.services.AttractionInfoService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AttractionPrivateController {
 
-	private final AttractionService attractionInfoService;
+	private final AttractionInfoService attractionInfoService;
 
 	@GetMapping("/likes")
 	public ResponseEntity<?> getLikeAttractions(Integer page) {
