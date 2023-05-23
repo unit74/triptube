@@ -2,6 +2,15 @@
   <div id="search" class="pl-6">
     <v-container fluid>
       <v-row>
+        <v-container>
+          <v-row>
+            <v-col> <v-select v-model="sido" :items="sidos" item-text="sidoName" item-value="sido" label="시/도"></v-select></v-col>
+
+            <!-- <v-col> <v-select :sidos="sidos" label="Standard"></v-select></v-col> -->
+            <v-col> <v-select v-model="gugun" :items="guguns" item-text="gugunName" item-value="gugun" label="구/군"></v-select></v-col>
+            <v-col> <v-select v-model="contentType" :items="contents" item-text="contentTypeName" item-value="contentType" label="컨텐츠"></v-select></v-col>
+          </v-row>
+        </v-container>
         <v-alert prominent class="mx-auto" type="error" v-if="errored">
           <v-row align="center">
             <v-col class="grow">
@@ -90,6 +99,12 @@ export default {
     results: [],
     searchText: "",
     infiniteId: +new Date(),
+    sidos: [],
+    guguns: [],
+    contents: [],
+    sido: "",
+    gugun: "",
+    contentType: "",
   }),
   computed: {
     ...mapGetters(["getUrl"]),
@@ -100,7 +115,14 @@ export default {
       if (!this.loaded) {
         this.loading = true;
       }
-      const results = await SearchService.search({ page: this.page, searchText: this.searchText })
+      const params = {
+        page: this.page,
+        searchText: this.searchText,
+        sido: this.sido,
+        gugun: this.gugun,
+        contentType: this.contentType,
+      };
+      const results = await SearchService.search(params)
         .catch((err) => {
           console.log(err);
           this.errored = true;
@@ -110,8 +132,7 @@ export default {
         });
 
       if (!results) return;
-      console.log("results");
-      console.log(results);
+
       if (results.data.data.length) {
         this.page += 1;
 
@@ -127,6 +148,43 @@ export default {
         }
       }
     },
+    async getSidos() {
+      const sidos = await SearchService.getSidos().catch((err) => {
+        console.log(err);
+      });
+
+      if (!sidos) return;
+
+      // this.sidos = [{ sidoName: "선택 X", sido: "" }];
+      this.sidos = [];
+      this.sidos = sidos.data.data;
+      this.sidos.unshift({ sidoName: "시/도", sido: "" });
+    },
+
+    async getGuguns(sido) {
+      const guguns = await SearchService.getGuguns(sido).catch((err) => {
+        console.log(err);
+      });
+      if (!guguns) return;
+      this.guguns = guguns.data.data;
+
+      this.guguns.unshift({ gugunName: "구/군", gugun: "" });
+    },
+    async getContents() {
+      const contents = await SearchService.getContents().catch((err) => {
+        console.log(err);
+      });
+
+      if (!contents) return;
+
+      this.contents = contents.data.data;
+      this.contents.unshift({ contentTypeName: "컨텐츠", contentType: "" });
+    },
+    clearResult() {
+      this.page = 1;
+      this.results = [];
+      this.getSearchResults();
+    },
   },
   components: {
     InfiniteLoading,
@@ -139,12 +197,29 @@ export default {
     this.page = 1;
     this.results = [];
     this.infiniteId += 1;
-
     next();
   },
   mounted() {
     this.searchText = this.$route.query["search-query"];
     this.searchParams = this.$route.query.searchParams;
+
+    this.getSidos();
+    this.getContents();
+  },
+  watch: {
+    sido() {
+      this.getGuguns(this.sido);
+      this.gugun = "";
+      this.clearResult();
+    },
+    content() {
+      this.clearResult();
+    },
+    gugun() {
+      if (this.gugun != "") {
+        this.clearResult();
+      }
+    },
   },
 };
 </script>

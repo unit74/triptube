@@ -24,7 +24,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/liked-videos",
+    path: "/liked",
     name: "LikedVideos",
     components: {
       NavBar,

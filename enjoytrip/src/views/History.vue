@@ -82,7 +82,7 @@
               </infinite-loading>
             </section>
           </template>
-          <!-- <template v-else>
+          <template v-else>
             <template v-if="histories.length <= 0 && !loading">
               <p class="text-center body-1">No search history yet.</p>
             </template>
@@ -125,7 +125,7 @@
                 </div>
               </infinite-loading>
             </div>
-          </template> -->
+          </template>
         </v-col>
         <v-col
           cols="12"
@@ -208,6 +208,8 @@ export default {
         this.loading = true;
       }
 
+      // console.log("this.historyType");
+      // console.log(this.historyType);
       const params = {
         page: this.page,
         type: this.historyType === "Watch History" ? "VISIT" : "SEARCH",

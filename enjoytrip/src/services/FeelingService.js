@@ -15,10 +15,9 @@ export default {
     return Api().delete(`/api/v1/private/trips/reactions/${contentId}`);
   },
   getLikedVideos(page) {
-    return Api().get("feelings/videos", {
+    return Api().get("/api/v1/private/trips/attractions/likes", {
       params: {
-        page,
-        limit: 12,
+        page: page,
       },
     });
   },
