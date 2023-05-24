@@ -8,7 +8,11 @@
         <v-card class="transparent" flat>
           <v-list-item three-line class="pl-0 mt-2">
             <v-list-item-avatar v-if="typeof comment.user !== 'undefined'" size="50">
-              <v-img v-if="comment.user.profilePhotoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${comment.user.profilePhotoUrl}`"></v-img>
+              <v-img
+                v-if="comment.user.profilePhotoUrl !== 'no-photo.jpg'"
+                class="elevation-6"
+                :src="`${defaultProfileUrl + comment.user.profilePhotoUrl}`"
+              ></v-img>
               <v-avatar v-else color="red">
                 <span class="white--text headline "> {{ comment.user.name.split("")[0].toUpperCase() }}</span>
               </v-avatar>
@@ -48,7 +52,11 @@
                       <v-icon class="white--text">mdi-account</v-icon>
                     </v-avatar>
                     <template v-else>
-                      <v-img v-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${currentUser.profilePhotoUrl}`"></v-img>
+                      <v-img
+                        v-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'"
+                        class="elevation-6"
+                        :src="`${defaultProfileUrl + currentUser.profilePhotoUrl}`"
+                      ></v-img>
                       <v-avatar v-else color="red">
                         <span class="white--text headline "> {{ currentUser.name.split("")[0].toUpperCase() }}</span>
                       </v-avatar>
@@ -92,7 +100,11 @@
                   <v-expansion-panel-content>
                     <v-list-item three-line class="pl-0 mt-2" v-for="(reply, j) in comment.replies" :key="reply.replyId">
                       <v-list-item-avatar v-if="typeof reply !== 'undefined'" size="50">
-                        <v-img v-if="reply.user.profilePhotoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${reply.user.profilePhotoUrl}`"></v-img>
+                        <v-img
+                          v-if="reply.user.profilePhotoUrl !== 'no-photo.jpg'"
+                          class="elevation-6"
+                          :src="`${defaultProfileUrl + reply.user.profilePhotoUrl}`"
+                        ></v-img>
                         <v-avatar v-else color="red">
                           <span class="white--text headline "> {{ reply.user.name.split("")[0].toUpperCase() }}</span>
                         </v-avatar>
@@ -163,7 +175,11 @@
         <v-card class="transparent" flat>
           <v-list-item three-line class="pl-0 mt-2">
             <v-list-item-avatar v-if="typeof comment.user !== 'undefined'" size="50">
-              <v-img v-if="comment.user.profilePhotoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${comment.user.profilePhotoUrl}`"></v-img>
+              <v-img
+                v-if="comment.user.profilePhotoUrl !== 'no-photo.jpg'"
+                class="elevation-6"
+                :src="`${defaultProfileUrl + comment.user.profilePhotoUrl}`"
+              ></v-img>
               <v-avatar v-else color="red">
                 <span class="white--text headline "> {{ comment.user.name.split("")[0].toUpperCase() }}</span>
               </v-avatar>
@@ -253,7 +269,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "currentUser"]),
+    ...mapGetters(["isAuthenticated", "currentUser", "defaultProfileUrl"]),
   },
   methods: {
     async getComments() {

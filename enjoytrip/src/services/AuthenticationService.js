@@ -10,10 +10,10 @@ export default {
   updateUserDetails(data) {
     return Api().put("/api/v1/private/users", data);
   },
-  uploadUserAvatar(data) {
+  uploadUserProfile(data) {
     console.log("uploadUserAvatar");
     console.log(data);
-    return Api().put("auth/avatar", data);
+    return Api().post("/api/v1/private/users/profiles", data, { headers: { "Content-Type": "multipart/form-data" } });
   },
   updatePassword(data) {
     return Api().put("/api/v1/private/users", data);

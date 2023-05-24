@@ -5,7 +5,7 @@
         <v-avatar v-if="!isAuthenticated" color="primary">
           <v-icon class="white--text">mdi-account</v-icon>
         </v-avatar>
-        <v-img v-else-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'" :src="`${currentUser.profilePhotoUrl}`"></v-img>
+        <v-img v-else-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'" :src="`${defaultProfileUrl + currentUser.profilePhotoUrl}`"></v-img>
 
         <v-avatar v-else color="red">
           <span class="white--text headline "> {{ currentUser.name.split("")[0].toUpperCase() }}</span>
@@ -40,7 +40,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentUser", "getUrl", "isAuthenticated"]),
+    ...mapGetters(["currentUser", "getUrl", "isAuthenticated", "defaultProfileUrl"]),
   },
   methods: {
     async createComment() {

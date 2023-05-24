@@ -41,7 +41,7 @@
         <template v-slot:activator="{ on }">
           <v-btn small color="red" depressed fab v-on="on" class="white--text">
             <v-avatar v-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'">
-              <img :src="`${currentUser.profilePhotoUrl}`" :alt="`${currentUser.name} avatar`" />
+              <img :src="`${defaultProfileUrl + currentUser.profilePhotoUrl}`" :alt="`${currentUser.name} avatar`" />
             </v-avatar>
             <template v-else>
               <span class="headline">
@@ -56,7 +56,7 @@
             <v-list-item>
               <v-list-item-avatar>
                 <v-avatar v-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'">
-                  <img :src="`${currentUser.profilePhotoUrl}`" :alt="`${currentUser.name} avatar`" />
+                  <img :src="`${defaultProfileUrl + currentUser.profilePhotoUrl}`" :alt="`${currentUser.name} avatar`" />
                 </v-avatar>
                 <template v-else>
                   <v-avatar color="red">
@@ -208,7 +208,7 @@ export default {
     // user: null
   }),
   computed: {
-    ...mapGetters(["currentUser", "getUrl", "isAuthenticated", "logoUrl"]),
+    ...mapGetters(["currentUser", "getUrl", "isAuthenticated", "logoUrl", "defaultProfileUrl"]),
   },
   components: { SettingsModal },
 

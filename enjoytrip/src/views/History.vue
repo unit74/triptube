@@ -150,7 +150,11 @@
                 >
                   <v-card class="mt-2  card d-flex pl-2" flat @mouseover="isHovering = true" @mouseout="isHovering = false" :hover="isHovering">
                     <v-list-item-avatar size="50">
-                      <v-img v-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${currentUser.profilePhotoUrl}`"></v-img>
+                      <v-img
+                        v-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'"
+                        class="elevation-6"
+                        :src="`${defaultProfileUrl + currentUser.profilePhotoUrl}`"
+                      ></v-img>
                       <v-avatar v-else color="red">
                         <span class="white--text headline "> {{ currentUser.name.split("")[0].toUpperCase() }}</span>
                       </v-avatar>
@@ -258,7 +262,7 @@ export default {
     isHovering: false,
   }),
   computed: {
-    ...mapGetters(["currentUser", "getUrl"]),
+    ...mapGetters(["currentUser", "getUrl", "defaultProfileUrl"]),
   },
   methods: {
     async getHistories($state) {

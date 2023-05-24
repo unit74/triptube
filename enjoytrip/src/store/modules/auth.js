@@ -7,8 +7,12 @@ const state = {
   // isUserLoggedIn: localStorage.getItem('token') || false
   isUserLoggedIn: localStorage.getItem("token") || false,
   // logoUrl: "http://192.168.203.120:8080/api/v1/public/users/profiles/3.png",
-  logoUrl: "http://192.168.203.120:8080/api/v1/public/images/logo",
-  noImgUrl: "http://192.168.203.120:8080/api/v1/public/images/no-images",
+  // logoUrl: "http://192.168.203.120:8080/api/v1/public/images/logo",
+  // noImgUrl: "http://192.168.203.120:8080/api/v1/public/images/no-images",
+
+  logoUrl: "http://192.168.0.233:8080/api/v1/public/images/logo",
+  noImgUrl: "http://192.168.0.233:8080/api/v1/public/images/no-images",
+  defaultProfileUrl: "http://192.168.0.233:8080/api/v1/public/users/profiles/",
 };
 
 const getters = {
@@ -29,6 +33,9 @@ const getters = {
   },
   noImgUrl: (state) => {
     return state.noImgUrl;
+  },
+  defaultProfileUrl: (state) => {
+    return state.defaultProfileUrl;
   },
 };
 
@@ -66,7 +73,6 @@ const actions = {
     });
   },
   signIn({ commit }, credentials) {
-    console.log("로그인");
     return new Promise((resolve, reject) => {
       AuthenticationService.signIn(credentials)
         .then(({ data }) => {
@@ -78,6 +84,13 @@ const actions = {
           resolve(data);
         })
         .catch((err) => reject(err));
+    });
+  },
+  updateUserInfo({ commit }, credentials) {
+    return new Promise((resolve) => {
+      localStorage.setItem("user", JSON.stringify(credentials));
+      commit("SET_USER_DATA", credentials);
+      resolve(credentials);
     });
   },
   getCurrentUser({ commit }, token) {
