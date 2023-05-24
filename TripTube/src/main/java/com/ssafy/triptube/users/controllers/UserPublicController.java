@@ -1,6 +1,13 @@
 package com.ssafy.triptube.users.controllers;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.io.IOUtils;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +22,7 @@ import com.ssafy.triptube.users.services.UserService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/public/user")
+@RequestMapping("/api/v1/public/users")
 @RequiredArgsConstructor
 public class UserPublicController {
 
@@ -43,4 +50,12 @@ public class UserPublicController {
 
 		return ApiResponseUtil.createResponse(true, "회원가입 성공", loginInfoDto);
 	}
+
+	@GetMapping(value = "/profiles/{filename:.+}", produces = MediaType.IMAGE_PNG_VALUE)
+	public ResponseEntity<?> getProfileImage(@PathVariable String filename) throws IOException {
+		InputStream image = userService.getProfileImage(filename);
+
+		return ResponseEntity.ok().body(IOUtils.toByteArray(image));
+	}
+
 }
