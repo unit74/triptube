@@ -16,4 +16,5 @@ public interface AttractionInfoRepository extends JpaRepository<AttractionInfoEn
 	Slice<AttractionInfoEntity> findByTitleLike(String title, Pageable pageable);
 
 	Slice<AttractionInfoEntity> findAllByOrderByReadcountDesc(Pageable pageable);
+
 }

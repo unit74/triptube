@@ -64,9 +64,18 @@ public class AttractionPublicController {
 		return createResponse(true, "관광지 검색", attractionInfoDto);
 	}
 
-	@GetMapping("/hots")
-	public ResponseEntity<?> getHotAttractions(Integer page) {
-		return createResponse(true, "핫플레이스", attractionInfoService.getHotAttractions(page));
+	@GetMapping("/trends")
+	public ResponseEntity<?> getTrendingAttractions(Integer page) {
+		return createResponse(true, "많이 본 관광지", attractionInfoService.getTrendingAttractions(page));
 	}
 
+	@GetMapping("/hots")
+	public ResponseEntity<?> getTop10LikedAttractions(Integer contentType) {
+		return createResponse(true, "핫플레이스", attractionInfoService.getTop10LikedAttractions(contentType));
+	}
+
+	@GetMapping("/{contentId}/nearby")
+	public ResponseEntity<?> getNearbyAttractions(@PathVariable Integer contentId, Integer page) {
+		return createResponse(true, "주변 관광지", attractionInfoService.getNearbyAttractions(contentId, page));
+	}
 }

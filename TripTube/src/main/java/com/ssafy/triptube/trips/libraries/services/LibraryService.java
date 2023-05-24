@@ -27,6 +27,10 @@ public class LibraryService {
 	public LibraryResponseDto getLibrary(Long userId, Integer contentId) {
 		LibraryEntity libraryEntity = libraryRepository.findByUserIdAndAttractionInfo_ContentId(userId, contentId);
 
+		if (libraryEntity == null) {
+			return null;
+		}
+
 		LibraryResponseDto libraryResponseDto = new LibraryResponseDto();
 
 		libraryResponseDto.setLibraryId(libraryEntity.getLibraryId());
@@ -68,7 +72,7 @@ public class LibraryService {
 		return libraryResponseDtos;
 	}
 
-	public void saveLibrary(Long userId, Integer contentId) {
+	public LibraryResponseDto saveLibrary(Long userId, Integer contentId) {
 		LibraryEntity libraryEntity = libraryRepository.findByUserIdAndAttractionInfo_ContentId(userId, contentId);
 
 		if (libraryEntity == null) {
@@ -81,7 +85,13 @@ public class LibraryService {
 
 		libraryEntity.setUserId(userId);
 		libraryEntity.setUpdatedAt(null);
-		libraryRepository.save(libraryEntity);
+
+		libraryEntity = libraryRepository.save(libraryEntity);
+
+		LibraryResponseDto libraryResponseDto = new LibraryResponseDto();
+		libraryResponseDto.setLibraryId(libraryEntity.getLibraryId());
+
+		return libraryResponseDto;
 	}
 
 	public void deleteLibrary(Long libraryId) {

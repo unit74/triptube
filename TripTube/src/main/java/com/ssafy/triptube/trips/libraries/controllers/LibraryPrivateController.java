@@ -30,7 +30,7 @@ public class LibraryPrivateController {
 		LibraryResponseDto libraryResponseDto = libraryService.getLibrary(getLoginUserId(), contentId);
 
 		if (libraryResponseDto == null) {
-			return createResponse(true, "보관하지 않은 관광지");
+			return createResponse(false, "보관하지 않은 관광지");
 		}
 
 		return createResponse(true, "보관한 관광지", libraryResponseDto);
@@ -38,9 +38,8 @@ public class LibraryPrivateController {
 
 	@PostMapping("")
 	public ResponseEntity<?> saveLibrary(@RequestBody LibraryRequestDto libraryRequestDto) {
-		libraryService.saveLibrary(getLoginUserId(), libraryRequestDto.getContentId());
-
-		return createResponse(true, "보관");
+		return createResponse(true, "보관",
+				libraryService.saveLibrary(getLoginUserId(), libraryRequestDto.getContentId()));
 	}
 
 	@DeleteMapping("/{libraryId}")

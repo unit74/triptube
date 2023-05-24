@@ -14,4 +14,5 @@ public interface ReactionRepository extends JpaRepository<ReactionEntity, Long> 
 	void deleteByUser_UserIdAndAttractionInfo_ContentId(Long userId, Integer contentId);
 
 	Slice<ReactionEntity> findByUser_UserId(Long userId, Pageable pageable);
+
 }

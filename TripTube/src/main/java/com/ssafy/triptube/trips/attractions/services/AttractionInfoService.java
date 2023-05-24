@@ -3,6 +3,9 @@ package com.ssafy.triptube.trips.attractions.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import com.ssafy.triptube.trips.attractions.models.AttractionInfoEntity;
 import com.ssafy.triptube.trips.attractions.models.QAttractionInfoEntity;
 import com.ssafy.triptube.trips.attractions.repositories.AttractionInfoRepository;
 import com.ssafy.triptube.trips.comments.repositories.CommentRepository;
+import com.ssafy.triptube.trips.reactions.models.QReactionEntity;
 import com.ssafy.triptube.trips.reactions.models.ReactionEntity;
 import com.ssafy.triptube.trips.reactions.repositories.ReactionRepository;
 
@@ -32,7 +36,11 @@ public class AttractionInfoService {
 
 	private final JPAQueryFactory queryFactory;
 
+	private final EntityManager entityManager;
+
 	private final QAttractionInfoEntity attraction = QAttractionInfoEntity.attractionInfoEntity;
+
+	private final QReactionEntity reaction = QReactionEntity.reactionEntity;
 
 	public List<AttractionInfoDto> getRandomAttractions() {
 		List<AttractionInfoEntity> attractionInfoEntities = attractionInfoRepository.findRandomAttractionInfos();
@@ -122,7 +130,7 @@ public class AttractionInfoService {
 		return attractionInfoDtos;
 	}
 
-	public List<AttractionInfoDto> getHotAttractions(Integer page) {
+	public List<AttractionInfoDto> getTrendingAttractions(Integer page) {
 		List<AttractionInfoDto> attractionInfoDtos = new ArrayList<>();
 
 		PageRequest pageRequest = PageRequest.of(page - 1, 12);
@@ -140,6 +148,62 @@ public class AttractionInfoService {
 			attractionInfoDto.setFirstImage2(attractionInfoEntity.getFirstImage2());
 			attractionInfoDto.setReadcount(attractionInfoEntity.getReadcount());
 			attractionInfoDto.setOverview(attractionInfoEntity.getAttractionDescription().getOverview());
+
+			attractionInfoDtos.add(attractionInfoDto);
+		}
+
+		return attractionInfoDtos;
+	}
+
+	@Transactional(readOnly = true)
+	public List<AttractionInfoDto> getTop10LikedAttractions(Integer contentType) {
+		String sql = "SELECT * FROM attraction_info ai inner join (SELECT ai.content_id, COUNT(ai.content_id) likes FROM attraction_info ai INNER JOIN reactions r ON ai.content_id = r.content_id WHERE content_type_id = :contentType GROUP BY ai.content_id) r on ai.content_id = r.content_id ORDER BY r.likes DESC LIMIT 10";
+		Query nativeQuery = entityManager.createNativeQuery(sql, AttractionInfoEntity.class);
+		nativeQuery.setParameter("contentType", contentType);
+		List<AttractionInfoEntity> results = nativeQuery.getResultList();
+
+		List<AttractionInfoDto> attractionInfoDtos = new ArrayList<>();
+		for (AttractionInfoEntity attractionInfoEntity : results) {
+			AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
+
+			attractionInfoDto.setContentId(attractionInfoEntity.getContentId());
+			attractionInfoDto.setTitle(attractionInfoEntity.getTitle());
+			attractionInfoDto.setAddr1(attractionInfoEntity.getAddr1());
+			attractionInfoDto.setFirstImage(attractionInfoEntity.getFirstImage());
+			attractionInfoDto.setFirstImage2(attractionInfoEntity.getFirstImage2());
+			attractionInfoDto.setReadcount(attractionInfoEntity.getReadcount());
+			attractionInfoDto.setLatitude(attractionInfoEntity.getLatitude());
+			attractionInfoDto.setLongitude(attractionInfoEntity.getLongitude());
+
+			attractionInfoDtos.add(attractionInfoDto);
+		}
+
+		return attractionInfoDtos;
+	}
+
+	public List<AttractionInfoDto> getNearbyAttractions(Integer contentId, Integer page) {
+		AttractionInfoEntity attractionInfo = attractionInfoRepository.findById(contentId).get();
+
+		String sql = "SELECT *, ST_Distance_Sphere(point(longitude, latitude), point(:longitude, :latitude)) as distance FROM attraction_info ORDER BY distance LIMIT :limit OFFSET :offset";
+		Query nativeQuery = entityManager.createNativeQuery(sql, AttractionInfoEntity.class);
+		nativeQuery.setParameter("longitude", attractionInfo.getLongitude());
+		nativeQuery.setParameter("latitude", attractionInfo.getLatitude());
+		nativeQuery.setParameter("limit", 12);
+		nativeQuery.setParameter("offset", (page - 1) * 12);
+		List<AttractionInfoEntity> results = nativeQuery.getResultList();
+
+		List<AttractionInfoDto> attractionInfoDtos = new ArrayList<>();
+		for (AttractionInfoEntity attractionInfoEntity : results) {
+			AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
+
+			attractionInfoDto.setContentId(attractionInfoEntity.getContentId());
+			attractionInfoDto.setTitle(attractionInfoEntity.getTitle());
+			attractionInfoDto.setAddr1(attractionInfoEntity.getAddr1());
+			attractionInfoDto.setFirstImage(attractionInfoEntity.getFirstImage());
+			attractionInfoDto.setFirstImage2(attractionInfoEntity.getFirstImage2());
+			attractionInfoDto.setReadcount(attractionInfoEntity.getReadcount());
+			attractionInfoDto.setLatitude(attractionInfoEntity.getLatitude());
+			attractionInfoDto.setLongitude(attractionInfoEntity.getLongitude());
 
 			attractionInfoDtos.add(attractionInfoDto);
 		}
