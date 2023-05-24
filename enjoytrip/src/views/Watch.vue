@@ -77,9 +77,8 @@
                       </v-card>
                     </v-col>
                     <v-col cols="12" sm="6" md="4" lg="4">
-                      <div class="d-flex justify-end align-center" v-if="typeof video.userId !== 'undefined'">
+                      <div class="d-flex justify-end align-center" v-if="typeof video.title !== 'undefined'">
                         <v-btn
-                          v-if="showSubBtn"
                           :class="[
                             { 'red white--text': !subscribed },
                             {
@@ -214,6 +213,7 @@ export default {
     url: process.env.VUE_APP_URL,
     signinDialog: false,
     details: {},
+    libraryId: null,
   }),
   computed: {
     ...mapGetters(["currentUser", "getUrl", "isAuthenticated"]),
@@ -233,7 +233,7 @@ export default {
         console.log(err);
       } finally {
         this.videoLoading = false;
-        // this.checkSubscription(this.video.userId._id);
+        this.checkSubscription(this.video.contentId);
         this.checkFeeling(this.video.contentId);
       }
       // if (this.currentUser && this.currentUser._id === this.video.userId._id) {
@@ -275,11 +275,11 @@ export default {
         }
       }
     },
-    async checkSubscription(id) {
+    async checkSubscription(contentId) {
       if (!this.isAuthenticated) return;
 
       this.loading = true;
-      const sub = await SubscriptionService.checkSubscription({ userId: id })
+      const sub = await SubscriptionService.checkSubscription(contentId)
         .catch((err) => {
           console.log(err);
         })
@@ -289,8 +289,9 @@ export default {
 
       if (!sub) return;
 
-      if (!sub.data.data._id) this.subscribed = false;
-      else this.subscribed = true;
+      this.subscribed = sub.data.success;
+      this.libraryId = null;
+      if (sub.data.success) this.libraryId = sub.data.data.libraryId;
     },
     async checkFeeling(id) {
       if (!this.isAuthenticated) return;
@@ -383,20 +384,27 @@ export default {
         return;
       }
       this.subscribeLoading = true;
-      const sub = await SubscriptionService.createSubscription({
-        channelId: this.video.contentId,
-      })
-        .catch((err) => console.log(err))
-        .finally(() => {
-          this.subscribeLoading = false;
-        });
-
-      if (!sub) return;
-
-      if (!sub.data.data._id) {
-        this.subscribed = false;
+      let sub;
+      if (!this.subscribed) {
+        sub = await SubscriptionService.createSubscription(this.video.contentId)
+          .catch((err) => console.log(err))
+          .finally(() => {
+            this.subscribeLoading = false;
+          });
       } else {
-        this.subscribed = true;
+        sub = await SubscriptionService.deleteLibrary(this.libraryId)
+          .catch((err) => console.log(err))
+          .finally(() => {
+            this.subscribeLoading = false;
+          });
+      }
+
+      console.log(sub);
+      if (!sub.data.success) return;
+
+      if (sub.data.success) {
+        this.subscribed = !this.subscribed;
+        if (this.subscribed) this.libraryId = sub.data.data.libraryId;
       }
     },
     // async updateViews(id) {

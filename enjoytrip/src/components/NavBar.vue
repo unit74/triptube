@@ -173,25 +173,25 @@ export default {
       {
         header: null,
         pages: [
-          { title: "홈으로", link: "/", icon: "mdi-home" },
-          { title: "핫플레이스", link: "/trending", icon: "mdi-fire" },
+          { title: "Home", link: "/", icon: "mdi-home" },
+          { title: "Top Viewed Attractions", link: "/trending", icon: "mdi-fire" },
           {
-            title: "Subscriptions",
-            link: "/subscriptions",
-            icon: "mdi-youtube-subscription",
+            title: "Popular Attractions",
+            link: "#sd",
+            icon: "mdi-podium",
           },
         ],
       },
       {
-        header: null,
+        header: "Storage",
         pages: [
           {
-            title: "보관함",
-            link: "#st",
-            icon: "mdi-play-box-multiple",
+            title: "Library",
+            link: "/subscriptions",
+            icon: "mdi-package-variant",
           },
           {
-            title: "관광지 기록",
+            title: "History",
             link: "/history",
             icon: "mdi-history",
           },
@@ -203,74 +203,9 @@ export default {
           // },
 
           {
-            title: "좋아요 표시한 관광지",
+            title: "Liked Attractions",
             link: "/liked",
             icon: "mdi-thumb-up",
-          },
-        ],
-      },
-      {
-        header: "Subscriptions",
-        pages: [
-          // {
-          //   title: 'Traversy Media',
-          //   link: '#tm',
-          //   icon: 'mdi-badge-account'
-          // },
-          // {
-          //   title: 'The New Boston',
-          //   link: '#tn',
-          //   icon: 'mdi-badge-account'
-          // },
-          // {
-          //   title: 'Net Ninija',
-          //   link: '#nn',
-          //   icon: 'mdi-badge-account'
-          // },
-          // {
-          //   title: 'Chris Hawks',
-          //   link: '#ch',
-          //   icon: 'mdi-badge-account'
-          // }
-        ],
-      },
-      {
-        header: "TripTube 더보기",
-        pages: [
-          {
-            title: "랜덤 코스 추천",
-            link: "#rc",
-            icon: "mdi-timeline-question",
-          },
-          {
-            title: "가까운 코스 추천",
-            link: "#nc",
-            icon: "mdi-road",
-          },
-        ],
-      },
-      {
-        header: null,
-        pages: [
-          {
-            title: "설정",
-            link: "#sg",
-            icon: "mdi-cog",
-          },
-          {
-            title: "신고기록",
-            link: "#rh",
-            icon: "mdi-flag",
-          },
-          {
-            title: "고객센터",
-            link: "#cc",
-            icon: "mdi-help-circle",
-          },
-          {
-            title: "의견 보내기",
-            link: "#sr",
-            icon: "mdi-message-alert",
           },
         ],
       },

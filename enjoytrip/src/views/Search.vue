@@ -212,7 +212,8 @@ export default {
       this.gugun = "";
       this.clearResult();
     },
-    content() {
+    contentType() {
+      console.log("content()");
       this.clearResult();
     },
     gugun() {

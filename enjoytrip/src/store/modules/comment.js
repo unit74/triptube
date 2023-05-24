@@ -7,32 +7,35 @@ Vue.use(Vuex);
 export default {
   state: {
     comments: [],
-    commentUpdateCheck: [],
   },
   getters: {
     getComments: (state) => {
       return state.comments;
     },
-    getCommentUpdateCheck: (state) => {
-      return state.commentUpdateCheck;
-    },
   },
   mutations: {
     setComments(state, comments) {
+      for (var i = 0; i < comments.data.length; i++) {
+        comments.data[i].commentUpdateCheck = false;
+        console.log(comments.data[i]);
+
+        for (var j = 0; j < comments.data[i].replies.length; j++) {
+          comments.data[i].replies[j].replyUpdateCheck = false;
+        }
+      }
+      console.log("setComments comments");
+      console.log(comments);
       state.comments = comments;
     },
-    setCommentUpdateCheck(state, comments) {
-      console.log("comments");
-      console.log(comments);
-      const length = comments.data.length;
-      console.log("length");
-      console.log(length);
-      state.commentUpdateCheck = new Array(length).fill(false);
-    },
+
     addComment(state, comment) {
       // console.log('hello', comment)
+
+      comment.commentUpdateCheck = false;
+      for (var j = 0; comment.replies.length; j++) {
+        comment.replies[j].replyUpdateCheck = false;
+      }
       state.comments.data.unshift(comment);
-      state.commentUpdateCheck.unshift(false);
       // console.log(state.comments.data)
     },
   },
@@ -42,7 +45,6 @@ export default {
         CommentService.getCommentByVideoId(videoId)
           .then((comments) => {
             commit("setComments", comments.data);
-            commit("setCommentUpdateCheck", comments.data);
 
             resolve(comments);
           })

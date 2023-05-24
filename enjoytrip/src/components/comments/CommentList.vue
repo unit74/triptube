@@ -4,7 +4,7 @@
       <p>No comment yet, leave a comment</p>
     </div> -->
     <div v-for="(comment, i) in loading ? 4 : comments" :key="comment.commentId">
-      <v-skeleton-loader type="list-item-avatar-two-line" :loading="loading" :id="'a' + `${comment.commentId}`">
+      <v-skeleton-loader type="list-item-avatar-two-line" :loading="loading" :id="'a' + `${comment.commentId}`" v-show="!comment.commentUpdateCheck">
         <v-card class="transparent" flat>
           <v-list-item three-line class="pl-0 mt-2">
             <v-list-item-avatar v-if="typeof comment.user !== 'undefined'" size="50">
@@ -27,11 +27,11 @@
                   </template>
 
                   <v-list v-if="isAuthenticated">
-                    <v-list-item @click="updateTextField(comment.commentId, comment.text)">
-                      <v-list-item-title><v-icon>mdi-trash</v-icon>Update</v-list-item-title>
+                    <v-list-item @click="updateTextField(comment.user.email, comment.text, i)">
+                      <v-list-item-title><v-icon>mdi-update</v-icon> Update</v-list-item-title>
                     </v-list-item>
                     <v-list-item @click="deleteComment(comment.commentId, comment.user)">
-                      <v-list-item-title><v-icon>mdi-trash</v-icon>Delete</v-list-item-title>
+                      <v-list-item-title><v-icon>mdi-trash-can-outline</v-icon> Delete</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -90,14 +90,14 @@
                     >{{ comment.replies.length }} replies</v-expansion-panel-header
                   >
                   <v-expansion-panel-content>
-                    <v-list-item three-line class="pl-0 mt-2" v-for="reply in comment.replies" :key="reply._id">
+                    <v-list-item three-line class="pl-0 mt-2" v-for="(reply, j) in comment.replies" :key="reply.replyId">
                       <v-list-item-avatar v-if="typeof reply !== 'undefined'" size="50">
                         <v-img v-if="reply.user.profilePhotoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${reply.user.profilePhotoUrl}`"></v-img>
                         <v-avatar v-else color="red">
                           <span class="white--text headline "> {{ reply.user.name.split("")[0].toUpperCase() }}</span>
                         </v-avatar>
                       </v-list-item-avatar>
-                      <v-list-item-content>
+                      <v-list-item-content v-show="!reply.replyUpdateCheck">
                         <div class="d-flex mb-0">
                           <v-list-item-title v-if="reply.user.name" class="font-weight-medium caption mb-0 d-flex"
                             >{{ reply.user.name }}
@@ -111,13 +111,44 @@
                             </template>
 
                             <v-list>
+                              <v-list-item @click="replyUpdateTextField(i, j, reply.user.email, reply.text)">
+                                <v-list-item-title><v-icon>mdi-update</v-icon> Update</v-list-item-title>
+                              </v-list-item>
                               <v-list-item @click="deleteReply(comment.commentId, reply.replyId)">
-                                <v-list-item-title><v-icon>mdi-trash</v-icon>Delete</v-list-item-title>
+                                <v-list-item-title><v-icon>mdi-trash-can-outline</v-icon> Delete</v-list-item-title>
                               </v-list-item>
                             </v-list>
                           </v-menu>
                         </div>
                         <v-list-item-subtitle class="mt-n2 black--text text--darken-4 caption">{{ reply.text }}</v-list-item-subtitle>
+                      </v-list-item-content>
+                      <v-list-item-content v-show="reply.replyUpdateCheck">
+                        <div class="d-flex mb-0">
+                          <v-list-item-title v-if="reply.user.name" class="font-weight-medium caption mb-0 d-flex"
+                            >{{ reply.user.name }}
+                            <span class="pl-2 font-weight-light grey--text"> {{ dateFormatter(reply.createdAt) }}</span>
+                          </v-list-item-title>
+                          <v-menu bottom left v-if="isAuthenticated">
+                            <template v-slot:activator="{ on }">
+                              <v-btn icon v-on="on">
+                                <v-icon>mdi-dots-vertical</v-icon>
+                              </v-btn>
+                            </template>
+                          </v-menu>
+                        </div>
+                        <v-text-field v-model="updateText" @click="clickTextField2"> </v-text-field>
+                        <div v-if="showCommentBtns" class="d-inline-block text-right">
+                          <v-btn text @click="finishReply(i, j)">Cancel</v-btn>
+                          <v-btn
+                            class="blue darken-3 white--text"
+                            depressed
+                            tile
+                            :loading="loading"
+                            :disabled="comment === ''"
+                            @click="updateReply(i, j, reply.replyId)"
+                            >Comment</v-btn
+                          >
+                        </div>
                       </v-list-item-content>
                     </v-list-item>
                   </v-expansion-panel-content>
@@ -128,7 +159,7 @@
         </v-card>
       </v-skeleton-loader>
       <!-------------------------여기가 업데이트------------------------------------------------------>
-      <v-skeleton-loader type="list-item-avatar-two-line" :loading="loading" :id="'b' + `${comment.commentId}`" style="display:none;">
+      <v-skeleton-loader type="list-item-avatar-two-line" :loading="loading" :id="'b' + `${comment.commentId}`" v-show="comment.commentUpdateCheck">
         <v-card class="transparent" flat>
           <v-list-item three-line class="pl-0 mt-2">
             <v-list-item-avatar v-if="typeof comment.user !== 'undefined'" size="50">
@@ -153,7 +184,7 @@
               </div>
               <v-text-field v-model="updateText" @click="clickTextField2"> </v-text-field>
               <div v-if="showCommentBtns" class="d-inline-block text-right">
-                <v-btn text @click="finishUpdate(comment.commentId)">Cancel</v-btn>
+                <v-btn text @click="finishUpdate(i)">Cancel</v-btn>
                 <v-btn
                   class="blue darken-3 white--text"
                   depressed
@@ -178,6 +209,12 @@
     <v-snackbar v-model="snackbarFail">
       Comment deleted fail
       <v-btn color="white" text @click="snackbarFail = false" icon>
+        <v-icon>mdi-close-circle</v-icon>
+      </v-btn>
+    </v-snackbar>
+    <v-snackbar v-model="updateFail">
+      Comment {{ updateFailMessage }}
+      <v-btn color="white" text @click="updateFail = false" icon>
         <v-icon>mdi-close-circle</v-icon>
       </v-btn>
     </v-snackbar>
@@ -208,9 +245,11 @@ export default {
       snackbar: false,
       loading: false,
       snackbarFail: false,
-      commentUpdateCheck: this.$store.getters.getCommentUpdateCheck,
       showCommentBtns: false,
       updateText: "",
+      usingUpdate: false,
+      updateFail: false,
+      updateFailMessage: "",
     };
   },
   computed: {
@@ -227,26 +266,53 @@ export default {
       if (!comments) return;
 
       this.comments = this.$store.getters.getComments.data;
-      this.commentUpdateCheck = this.$store.getters.getCommentUpdateCheck;
 
-      console.log("this.commentUpdateCheck");
-      console.log(this.commentUpdateCheck);
       // console.log(this.comments.length)
       // this.loading = false
       // console.log(this.$store.getters.getComments.data)
     },
 
-    updateTextField(commentId, commentText) {
-      // console.log(this.commentUpdateCheck);
-      //this.commentUpdateCheck[i] = true;
-      //console.log(this.commentUpdateCheck);
-      this.updateText = commentText;
-      document.querySelector("#a" + commentId).style.display = "none";
-      document.querySelector("#b" + commentId).style.display = "block";
-      console.log(document.querySelector("#a" + commentId));
-      console.log(document.querySelector("#b" + commentId));
+    updateTextField(email, commentText, i) {
+      console.log(email);
+      console.log(this.currentUser.email);
 
-      // document.querySelector("#b" + commentId).show();
+      if (this.currentUser.email !== email) {
+        this.updateFailMessage = "작성자가 동일 하지 않습니다.";
+        this.updateFail = true;
+        return;
+      } else if (this.usingUpdate) {
+        this.updateFailMessage = "이미 업데이트 사용 중 입니다.";
+        this.updateFail = true;
+        return;
+      }
+      console.log("updateTextField");
+      this.usingUpdate = true;
+
+      console.log(i);
+      console.log(this.comments[i]);
+      this.comments[i].commentUpdateCheck = true;
+      this.updateText = commentText;
+    },
+    replyUpdateTextField(i, j, email, replyText) {
+      console.log(email);
+      console.log(this.currentUser.email);
+
+      if (this.currentUser.email !== email) {
+        this.updateFailMessage = "작성자가 동일 하지 않습니다.";
+        this.updateFail = true;
+        return;
+      } else if (this.usingUpdate) {
+        this.updateFailMessage = "이미 업데이트 사용 중 입니다.";
+        this.updateFail = true;
+        return;
+      }
+      console.log("updateTextField");
+      this.usingUpdate = true;
+
+      console.log(i);
+      console.log(this.comments[i]);
+      this.comments[i].replies[j].replyUpdateCheck = true;
+      this.updateText = replyText;
     },
     async updateComment(commentId, i) {
       console.log(i);
@@ -259,7 +325,24 @@ export default {
         this.comments[i].text = this.updateText;
       }
 
-      this.finishUpdate(commentId);
+      this.finishUpdate(i);
+      if (!result.data.success) {
+        this.snackbarFail = true;
+        return;
+      }
+    },
+    async updateReply(i, j, replyId) {
+      console.log(i);
+      if (!this.isAuthenticated) return;
+      const result = await ReplyService.updateReply(replyId, this.updateText).catch((err) => {
+        console.log(err);
+      });
+
+      if (result.data.success) {
+        this.comments[i].replies[j].text = this.updateText;
+      }
+
+      this.finishReply(i, j);
       if (!result.data.success) {
         this.snackbarFail = true;
         return;
@@ -363,16 +446,21 @@ export default {
     dateFormatter(date) {
       return moment(date).fromNow();
     },
-    finishUpdate(commentId) {
-      this.commentText = "";
-      document.querySelector("#a" + commentId).style.display = "block";
-      document.querySelector("#b" + commentId).style.display = "none";
+    finishUpdate(i) {
+      this.updateText = "";
+      this.usingUpdate = false;
+      this.comments[i].commentUpdateCheck = false;
+    },
+    finishReply(i, j) {
+      this.updateText = "";
+      this.usingUpdate = false;
+      this.comments[i].replies[j].replyUpdateCheck = false;
     },
   },
 
   mounted() {
     this.getComments();
-    // console.log(this.comments)
+    console.log("mounted()");
   },
 };
 </script>

@@ -18,9 +18,16 @@
                   tile
                   large
                   @click="movePage(history.attractionInfo.contentId)"
-                  style="cursor:Pointer"
                 >
-                  <v-card class="card" v-if="history.attractionInfo.contentId" tile flat>
+                  <v-card
+                    class="card"
+                    v-if="history.attractionInfo.contentId"
+                    tile
+                    flat
+                    @mouseover="isHovering = true"
+                    @mouseout="isHovering = false"
+                    :hover="isHovering"
+                  >
                     <v-row no-gutters>
                       <v-col class="mx-auto" cols="3" sm="3" md="5" lg="5">
                         <v-img
@@ -82,14 +89,14 @@
               </infinite-loading>
             </section>
           </template>
-          <template v-else>
+          <template v-else-if="historyType == 'Search History'">
             <template v-if="histories.length <= 0 && !loading">
               <p class="text-center body-1">No search history yet.</p>
             </template>
             <div>
               <div v-for="(history, i) in loading ? 12 : histories" :key="i">
                 <v-skeleton-loader class="mx-auto" type="list-item-two-line" :loading="loading" tile large>
-                  <v-card class="card d-flex pl-0" flat>
+                  <v-card class="mt-2 card d-flex pl-4" flat @mouseover="isHovering = true" @mouseout="isHovering = false" :hover="isHovering">
                     <v-card-text class="pl-0 py-0">
                       <v-card-title class="pl-0 black--text text--lighten-5 subtitle-1 font-weight-medium">{{ history.searchText }}</v-card-title>
                       <v-card-subtitle class="pl-0 pb-0">{{ dateFormatter(history.updatedAt) }}</v-card-subtitle>
@@ -126,6 +133,55 @@
               </infinite-loading>
             </div>
           </template>
+          <template v-else>
+            <template v-if="histories.length <= 0 && !loading">
+              <p class="text-center body-1">No search history yet.</p>
+            </template>
+            <div>
+              <div v-for="(history, i) in loading ? 12 : histories" :key="i">
+                <v-skeleton-loader
+                  class="mx-auto"
+                  type="list-item-two-line"
+                  :loading="loading"
+                  tile
+                  large
+                  @click="movePage(history.contentId)"
+                  style="cursor:Pointer"
+                >
+                  <v-card class="mt-2  card d-flex pl-2" flat @mouseover="isHovering = true" @mouseout="isHovering = false" :hover="isHovering">
+                    <v-list-item-avatar size="50">
+                      <v-img v-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'" class="elevation-6" :src="`${currentUser.profilePhotoUrl}`"></v-img>
+                      <v-avatar v-else color="red">
+                        <span class="white--text headline "> {{ currentUser.name.split("")[0].toUpperCase() }}</span>
+                      </v-avatar>
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                      <div class="d-flex mb-0">
+                        <v-list-item-title class="font-weight-medium caption mb-0 d-flex"
+                          >{{ currentUser.name }}
+                          <span class="pl-2 font-weight-light grey--text"> {{ dateFormatter(history.createdAt) }}</span>
+                        </v-list-item-title>
+                      </div>
+                      <v-list-item-subtitle class="mt-2 black--text text--darken-4 caption">{{ history.text }}</v-list-item-subtitle>
+                    </v-list-item-content>
+                    <v-btn text @click="deleteHistory(history)">
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                    <!-- <v-card-text class="pl-0 py-0">
+                      <v-card-title class="pl-0 black--text text--lighten-5 subtitle-1 font-weight-medium">{{ history.text }}</v-card-title>
+                      <v-card-subtitle class="pl-0 pb-0">{{ dateFormatter(history.updatedAt) }}</v-card-subtitle>
+                    </v-card-text> -->
+
+                    <!-- <v-card-actions
+                      ><v-btn text class="grey--text" fab @click="deleteHistory(history.historyId)">
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
+                    </v-card-actions> -->
+                  </v-card>
+                </v-skeleton-loader>
+              </div>
+            </div>
+          </template>
         </v-col>
         <v-col
           cols="12"
@@ -158,7 +214,9 @@
                 </v-list-item-group>
               </v-list>
               <div>
-                <v-btn text :loading="clearLoading" @click="clearHistory">Clear all {{ historyType }}</v-btn>
+                <v-btn v-if="historyType !== 'Comment History' && historyType !== 'Reply History'" text :loading="clearLoading" @click="clearHistory"
+                  >Clear all {{ historyType }}</v-btn
+                >
                 <!-- <v-btn text>Pause {{ historyType }}</v-btn>
                 <v-btn text>Manage all activity</v-btn> -->
               </div>
@@ -190,13 +248,14 @@ export default {
     errored: false,
     snackbar: false,
     deleteMessage: "",
-    items: ["Watch History", "Search History"],
+    items: ["Watch History", "Search History", "Comment History", "Reply History"],
     historyType: "Watch History",
     histories: [],
     page: 1,
     infiniteId: +new Date(),
     clearLoading: false,
     moveCheck: true,
+    isHovering: false,
   }),
   computed: {
     ...mapGetters(["currentUser", "getUrl"]),
@@ -215,14 +274,35 @@ export default {
         type: this.historyType === "Watch History" ? "VISIT" : "SEARCH",
       };
 
-      const histories = await HistoryService.getAll(params)
-        .catch((err) => {
-          this.errored = true;
-          console.log(err);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      let histories;
+      if (this.historyType == "Reply History") {
+        histories = await HistoryService.getReplies()
+          .catch((err) => {
+            this.errored = true;
+            console.log(err);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      } else if (this.historyType == "Comment History") {
+        histories = await HistoryService.getComments()
+          .catch((err) => {
+            this.errored = true;
+            console.log(err);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      } else {
+        histories = await HistoryService.getAll(params)
+          .catch((err) => {
+            this.errored = true;
+            console.log(err);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
       if (!histories) return;
 
       if (histories.data.data.length) {
@@ -262,17 +342,41 @@ export default {
     async deleteHistory(id) {
       console.log("delete");
       console.log(this.histories, id);
-      this.histories = this.histories.filter((history) => history.historyId.toString() !== id.toString());
       this.moveCheck = false;
-      await HistoryService.deleteById(id)
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          this.deleteMessage = "History Deleted Successfully";
-          this.snackbar = true;
-          this.moveCheck = true;
-        });
+      if (this.historyType == "Comment History") {
+        this.histories = this.histories.filter((history) => history.commentId.toString() !== id.commentId.toString());
+        await HistoryService.deleteComment(id.commentId)
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.deleteMessage = "History Deleted Successfully";
+            this.snackbar = true;
+            this.moveCheck = true;
+          });
+      } else if (this.historyType == "Reply History") {
+        this.histories = this.histories.filter((history) => history.replyId.toString() !== id.replyId.toString());
+        await HistoryService.deleteReply(id.replyId)
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.deleteMessage = "History Deleted Successfully";
+            this.snackbar = true;
+            this.moveCheck = true;
+          });
+      } else {
+        this.histories = this.histories.filter((history) => history.historyId.toString() !== id.toString());
+        await HistoryService.deleteById(id)
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.deleteMessage = "History Deleted Successfully";
+            this.snackbar = true;
+            this.moveCheck = true;
+          });
+      }
     },
     clickItem(item) {
       this.historyType = item;
@@ -290,10 +394,11 @@ export default {
   components: {
     InfiniteLoading,
   },
-  // mounted() {
-  //   console.log("mounted");
-  //   this.getHistories();
-  // },
+  watch: {
+    historyType() {
+      if (this.historyType == "Comment History" || this.historyType == "Reply History") this.getHistories();
+    },
+  },
 };
 </script>
 

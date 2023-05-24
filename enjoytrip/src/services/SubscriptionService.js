@@ -16,17 +16,19 @@ export default {
       },
     });
   },
-  checkSubscription(data) {
-    return Api().post("subscriptions/check", data);
+  checkSubscription(contentId) {
+    return Api().get(`/api/v1/private/trips/libraries/${contentId}`);
   },
-  createSubscription(data) {
-    return Api().post("subscriptions", data);
+  createSubscription(contentId) {
+    return Api().post("/api/v1/private/trips/libraries", { contentId });
   },
-  getSubscribedVideos(page) {
-    return Api().get("subscriptions/videos", {
+  deleteLibrary(libraryId) {
+    return Api().delete(`/api/v1/private/trips/libraries/${libraryId}`);
+  },
+  getSaveAttractions(page) {
+    return Api().get("/api/v1/private/trips/attractions/libraries", {
       params: {
         page,
-        limit: 12,
       },
     });
   },
