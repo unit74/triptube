@@ -6,7 +6,7 @@
         <router-link to="/" class="black--text" style="text-decoration: none">
           <v-row align="center">
             <v-col cols="auto">
-              <v-img src="@/assets/logo.png" max-width="50"></v-img>
+              <v-img :src="`${logoUrl}`" max-width="50"></v-img>
             </v-col>
             <v-col cols="auto">TripTube</v-col>
           </v-row>
@@ -75,13 +75,13 @@
           <v-divider></v-divider>
 
           <v-list>
-            <v-list-item router :to="`/channels/${$store.getters.currentUser._id}`">
+            <v-list-item @click="updateProfileImage()">
               <v-list-item-icon>
                 <v-icon>mdi-account-box</v-icon>
               </v-list-item-icon>
               <v-list-item-title>Your channel</v-list-item-title>
             </v-list-item>
-            <v-list-item router to="/studio">
+            <v-list-item @click="settingsMoal()">
               <v-list-item-icon>
                 <v-icon>mdi-youtube-studio</v-icon>
               </v-list-item-icon>
@@ -125,14 +125,6 @@
               </v-list-item-icon>
               <v-list-item-avatar v-else class="mr-5">
                 {{ i }}
-                <v-avatar v-if="item.channelId.photoUrl !== 'no-photo.jpg' && item.channelId">
-                  <img :src="`${getUrl}/uploads/avatars/${item.channelId.photoUrl}`" :alt="`${item.channelId.channelName} avatar`" />
-                </v-avatar>
-                <template v-else>
-                  <v-avatar color="red">
-                    <span class="white--text headline "> {{ item.channelId.channelName.split("")[0].toUpperCase() }}</span>
-                  </v-avatar>
-                </template>
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class=" font-weight-medium subtitle-2">{{
@@ -141,7 +133,7 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-btn
+            <!-- <v-btn
               id="showBtn"
               @click="moreChannels"
               v-if="parentItem.header === 'Subscriptions' && isAuthenticated && items[2].length > 0"
@@ -151,20 +143,20 @@
             >
               <v-icon>{{ channelLength === 3 ? "mdi-chevron-down" : "mdi-chevron-up" }}</v-icon>
               {{ channelLength === 3 ? `Show ${items[2].pages.length - 3} more ` : "Show less" }}</v-btn
-            >
+            > -->
 
             <v-divider v-if="parentItem.header !== false" class="mt-2 mb-2"></v-divider>
           </div>
         </v-list>
       </div>
     </v-navigation-drawer>
+    <settings-modal :open-dialog="settingsDialog" v-on:closeDialog="settingsDialog = false" />
   </nav>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-//import SubscriptionService from "@/services/SubscriptionService";
-// import HistoryService from "@/services/HistoryService";
+import SettingsModal from "@/components/SettingsModal";
 
 export default {
   data: () => ({
@@ -212,11 +204,14 @@ export default {
     ],
     channelLength: 0,
     searchText: "",
+    settingsDialog: false,
     // user: null
   }),
   computed: {
-    ...mapGetters(["currentUser", "getUrl", "isAuthenticated"]),
+    ...mapGetters(["currentUser", "getUrl", "isAuthenticated", "logoUrl"]),
   },
+  components: { SettingsModal },
+
   methods: {
     async search() {
       if (!this.searchText) return;
@@ -247,6 +242,9 @@ export default {
     signOut() {
       this.$store.dispatch("signOut");
       // this.$router.push('/')
+    },
+    settingsMoal() {
+      this.settingsDialog = true;
     },
   },
   // beforeRouteLeave(to, from, next) {

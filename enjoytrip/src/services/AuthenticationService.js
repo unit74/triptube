@@ -8,13 +8,15 @@ export default {
     return Api().post("/api/v1/public/users/register", data);
   },
   updateUserDetails(data) {
-    return Api().put("auth/updatedetails", data);
+    return Api().put("/api/v1/private/users", data);
   },
   uploadUserAvatar(data) {
+    console.log("uploadUserAvatar");
+    console.log(data);
     return Api().put("auth/avatar", data);
   },
   updatePassword(data) {
-    return Api().put("auth/updatepassword", data);
+    return Api().put("/api/v1/private/users", data);
   },
   me(token) {
     //필요없을듯

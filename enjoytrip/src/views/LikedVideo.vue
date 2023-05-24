@@ -71,6 +71,7 @@ export default {
     videos: [],
     page: 1,
   }),
+
   methods: {
     async getVideos($state) {
       if (!this.loaded) {

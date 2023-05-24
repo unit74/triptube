@@ -8,7 +8,7 @@ export default {
     return Api().get(`/api/v1/public/trips/attractions`);
   },
   getHotplace(page) {
-    return Api().get(`/api/v1/public/trips/attractions/hots`, { params: page });
+    return Api().get(`/api/v1/public/trips/attractions/trends`, { params: page });
   },
   async getById(id) {
     const token = localStorage.getItem("token");

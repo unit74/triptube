@@ -1,7 +1,7 @@
 <template>
   <v-card class="content-bg card mx-auto" :max-width="card.maxWidth" flat tile router :to="`/watch/${video.contentId}`">
-    <v-img v-if="video.firstImage" :src="`${video.firstImage}`" max-width="400" max-height="200" style="border-radius: 5%"></v-img>
-    <v-img v-else :src="require(`@/assets/logo.png`)" max-width="400" max-height="200" style="border-radius: 5%"></v-img>
+    <v-img v-if="video.firstImage" :src="`${video.firstImage}`" width="400" height="200" style="border-radius: 5%;"></v-img>
+    <v-img v-else :src="`${noImgUrl}`" max-width="400" contain max-height="200" style="border-radius: 5%;"></v-img>
     <v-row no-gutters>
       <v-col cols="2" v-if="card.type != 'noAvatar'">
         <v-list-item class="pl-0 pt-3" router :to="`/Watch/${video.contentId}`">
@@ -35,6 +35,7 @@
 
 <script>
 import moment from "moment";
+import { mapGetters } from "vuex";
 export default {
   name: "VideoCard",
   props: {
@@ -48,10 +49,14 @@ export default {
     // },
     card: Object,
   },
+
   data() {
     return {
       url: process.env.VUE_APP_URL,
     };
+  },
+  computed: {
+    ...mapGetters(["noImgUrl"]),
   },
   methods: {
     dateFormatter(date) {

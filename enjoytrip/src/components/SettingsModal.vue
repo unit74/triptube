@@ -15,11 +15,11 @@
             <h3 class="mb-6 mt-0 pt-0">Personal Information</h3>
             <ValidationObserver ref="personalInfoForm" v-slot="{ handleSubmit, reset }">
               <form @submit.prevent="handleSubmit(submit)" @reset.prevent="reset">
-                <ValidationProvider v-slot="{ errors }" name="Channel Name" rules="required|min:3">
-                  <v-text-field v-model="formData.channelName" :error-messages="errors" label="Channel Name" filled dense></v-text-field>
+                <ValidationProvider v-slot="{ errors }" name="Name" rules="required|min:3">
+                  <v-text-field v-model="formData.name" :error-messages="errors" label="Name" filled dense></v-text-field>
                 </ValidationProvider>
                 <ValidationProvider v-slot="{ errors }" name="email" rules="required|email">
-                  <v-text-field v-model="formData.email" :error-messages="errors" label="Email" filled dense></v-text-field>
+                  <v-text-field v-model="formData.email" readonly :error-messages="errors" label="Email" filled dense></v-text-field>
                 </ValidationProvider>
 
                 <v-btn :loading="loading.personalInfo" type="submit" class="primary " depressed>Submit</v-btn>
@@ -68,13 +68,13 @@
             <v-btn text @click="toggleShow">Upload Avatar</v-btn>
             <my-upload
               field="avatar"
-              method="PUT"
+              method="POST"
               :headers="headers"
               @crop-success="cropSuccess"
               @crop-upload-success="cropUploadSuccess"
               @crop-upload-fail="cropUploadFail"
               v-model="show"
-              :url="url"
+              :url="`http://192.168.203.120:8080/api/v1/private/users`"
               :width="200"
               :height="200"
               :noRotate="false"
@@ -113,7 +113,7 @@ export default {
       categories: ["People", "Technology", "Fashion"],
       visibilty: ["Public", "Private"],
       formData: {
-        channelName: this.$store.getters.currentUser.channelName,
+        name: this.$store.getters.currentUser.name,
         email: this.$store.getters.currentUser.email,
         currentPassword: "",
         newPassword: "",
@@ -138,8 +138,7 @@ export default {
       this.loading.personalInfo = true;
 
       const user = await AuthenticationService.updateUserDetails({
-        channelName: this.formData.channelName,
-        email: this.formData.email,
+        name: this.formData.name,
       })
         .catch((err) => {
           this.loading.personalInfo = false;
@@ -151,8 +150,8 @@ export default {
             })
               ? ["This email is already taken"]
               : null,
-            "Channel Name": errors.find((error) => {
-              return error.field === "channelName";
+            name: errors.find((error) => {
+              return error.field === "name";
             })
               ? ["This channel name is already taken"]
               : null,
@@ -161,7 +160,7 @@ export default {
         .finally(() => (this.loading.personalInfo = false));
 
       if (!user) return;
-      if (this.formData.channelName !== this.$store.getters.currentUser.channelName || this.formData.email !== this.$store.getters.currentUser.email) {
+      if (this.formData.name !== this.$store.getters.currentUser.name || this.formData.email !== this.$store.getters.currentUser.email) {
         this.$store.dispatch("signOut");
         this.$router.push("/signin");
       }
@@ -174,8 +173,7 @@ export default {
       this.loading.password = true;
 
       const user = await AuthenticationService.updatePassword({
-        currentPassword: this.formData.currentPassword,
-        newPassword: this.formData.newPassword,
+        password: this.formData.newPassword,
       })
         .catch((err) => {
           this.loading.password = false;
