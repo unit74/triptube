@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.triptube.users.dtos.RegistRequestDto;
+import com.ssafy.triptube.users.dtos.UpdateRequestDto;
 import com.ssafy.triptube.users.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,9 +32,9 @@ public class UserPrivateController {
 	}
 
 	@PutMapping("")
-	public ResponseEntity<?> updateUser(@RequestBody RegistRequestDto registRequestDto) {
-		return createResponse(true, "유저 정보 업데이트", userService.updateUser(getLoginUserId(), registRequestDto.getEmail(),
-				registRequestDto.getPassword(), registRequestDto.getName()));
+	public ResponseEntity<?> updateUser(@RequestBody UpdateRequestDto updateRequestDto) {
+		return createResponse(true, "유저 정보 업데이트",
+				userService.updateUser(getLoginUserId(), updateRequestDto.getPassword(), updateRequestDto.getName()));
 	}
 
 }

@@ -137,14 +137,12 @@ public class UserService {
 	}
 
 	@Transactional
-	public UserDto updateUser(Long userId, String email, String password, String name) {
+	public UserDto updateUser(Long userId, String password, String name) {
 		UserEntity userEntity = userRepository.findById(userId).get();
 
-		if (email != null) {
-			userEntity.setEmail(email);
-		}
 		if (password != null) {
 			userEntity.setPassword(password);
+			userEntity.encodePassword(passwordEncoder);
 		}
 		if (name != null) {
 			userEntity.setName(name);
