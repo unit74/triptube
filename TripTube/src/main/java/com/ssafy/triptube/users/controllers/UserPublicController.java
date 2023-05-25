@@ -1,22 +1,22 @@
 package com.ssafy.triptube.users.controllers;
 
-import java.io.IOException;
-import java.io.InputStream;
+import static com.ssafy.triptube.support.web.ApiResponseUtil.createResponse;
 
-import org.apache.commons.io.IOUtils;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.triptube.support.web.ApiResponseUtil;
+import com.ssafy.triptube.configures.jwt.dtos.TokenDto;
+import com.ssafy.triptube.support.web.ApiResponseDto;
 import com.ssafy.triptube.users.dtos.LoginInfoDto;
 import com.ssafy.triptube.users.dtos.LoginRequestDto;
 import com.ssafy.triptube.users.dtos.RegistRequestDto;
+import com.ssafy.triptube.users.services.AuthService;
 import com.ssafy.triptube.users.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,36 +26,36 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserPublicController {
 
+	private final AuthService authService;
+
 	private final UserService userService;
 
-	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
-		LoginInfoDto loginInfoDto = userService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword());
-
-		if (loginInfoDto == null) {
-			return ApiResponseUtil.createResponse(false, "로그인 실패");
-		}
-
-		return ApiResponseUtil.createResponse(true, "로그인 성공", loginInfoDto);
-	}
+	private final long COOKIE_EXPIRATION = 90 * 24 * 60 * 60; // 90일
 
 	@PostMapping("/register")
-	public ResponseEntity<?> regist(@RequestBody RegistRequestDto registRequestDto) {
-		LoginInfoDto loginInfoDto = userService.regist(registRequestDto.getEmail(), registRequestDto.getPassword(),
+	public ResponseEntity<?> signup(@RequestBody RegistRequestDto registRequestDto) {
+		boolean result = userService.regist(registRequestDto.getEmail(), registRequestDto.getPassword(),
 				registRequestDto.getName());
 
-		if (loginInfoDto == null) {
-			return ApiResponseUtil.createResponse(false, "회원가입 실패");
+		if (!result) {
+			return createResponse(false, "중복된 이메일");
 		}
 
-		return ApiResponseUtil.createResponse(true, "회원가입 성공", loginInfoDto);
+		return login(new LoginRequestDto(registRequestDto.getEmail(), registRequestDto.getPassword()));
 	}
 
-	@GetMapping(value = "/profiles/{filename:.+}", produces = MediaType.IMAGE_PNG_VALUE)
-	public ResponseEntity<?> getProfileImage(@PathVariable String filename) throws IOException {
-		InputStream image = userService.getProfileImage(filename);
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody LoginRequestDto loginDto) {
+		TokenDto tokenDto = authService.login(loginDto);
 
-		return ResponseEntity.ok().body(IOUtils.toByteArray(image));
+		HttpCookie httpCookie = ResponseCookie.from("refresh-token", tokenDto.getRefreshToken())
+				.maxAge(COOKIE_EXPIRATION).httpOnly(true).secure(true).build();
+
+		LoginInfoDto loginInfoDto = userService.me(loginDto.getEmail());
+		loginInfoDto.setToken("Bearer " + tokenDto.getAccessToken());
+
+		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, httpCookie.toString())
+				.body(new ApiResponseDto<>(true, "로그인", loginInfoDto));
 	}
 
 }

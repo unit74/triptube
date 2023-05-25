@@ -21,4 +21,6 @@ public class ContentTypeEntity {
 	@Column(name = "contentTypeName")
 	private String contentTypeName;
 
+	@Column(name = "content_type_image_url")
+	private String contentTypeImageUrl;
 }
