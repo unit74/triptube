@@ -14,4 +14,8 @@ public class ApiResponseDto<T> {
 	private Boolean success;
 	private String message;
 	private T data;
+
+	public ApiResponseDto(Boolean success, String message) {
+		this(success, message, null);
+	}
 }
