@@ -4,8 +4,8 @@ v-container<template>
 
 <script>
 export default {
-  name: "NearbyMap",
-  props: ["video", "videos"],
+  name: 'NearbyMap',
+  props: ['attraction', 'attractions'],
   data() {
     return {
       map: null,
@@ -27,16 +27,16 @@ export default {
   // },
   methods: {
     loadScript() {
-      const script = document.createElement("script");
-      script.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=5cbe260f12f7558c41e541afc9525bf6&autoload=false";
+      const script = document.createElement('script');
+      script.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=5cbe260f12f7558c41e541afc9525bf6&autoload=false';
       script.onload = () => window.kakao.maps.load(this.loadMapInit);
       this.mapLoading = true;
       document.head.appendChild(script);
     },
     loadMapInit() {
-      const mapContainer = document.getElementById("map"); // 지도를 표시할 div
+      const mapContainer = document.getElementById('map'); // 지도를 표시할 div
       const mapOption = {
-        center: new window.kakao.maps.LatLng(this.video.latitude, this.video.longitude), // 지도의 중심좌표
+        center: new window.kakao.maps.LatLng(this.attraction.latitude, this.attraction.longitude), // 지도의 중심좌표
         level: 5, // 지도의 확대 레벨
       };
 
@@ -47,7 +47,7 @@ export default {
     loadMakers() {
       let positions = [];
 
-      this.videos.forEach((element) => {
+      this.attractions.forEach((element) => {
         positions.push({
           content: `<div style="padding:5px;font-weight:bold;text-align:center;height:100%;width:240px">
                       ${element.title}
@@ -77,8 +77,8 @@ export default {
 
         // const contentId = positions[i].contentId;
 
-        window.kakao.maps.event.addListener(marker, "mouseover", this.makeOverListener(this.map, marker, infowindow));
-        window.kakao.maps.event.addListener(marker, "mouseout", this.makeOutListener(infowindow));
+        window.kakao.maps.event.addListener(marker, 'mouseover', this.makeOverListener(this.map, marker, infowindow));
+        window.kakao.maps.event.addListener(marker, 'mouseout', this.makeOutListener(infowindow));
         // window.kakao.maps.event.addListener(marker, "click", function() {
         //   console.log(this.Gb);
         //   console.log(this.test);
@@ -91,7 +91,7 @@ export default {
     // },
     setCenter() {
       // 이동할 위도 경도 위치를 생성합니다
-      var moveLatLon = new window.kakao.maps.LatLng(this.video.latitude, this.video.longitude);
+      var moveLatLon = new window.kakao.maps.LatLng(this.attraction.latitude, this.attraction.longitude);
 
       // 지도 중심을 이동 시킵니다
       this.map.setCenter(moveLatLon);
@@ -110,7 +110,7 @@ export default {
   },
 
   watch: {
-    videos: function() {
+    attractions: function() {
       this.loadMakers();
     },
   },

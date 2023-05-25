@@ -14,7 +14,7 @@
                 :src="`${defaultProfileUrl + comment.user.profilePhotoUrl}`"
               ></v-img>
               <v-avatar v-else color="red">
-                <span class="white--text headline "> {{ comment.user.name.split("")[0].toUpperCase() }}</span>
+                <span class="white--text headline "> {{ comment.user.name.split('')[0].toUpperCase() }}</span>
               </v-avatar>
             </v-list-item-avatar>
             <v-list-item-content>
@@ -58,7 +58,7 @@
                         :src="`${defaultProfileUrl + currentUser.profilePhotoUrl}`"
                       ></v-img>
                       <v-avatar v-else color="red">
-                        <span class="white--text headline "> {{ currentUser.name.split("")[0].toUpperCase() }}</span>
+                        <span class="white--text headline "> {{ currentUser.name.split('')[0].toUpperCase() }}</span>
                       </v-avatar>
                     </template>
                   </v-list-item-avatar>
@@ -106,7 +106,7 @@
                           :src="`${defaultProfileUrl + reply.user.profilePhotoUrl}`"
                         ></v-img>
                         <v-avatar v-else color="red">
-                          <span class="white--text headline "> {{ reply.user.name.split("")[0].toUpperCase() }}</span>
+                          <span class="white--text headline "> {{ reply.user.name.split('')[0].toUpperCase() }}</span>
                         </v-avatar>
                       </v-list-item-avatar>
                       <v-list-item-content v-show="!reply.replyUpdateCheck">
@@ -181,7 +181,7 @@
                 :src="`${defaultProfileUrl + comment.user.profilePhotoUrl}`"
               ></v-img>
               <v-avatar v-else color="red">
-                <span class="white--text headline "> {{ comment.user.name.split("")[0].toUpperCase() }}</span>
+                <span class="white--text headline "> {{ comment.user.name.split('')[0].toUpperCase() }}</span>
               </v-avatar>
             </v-list-item-avatar>
             <v-list-item-content>
@@ -238,14 +238,14 @@
 </template>
 
 <script>
-import moment from "moment";
-import { mapGetters } from "vuex";
+import moment from 'moment';
+import { mapGetters } from 'vuex';
 
-import CommentService from "@/services/CommentService";
-import ReplyService from "@/services/ReplyService";
+import CommentService from '@/services/CommentService';
+import ReplyService from '@/services/ReplyService';
 export default {
   props: {
-    videoId: {
+    attractionId: {
       type: Number,
       required: true,
     },
@@ -262,20 +262,20 @@ export default {
       loading: false,
       snackbarFail: false,
       showCommentBtns: false,
-      updateText: "",
+      updateText: '',
       usingUpdate: false,
       updateFail: false,
-      updateFailMessage: "",
+      updateFailMessage: '',
     };
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "currentUser", "defaultProfileUrl"]),
+    ...mapGetters(['isAuthenticated', 'currentUser', 'defaultProfileUrl']),
   },
   methods: {
     async getComments() {
       this.loading = true;
       const comments = await this.$store
-        .dispatch("setComments", this.videoId)
+        .dispatch('setComments', this.attractionId)
         .catch((err) => console.log(err))
         .finally(() => (this.loading = false));
       // console.log(this.loading)
@@ -293,15 +293,15 @@ export default {
       console.log(this.currentUser.email);
 
       if (this.currentUser.email !== email) {
-        this.updateFailMessage = "작성자가 동일 하지 않습니다.";
+        this.updateFailMessage = '작성자가 동일 하지 않습니다.';
         this.updateFail = true;
         return;
       } else if (this.usingUpdate) {
-        this.updateFailMessage = "이미 업데이트 사용 중 입니다.";
+        this.updateFailMessage = '이미 업데이트 사용 중 입니다.';
         this.updateFail = true;
         return;
       }
-      console.log("updateTextField");
+      console.log('updateTextField');
       this.usingUpdate = true;
 
       console.log(i);
@@ -314,15 +314,15 @@ export default {
       console.log(this.currentUser.email);
 
       if (this.currentUser.email !== email) {
-        this.updateFailMessage = "작성자가 동일 하지 않습니다.";
+        this.updateFailMessage = '작성자가 동일 하지 않습니다.';
         this.updateFail = true;
         return;
       } else if (this.usingUpdate) {
-        this.updateFailMessage = "이미 업데이트 사용 중 입니다.";
+        this.updateFailMessage = '이미 업데이트 사용 중 입니다.';
         this.updateFail = true;
         return;
       }
-      console.log("updateTextField");
+      console.log('updateTextField');
       this.usingUpdate = true;
 
       console.log(i);
@@ -380,13 +380,13 @@ export default {
 
       this.snackbar = true;
 
-      await this.$store.dispatch("setComments", this.videoId).catch((err) => console.log(err));
+      await this.$store.dispatch('setComments', this.attractionId).catch((err) => console.log(err));
       this.comments = this.$store.getters.getComments.data;
-      this.$emit("videoCommentLength");
+      this.$emit('attractionCommentLength');
     },
     async addReply(event, id) {
       if (!this.isAuthenticated) return;
-      if (this.$refs[`input${id}`][0].$refs.input.value == "") return;
+      if (this.$refs[`input${id}`][0].$refs.input.value == '') return;
 
       this.btnLoading = true;
       // console.log((event.target.loading = true))
@@ -399,7 +399,7 @@ export default {
         })
         .finally(() => {
           this.btnLoading = false;
-          // this.$store.dispatch('setComments', this.videoId)
+          // this.$store.dispatch('setComments', this.attractionId)
         });
       reply.data.data.userId = this.$store.getters.currentUser;
       // this.$store.dispatch('addComment', reply.data.data)
@@ -442,33 +442,33 @@ export default {
 
       this.snackbar = true;
 
-      await this.$store.dispatch("setComments", this.videoId).catch((err) => console.log(err));
+      await this.$store.dispatch('setComments', this.attractionId).catch((err) => console.log(err));
       this.comments = this.$store.getters.getComments.data;
     },
     clickTextField() {
-      if (!this.isAuthenticated) return this.$router.push("/signin");
+      if (!this.isAuthenticated) return this.$router.push('/signin');
     },
     clickTextField2() {
-      if (!this.isAuthenticated) return this.$router.push("/signin");
+      if (!this.isAuthenticated) return this.$router.push('/signin');
       this.showCommentBtns = true;
     },
     showReply(id) {
-      this.$refs[id][0].classList.toggle("d-none");
+      this.$refs[id][0].classList.toggle('d-none');
     },
     hideReply(id) {
       this.$refs[`form${id}`][0].reset();
-      this.$refs["reply" + id][0].classList.toggle("d-none");
+      this.$refs['reply' + id][0].classList.toggle('d-none');
     },
     dateFormatter(date) {
       return moment(date).fromNow();
     },
     finishUpdate(i) {
-      this.updateText = "";
+      this.updateText = '';
       this.usingUpdate = false;
       this.comments[i].commentUpdateCheck = false;
     },
     finishReply(i, j) {
-      this.updateText = "";
+      this.updateText = '';
       this.usingUpdate = false;
       this.comments[i].replies[j].replyUpdateCheck = false;
     },
@@ -476,7 +476,7 @@ export default {
 
   mounted() {
     this.getComments();
-    console.log("mounted()");
+    console.log('mounted()');
   },
 };
 </script>

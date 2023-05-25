@@ -4,8 +4,8 @@
 
 <script>
 export default {
-  name: "ShowMap",
-  props: ["video"],
+  name: 'ShowMap',
+  props: ['attraction'],
   data() {
     return {
       map: null,
@@ -21,16 +21,16 @@ export default {
   },
   methods: {
     loadScript() {
-      const script = document.createElement("script");
-      script.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=5cbe260f12f7558c41e541afc9525bf6&autoload=false";
+      const script = document.createElement('script');
+      script.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=5cbe260f12f7558c41e541afc9525bf6&autoload=false';
       script.onload = () => window.kakao.maps.load(this.loadMap);
       this.mapLoading = true;
       document.head.appendChild(script);
     },
     loadMap() {
-      const mapContainer = document.getElementById("map"); // 지도를 표시할 div
+      const mapContainer = document.getElementById('map'); // 지도를 표시할 div
       const mapOption = {
-        center: new window.kakao.maps.LatLng(this.video.latitude, this.video.longitude), // 지도의 중심좌표
+        center: new window.kakao.maps.LatLng(this.attraction.latitude, this.attraction.longitude), // 지도의 중심좌표
         level: 3, // 지도의 확대 레벨
       };
 
@@ -38,7 +38,7 @@ export default {
       this.loadMaker();
     },
     loadMaker() {
-      const markerPosition = new window.kakao.maps.LatLng(this.video.latitude, this.video.longitude);
+      const markerPosition = new window.kakao.maps.LatLng(this.attraction.latitude, this.attraction.longitude);
 
       // 마커를 생성합니다
       const marker = new window.kakao.maps.Marker({
@@ -49,12 +49,12 @@ export default {
       marker.setMap(this.map);
 
       const iwContent = `
-      <div style="padding:5px;font-weight:bold;text-align:center">${this.video.title} <br>
-        <a href="https://map.kakao.com/link/map/${this.video.title},${this.video.latitude}, ${this.video.longitude}" style="color:gray;text-decoration: none; font-size:12px;" target="_blank">큰지도보기</a>
-        <a href="https://map.kakao.com/link/to/${this.video.title},${this.video.latitude}, ${this.video.longitude}" style="color:gray;text-decoration: none; font-size:12px;" target="_blank">길찾기</a>
+      <div style="padding:5px;font-weight:bold;text-align:center">${this.attraction.title} <br>
+        <a href="https://map.kakao.com/link/map/${this.attraction.title},${this.attraction.latitude}, ${this.attraction.longitude}" style="color:gray;text-decoration: none; font-size:12px;" target="_blank">큰지도보기</a>
+        <a href="https://map.kakao.com/link/to/${this.attraction.title},${this.attraction.latitude}, ${this.attraction.longitude}" style="color:gray;text-decoration: none; font-size:12px;" target="_blank">길찾기</a>
       </div>`; // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
 
-      const iwPosition = new window.kakao.maps.LatLng(this.video.latitude, this.video.longitude); //인포윈도우 표시 위치입니다
+      const iwPosition = new window.kakao.maps.LatLng(this.attraction.latitude, this.attraction.longitude); //인포윈도우 표시 위치입니다
 
       // 인포윈도우를 생성합니다
       const infowindow = new window.kakao.maps.InfoWindow({
@@ -68,7 +68,7 @@ export default {
 
     setCenter() {
       // 이동할 위도 경도 위치를 생성합니다
-      var moveLatLon = new window.kakao.maps.LatLng(this.video.latitude, this.video.longitude);
+      var moveLatLon = new window.kakao.maps.LatLng(this.attraction.latitude, this.attraction.longitude);
 
       // 지도 중심을 이동 시킵니다
       this.map.setCenter(moveLatLon);
@@ -76,7 +76,7 @@ export default {
     },
   },
   watch: {
-    video: function() {
+    attraction: function() {
       this.setCenter();
     },
   },

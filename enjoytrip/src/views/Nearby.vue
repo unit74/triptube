@@ -16,11 +16,11 @@
         <v-col v-else cols="11" class="mx-auto">
           <v-row>
             <v-col cols="12" sm="12" md="8" lg="8" :style="{ marginTop: scrollNum + 'px' }">
-              <v-skeleton-loader type="card-avatar, article, actions" :loading="videoLoading" tile large>
+              <v-skeleton-loader type="card-avatar, article, actions" :loading="attractionLoading" tile large>
                 <div ref="hello">
                   <v-responsive>
                     <v-container class="grey lighten-5" max-height="900">
-                      <nearby-map :video="video" :videos="videos" />
+                      <nearby-map :attraction="attraction" :attractions="attractions" />
                     </v-container>
                   </v-responsive>
                 </div>
@@ -30,28 +30,28 @@
             <v-col cols="12" sm="12" md="4" lg="4">
               <hr class="grey--text" />
               <h4 class="mb-3 mt-3">Up next</h4>
-              <div v-for="(video, i) in loading ? 12 : videos" :key="i" class="mb-5">
+              <div v-for="(attraction, i) in loading ? 12 : attractions" :key="i" class="mb-5">
                 <v-skeleton-loader class="mx-auto" type="list-item-avatar-three-line" :loading="loading" tile large>
-                  <v-card class="card" tile flat v-if="!loading" :to="`/watch/${video.contentId}`">
+                  <v-card class="card" tile flat v-if="!loading" :to="`/watch/${attraction.contentId}`">
                     <v-row no-gutters>
                       <v-col class="mx-auto" cols="12" sm="12" md="5" lg="5">
                         <!-- <v-responsive max-height="100%"> -->
-                        <v-img v-if="video.firstImage" class="align-center" height="110" :src="`${video.firstImage}`"> </v-img>
+                        <v-img v-if="attraction.firstImage" class="align-center" height="110" :src="`${attraction.firstImage}`"> </v-img>
                         <v-img v-else class="align-center" height="110" :src="noImgUrl"> </v-img>
                         <!-- </v-responsive> -->
                       </v-col>
                       <v-col>
                         <div class="ml-2">
                           <v-card-title class="pl-2 pt-2 subtitle-1 font-weight-bold " style="line-height: 1">
-                            {{ video.title }}
+                            {{ attraction.title }}
                           </v-card-title>
 
                           <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1">
-                            <!-- {{ video.userId.channelName }}<br /> -->
-                            {{ video.readcount }} views
+                            <!-- {{ attraction.userId.channelName }}<br /> -->
+                            {{ attraction.readcount }} views
                           </v-card-subtitle>
                           <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1">
-                            {{ video.addr1 }}
+                            {{ attraction.addr1 }}
                           </v-card-subtitle>
                         </div>
                       </v-col>
@@ -60,7 +60,7 @@
                 </v-skeleton-loader>
               </div>
               <!-- <v-col cols="12" sm="12" md="12" lg="12"> -->
-              <infinite-loading :identifier="infiniteId" @infinite="getVideos">
+              <infinite-loading :identifier="infiniteId" @infinite="getAttractions">
                 <div slot="spinner">
                   <v-progress-circular indeterminate color="red"></v-progress-circular>
                 </div>
@@ -92,66 +92,66 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import InfiniteLoading from "vue-infinite-loading";
+import { mapGetters } from 'vuex';
+import InfiniteLoading from 'vue-infinite-loading';
 
-import VideoService from "@/services/VideoService";
+import AttractionService from '@/services/AttractionService';
 
-import NearbyMap from "@/components/map/NearbyMap.vue";
+import NearbyMap from '@/components/map/NearbyMap.vue';
 
 export default {
   data: () => ({
     loading: false,
     loaded: false,
     errored: false,
-    videoLoading: true,
-    video: {},
-    videos: [],
+    attractionLoading: true,
+    attraction: {},
+    attractions: [],
     page: 1,
     infiniteId: +new Date(),
     details: {},
     scrollNum: 0,
   }),
   computed: {
-    ...mapGetters(["currentUser", "getUrl", "isAuthenticated", "noImgUrl"]),
+    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated', 'noImgUrl']),
   },
   methods: {
-    async getVideo(id) {
+    async getAttraction(id) {
       this.errored = false;
-      this.videoLoading = true;
-      this.video = {};
+      this.attractionLoading = true;
+      this.attraction = {};
       try {
-        const video = await VideoService.getById(id);
+        const attraction = await AttractionService.getById(id);
 
-        if (!video) return this.$router.push("/");
-        this.video = video.data.data;
+        if (!attraction) return this.$router.push('/');
+        this.attraction = attraction.data.data;
       } catch (err) {
         this.errored = true;
         console.log(err);
       } finally {
-        this.videoLoading = false;
+        this.attractionLoading = false;
       }
 
       if (!this.isAuthenticated) return;
     },
-    async getVideos($state) {
+    async getAttractions($state) {
       this.errored = false;
       if (!this.loaded) {
         this.loading = true;
       }
-      const videos = await VideoService.getNearbyAttractions(this.$route.params.id, { page: this.page })
+      const attractions = await AttractionService.getNearbyAttractions(this.$route.params.id, { page: this.page })
         .catch((err) => {
           console.log(err);
           this.errored = true;
         })
         .finally(() => (this.loading = false));
 
-      if (typeof videos === "undefined") return;
+      if (typeof attractions === 'undefined') return;
 
-      if (videos.data.data.length) {
+      if (attractions.data.data.length) {
         this.page += 1;
 
-        this.videos.push(...videos.data.data);
+        this.attractions.push(...attractions.data.data);
         if ($state) {
           $state.loaded();
         }
@@ -168,7 +168,7 @@ export default {
       console.log(e);
     },
     actions() {
-      this.getVideo();
+      this.getAttraction();
     },
 
     scroll() {
@@ -185,24 +185,24 @@ export default {
     NearbyMap,
   },
   mounted() {
-    this.getVideo(this.$route.params.id);
-    document.addEventListener("scroll", this.scroll);
+    this.getAttraction(this.$route.params.id);
+    document.addEventListener('scroll', this.scroll);
   },
   beforeDestroy() {
-    document.removeEventListener("scroll", this.scroll);
+    document.removeEventListener('scroll', this.scroll);
   },
   beforeRouteUpdate(to, from, next) {
     this.page = 1;
-    (this.loading = false), (this.loaded = false), (this.videos = []);
+    (this.loading = false), (this.loaded = false), (this.attractions = []);
     this.infiniteId += 1;
-    this.getVideo(to.params.id);
+    this.getAttraction(to.params.id);
     next();
   },
 };
 </script>
 
 <style lang="scss">
-video {
+attraction {
   max-width: 100%;
 }
 

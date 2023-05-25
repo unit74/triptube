@@ -2,29 +2,30 @@
   <div id="trending" class="pt-7 px-sm-10">
     <v-container fluid>
       <v-row>
-        <v-col cols="8" sm="7" md="10" lg="10" v-for="(video, i) in loading ? 12 : videos" :key="i" class="mx-lg-0 mx-md-0 mx-sm-auto mx-auto">
+        <v-col cols="8" sm="7" md="10" lg="10" v-for="(attraction, i) in loading ? 12 : attractions" :key="i" class="mx-lg-0 mx-md-0 mx-sm-auto mx-auto">
           <v-skeleton-loader class="mx-auto" type="list-item-avatar-three-line" :loading="loading" tile large>
-            <v-card class="card" tile flat :to="`/watch/${video.contentId}`">
+            <v-card class="card" tile flat :to="`/watch/${attraction.contentId}`">
               <v-row no-gutters>
                 <v-col class="mx-auto" cols="12" sm="8" md="5" lg="4">
                   <!-- <v-responsive max-height="100%"> -->
-                  <v-img v-if="video.firstImage" max-height="200" class="align-center" :src="`${video.firstImage}`"> </v-img>
+                  <v-img v-if="attraction.firstImage" max-height="200" class="align-center" :src="`${attraction.firstImage}`"> </v-img>
                   <v-img v-else :src="require(`@/assets/logo.png`)" max-height="200" class="align-center"> </v-img>
                   <!-- </v-responsive> -->
                 </v-col>
                 <v-col class="hidden-sm-and-down">
                   <div class="ml-4 ">
                     <v-card-title class="pl-2 pt-0 subtitle-1 font-weight-bold">
-                      {{ video.title }}
+                      {{ attraction.title }}
                     </v-card-title>
 
-                    <v-card-subtitle class="pl-2 pb-0" v-if="video">
-                      {{ video.addr1 }}
-                      <v-icon>mdi-circle-small</v-icon>{{ video.readcount }} views<v-icon>mdi-circle-small</v-icon>{{ dateFormatter(video.createdAt) }}
+                    <v-card-subtitle class="pl-2 pb-0" v-if="attraction">
+                      {{ attraction.addr1 }}
+                      <v-icon>mdi-circle-small</v-icon>{{ attraction.readcount }} views<v-icon>mdi-circle-small</v-icon
+                      >{{ dateFormatter(attraction.createdAt) }}
                     </v-card-subtitle>
                     <br />
                     <v-card-subtitle class="pl-2 pt-0">
-                      {{ truncateText(video.overview, 100) }}
+                      {{ truncateText(attraction.overview, 100) }}
                     </v-card-subtitle>
                   </div>
                 </v-col>
@@ -32,11 +33,11 @@
             </v-card>
           </v-skeleton-loader>
         </v-col>
-        <v-col class="text-center" v-if="videos.length === 0 && !loading">
-          <p>No trending videos yet</p>
+        <v-col class="text-center" v-if="attractions.length === 0 && !loading">
+          <p>No trending attractions yet</p>
         </v-col>
         <v-col cols="12" sm="12" md="12" lg="12">
-          <infinite-loading @infinite="getVideos">
+          <infinite-loading @infinite="getAttractions">
             <div slot="spinner">
               <v-progress-circular indeterminate color="red"></v-progress-circular>
             </div>
@@ -65,32 +66,32 @@
 </template>
 
 <script>
-import InfiniteLoading from "vue-infinite-loading";
-import moment from "moment";
+import InfiniteLoading from 'vue-infinite-loading';
+import moment from 'moment';
 
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex';
 
-import VideoService from "@/services/VideoService";
+import AttractionService from '@/services/AttractionService';
 
 export default {
-  name: "Trending",
+  name: 'Trending',
   data: () => ({
     loading: false,
     loaded: false,
     errored: false,
-    videos: [],
+    attractions: [],
     page: 1,
   }),
   computed: {
-    ...mapGetters(["currentUser", "getUrl", "isAuthenticated"]),
+    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated']),
   },
   methods: {
-    async getVideos($state) {
+    async getAttractions($state) {
       if (!this.loaded) {
         this.loading = true;
       }
 
-      const videos = await VideoService.getHotplace({
+      const attractions = await AttractionService.getHotplace({
         page: this.page,
       })
         .catch((err) => {
@@ -101,18 +102,18 @@ export default {
           this.loading = false;
         });
 
-      if (typeof videos === "undefined") return;
+      if (typeof attractions === 'undefined') return;
 
-      if (videos.data.data.length) {
+      if (attractions.data.data.length) {
         this.page += 1;
-        this.videos.push(...videos.data.data);
+        this.attractions.push(...attractions.data.data);
         $state.loaded();
         this.loaded = true;
       } else {
         $state.complete();
       }
     },
-    truncateText(string = "", num) {
+    truncateText(string = '', num) {
       if (string.length <= num) {
         return string;
       }

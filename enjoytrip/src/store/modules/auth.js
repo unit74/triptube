@@ -6,13 +6,13 @@ const state = {
   user: JSON.parse(localStorage.getItem("user")) || null,
   // isUserLoggedIn: localStorage.getItem('token') || false
   isUserLoggedIn: localStorage.getItem("token") || false,
-  // logoUrl: "http://192.168.203.120:8080/api/v1/public/users/profiles/3.png",
-  logoUrl: "http://192.168.203.120:8080/api/v1/public/images/logo",
-  noImgUrl: "http://192.168.203.120:8080/api/v1/public/images/no-images",
-  defaultProfileUrl: "http://192.168.203.120:8080/api/v1/public/users/profiles/",
+  // logoUrl: "http://192.168.203.120:8080/api/v1/public/images/logo",
+  // noImgUrl: "http://192.168.203.120:8080/api/v1/public/images/no-images",
+  // defaultProfileUrl: "http://192.168.203.120:8080/api/v1/public/users/profiles/",
 
-  // logoUrl: "http://192.168.203.119:8080/api/v1/public/images/logo",
-  // noImgUrl: "http://192.168.203.119:8080/api/v1/public/images/no-images",
+  logoUrl: "http://192.168.0.233:8080/api/v1/public/images/logo",
+  noImgUrl: "http://192.168.0.233:8080/api/v1/public/images/no-images",
+  defaultProfileUrl: "http://192.168.0.233:8080/api/v1/public/users/profiles/",
 };
 
 const getters = {

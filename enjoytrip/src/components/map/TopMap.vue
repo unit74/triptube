@@ -4,8 +4,8 @@ v-container<template>
 
 <script>
 export default {
-  name: "TopMap",
-  props: ["videos"],
+  name: 'TopMap',
+  props: ['attractions'],
   data() {
     return {
       map: null,
@@ -21,16 +21,16 @@ export default {
   },
   methods: {
     loadScript() {
-      const script = document.createElement("script");
-      script.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=5cbe260f12f7558c41e541afc9525bf6&autoload=false";
+      const script = document.createElement('script');
+      script.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=5cbe260f12f7558c41e541afc9525bf6&autoload=false';
       script.onload = () => window.kakao.maps.load(this.loadMapInit);
       this.mapLoading = true;
       document.head.appendChild(script);
     },
     loadMapInit() {
-      const mapContainer = document.getElementById("map"); // 지도를 표시할 div
+      const mapContainer = document.getElementById('map'); // 지도를 표시할 div
       const mapOption = {
-        center: new window.kakao.maps.LatLng(this.videos[0].latitude, this.videos[0].longitude), // 지도의 중심좌표
+        center: new window.kakao.maps.LatLng(this.attractions[0].latitude, this.attractions[0].longitude), // 지도의 중심좌표
         level: 13, // 지도의 확대 레벨
       };
 
@@ -41,7 +41,7 @@ export default {
     loadMakers() {
       let positions = [];
 
-      this.videos.forEach((element) => {
+      this.attractions.forEach((element) => {
         this.latitude += element.latitude;
         this.longitude += element.longitude;
         positions.push({
@@ -74,8 +74,8 @@ export default {
 
         // const contentId = positions[i].contentId;
 
-        window.kakao.maps.event.addListener(marker, "mouseover", this.makeOverListener(this.map, marker, infowindow));
-        window.kakao.maps.event.addListener(marker, "mouseout", this.makeOutListener(infowindow));
+        window.kakao.maps.event.addListener(marker, 'mouseover', this.makeOverListener(this.map, marker, infowindow));
+        window.kakao.maps.event.addListener(marker, 'mouseout', this.makeOutListener(infowindow));
       }
 
       // this.setCenter(this.latitude / positions.length, this.longitude / positions.length);

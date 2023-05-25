@@ -8,7 +8,7 @@
         <v-img v-else-if="currentUser.profilePhotoUrl !== 'no-photo.jpg'" :src="`${defaultProfileUrl + currentUser.profilePhotoUrl}`"></v-img>
 
         <v-avatar v-else color="red">
-          <span class="white--text headline "> {{ currentUser.name.split("")[0].toUpperCase() }}</span>
+          <span class="white--text headline "> {{ currentUser.name.split('')[0].toUpperCase() }}</span>
         </v-avatar>
       </v-list-item-avatar>
       <v-list-item-content class="align-self-auto">
@@ -23,11 +23,11 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import CommentService from "@/services/CommentService";
+import { mapGetters } from 'vuex';
+import CommentService from '@/services/CommentService';
 export default {
   props: {
-    videoId: {
+    attractionId: {
       type: Number,
       required: true,
     },
@@ -36,20 +36,20 @@ export default {
     return {
       showCommentBtns: false,
       loading: false,
-      comment: "",
+      comment: '',
     };
   },
   computed: {
-    ...mapGetters(["currentUser", "getUrl", "isAuthenticated", "defaultProfileUrl"]),
+    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated', 'defaultProfileUrl']),
   },
   methods: {
     async createComment() {
-      if (this.comment === "") return;
+      if (this.comment === '') return;
 
       this.loading = true;
       const comment = await CommentService.createComment({
         text: this.comment,
-        contentId: this.videoId,
+        contentId: this.attractionId,
       })
         .catch((err) => {
           console.log(err);
@@ -59,15 +59,15 @@ export default {
         });
 
       if (!comment) return;
-      this.comment = "";
+      this.comment = '';
       comment.data.data.replies = [];
       comment.data.data.userId = this.$store.getters.currentUser;
 
-      this.$store.dispatch("addComment", comment.data.data);
-      this.$emit("videoCommentLength");
+      this.$store.dispatch('addComment', comment.data.data);
+      this.$emit('attractionCommentLength');
     },
     clickTextField() {
-      if (!this.isAuthenticated) return this.$router.push("/signin");
+      if (!this.isAuthenticated) return this.$router.push('/signin');
       this.showCommentBtns = true;
     },
   },

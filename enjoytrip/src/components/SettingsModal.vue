@@ -97,32 +97,32 @@
 </template>
 
 <script>
-import AuthenticationService from "@/services/AuthenticationService";
+import AuthenticationService from '@/services/AuthenticationService';
 //import myUpload from "vue-image-crop-upload";
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex';
 
 export default {
-  name: "SettingsModal",
-  props: ["openDialog"],
+  name: 'SettingsModal',
+  props: ['openDialog'],
   data: function() {
     return {
       snackbar: false,
-      snackbarMessage: "",
+      snackbarMessage: '',
       image: null,
       imageUrl: null,
-      rules: [(value) => !value || value.size < 1000000 || "Video size should be less than 1 MB!"],
+      rules: [(value) => !value || value.size < 1000000 || 'Attraction size should be less than 1 MB!'],
       showCurrentPassword: false,
       showNewPassword: false,
       valid: false,
       interval: {},
       show: false,
-      categories: ["People", "Technology", "Fashion"],
-      visibilty: ["Public", "Private"],
+      categories: ['People', 'Technology', 'Fashion'],
+      visibilty: ['Public', 'Private'],
       formData: {
         name: this.$store.getters.currentUser.name,
         email: this.$store.getters.currentUser.email,
-        currentPassword: "",
-        newPassword: "",
+        currentPassword: '',
+        newPassword: '',
       },
       loading: {
         personalInfo: false,
@@ -135,7 +135,7 @@ export default {
     dialog() {
       return this.openDialog;
     },
-    ...mapGetters(["currentUser", "isAuthenticated", "defaultProfileUrl"]),
+    ...mapGetters(['currentUser', 'isAuthenticated', 'defaultProfileUrl']),
   },
   methods: {
     async submit() {
@@ -148,15 +148,15 @@ export default {
         .catch((err) => {
           console.log(err);
           this.snackbar = true;
-          this.snackbarMessage = "이름 입력이 잘못됐습니다. 다시 입력해주세요";
+          this.snackbarMessage = '이름 입력이 잘못됐습니다. 다시 입력해주세요';
         })
         .finally(() => (this.loading.personalInfo = false));
 
       if (!user.data.success) return;
       if (this.formData.name !== this.currentUser.name) {
-        const getUser = JSON.parse(localStorage.getItem("user"));
+        const getUser = JSON.parse(localStorage.getItem('user'));
         getUser.name = this.formData.name;
-        this.$store.dispatch("updateUserInfo", getUser);
+        this.$store.dispatch('updateUserInfo', getUser);
       }
 
       this.closeModal();
@@ -176,16 +176,16 @@ export default {
           const errors = err.response.data.error;
 
           this.$refs.passwordForm.setErrors({
-            "Current password": errors.find((error) => {
-              return error.field === "currentPassword";
+            'Current password': errors.find((error) => {
+              return error.field === 'currentPassword';
             })
-              ? ["Current password is incorrect"]
+              ? ['Current password is incorrect']
               : null,
-            "New password": errors.find((error) => {
-              return error.field === "newPassword";
+            'New password': errors.find((error) => {
+              return error.field === 'newPassword';
             })
               ? errors.find((error) => {
-                  return error.field === "newPassword";
+                  return error.field === 'newPassword';
                 }).message
               : null,
           });
@@ -193,24 +193,24 @@ export default {
         .finally(() => (this.loading.password = false));
       if (!user.data.success) {
         this.snackbar = true;
-        this.snackbarMessage = "현재 비밀번호가 틀렸습니다.";
+        this.snackbarMessage = '현재 비밀번호가 틀렸습니다.';
         return;
       }
 
-      this.formData.currentPassword = "";
-      this.formData.newPassword = "";
+      this.formData.currentPassword = '';
+      this.formData.newPassword = '';
 
       this.snackbar = true;
-      this.snackbarMessage = "다시 로그인이 필요합니다.";
+      this.snackbarMessage = '다시 로그인이 필요합니다.';
 
       this.closeModal();
-      this.$store.dispatch("signOut");
+      this.$store.dispatch('signOut');
       setTimeout(() => {
-        this.$router.push("/signin");
+        this.$router.push('/signin');
       }, 500);
     },
     closeModal() {
-      this.$emit("closeDialog");
+      this.$emit('closeDialog');
     },
 
     toggleShow() {
@@ -226,25 +226,25 @@ export default {
       if (this.loading.profileImg) return;
       if (this.image == null) {
         this.snackbar = true;
-        this.snackbarMessage = "이미지를 등록해주세요";
+        this.snackbarMessage = '이미지를 등록해주세요';
         return;
       }
       this.loading.profileImg = true;
 
       const formData = new FormData();
-      formData.append("image", this.image);
+      formData.append('image', this.image);
       const result = await AuthenticationService.uploadUserProfile(formData)
         .catch((err) => {
           console.log(err);
           this.snackbar = true;
-          this.snackbarMessage = "이미지가 너무 크거나 손상되었습니다. 이미지를 다시 확인해주세요 ";
+          this.snackbarMessage = '이미지가 너무 크거나 손상되었습니다. 이미지를 다시 확인해주세요 ';
         })
         .finally(() => (this.loading.profileImg = false));
 
       if (!result.data.success) {
-        console.log("???");
+        console.log('???');
         this.snackbar = true;
-        this.snackbarMessage = "이미지를 등록에 문제가 생겼습니다. 다시 시도해 주세요";
+        this.snackbarMessage = '이미지를 등록에 문제가 생겼습니다. 다시 시도해 주세요';
         return;
       }
       this.closeModal();
