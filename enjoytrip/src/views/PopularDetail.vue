@@ -15,7 +15,7 @@
         </v-alert>
         <v-col v-else cols="11" class="mx-auto">
           <v-row>
-            <v-col cols="12" sm="12" md="8" lg="8" :style="{ marginTop: scrollNum + 'px' }">
+            <v-col cols="12" sm="12" md="8" lg="8">
               <v-skeleton-loader type="card-avatar, article, actions" :loading="attractionLoading" tile large>
                 <div ref="hello">
                   <v-responsive>
@@ -81,7 +81,6 @@ export default {
     page: 1,
     infiniteId: +new Date(),
     details: {},
-    scrollNum: 0,
   }),
   computed: {
     ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated', 'noImgUrl']),
@@ -119,15 +118,6 @@ export default {
     actions() {
       this.getAttraction();
     },
-
-    scroll() {
-      this.scrollNum = window.scrollY || document.documentElement.scrollTop;
-      if (window.scrollY > this.$refs.scrollTest.offsetTop) {
-        this.isFixed = true;
-      } else {
-        this.isFixed = false;
-      }
-    },
   },
   components: {
     TopMap,
@@ -135,11 +125,9 @@ export default {
 
   mounted() {
     this.getAttractions(this.$route.params.id);
-    document.addEventListener('scroll', this.scroll);
+    window.scrollTo(0, 0);
   },
-  beforeDestroy() {
-    document.removeEventListener('scroll', this.scroll);
-  },
+
   beforeRouteUpdate(to, from, next) {
     (this.loading = false), (this.loaded = false), (this.attractions = []);
     this.infiniteId += 1;

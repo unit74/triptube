@@ -217,20 +217,8 @@
       </v-skeleton-loader>
     </div>
     <v-snackbar v-model="snackbar">
-      Comment deleted successfully
+      Comment {{ snackbarMessage }}
       <v-btn color="white" text @click="snackbar = false" icon>
-        <v-icon>mdi-close-circle</v-icon>
-      </v-btn>
-    </v-snackbar>
-    <v-snackbar v-model="snackbarFail">
-      Comment deleted fail
-      <v-btn color="white" text @click="snackbarFail = false" icon>
-        <v-icon>mdi-close-circle</v-icon>
-      </v-btn>
-    </v-snackbar>
-    <v-snackbar v-model="updateFail">
-      Comment {{ updateFailMessage }}
-      <v-btn color="white" text @click="updateFail = false" icon>
         <v-icon>mdi-close-circle</v-icon>
       </v-btn>
     </v-snackbar>
@@ -260,12 +248,10 @@ export default {
       url: process.env.VUE_APP_URL,
       snackbar: false,
       loading: false,
-      snackbarFail: false,
       showCommentBtns: false,
       updateText: '',
       usingUpdate: false,
-      updateFail: false,
-      updateFailMessage: '',
+      snackbarMessage: '',
     };
   },
   computed: {
@@ -288,12 +274,12 @@ export default {
       console.log(this.currentUser.email);
 
       if (this.currentUser.email !== email) {
-        this.updateFailMessage = '작성자가 동일 하지 않습니다.';
-        this.updateFail = true;
+        this.snackbarMessage = '작성자가 동일 하지 않습니다.';
+        this.snackbar = true;
         return;
       } else if (this.usingUpdate) {
-        this.updateFailMessage = '이미 업데이트 사용 중 입니다.';
-        this.updateFail = true;
+        this.snackbarMessage = '이미 업데이트 사용 중 입니다.';
+        this.snackbar = true;
         return;
       }
       console.log('updateTextField');
@@ -309,12 +295,12 @@ export default {
       console.log(this.currentUser.email);
 
       if (this.currentUser.email !== email) {
-        this.updateFailMessage = '작성자가 동일 하지 않습니다.';
-        this.updateFail = true;
+        this.snackbarMessage = '작성자가 동일 하지 않습니다.';
+        this.snackbar = true;
         return;
       } else if (this.usingUpdate) {
-        this.updateFailMessage = '이미 업데이트 사용 중 입니다.';
-        this.updateFail = true;
+        this.snackbarMessage = '이미 업데이트 사용 중 입니다.';
+        this.snackbar = true;
         return;
       }
       console.log('updateTextField');
@@ -334,13 +320,13 @@ export default {
 
       if (result.data.success) {
         this.comments[i].text = this.updateText;
+      } else {
+        this.snackbar = true;
+        this.snackbarMessage = 'update fail';
+        return;
       }
 
       this.finishUpdate(i);
-      if (!result.data.success) {
-        this.snackbarFail = true;
-        return;
-      }
     },
     async updateReply(i, j, replyId) {
       console.log(i);
@@ -366,13 +352,15 @@ export default {
         console.log(err);
       });
       if (!result.data.success) {
-        this.snackbarFail = true;
+        this.snackbar = true;
+        this.snackbarMessage = 'deleted fail';
         return;
+      } else {
+        this.snackbar = true;
+        this.snackbarMessage = 'deleted successfully';
       }
 
       this.comments = this.comments.filter((comment) => comment.commentId.toString() !== commentId.toString());
-
-      this.snackbar = true;
 
       await this.$store.dispatch('setComments', this.attractionId).catch((err) => console.log(err));
       this.comments = this.$store.getters.getComments.data;
@@ -383,9 +371,7 @@ export default {
       if (this.$refs[`input${id}`][0].$refs.input.value == '') return;
 
       this.btnLoading = true;
-      // console.log((event.target.loading = true))
       this.$refs[`form${id}`][0].reset();
-      // console.log(this.$refs[`input${id}`][0].$refs.input.value)
 
       const reply = await ReplyService.createReply(id, this.$refs[`input${id}`][0].$refs.input.value)
         .catch((err) => {
@@ -393,33 +379,15 @@ export default {
         })
         .finally(() => {
           this.btnLoading = false;
-          // this.$store.dispatch('setComments', this.attractionId)
         });
       reply.data.data.userId = this.$store.getters.currentUser;
-      // this.$store.dispatch('addComment', reply.data.data)
-      // console.log(this.$store.getters.getComments.data)
       let comment = this.comments.find((comment) => comment.commentId.toString() === id.toString());
-      // console.log(comment)
       if (!comment.replies) {
-        // console.log('1')
-        // comment.replies = []
         comment.replies.push(reply.data.data);
       } else {
-        // console.log('2')
         comment.replies.unshift(reply.data.data);
-        // this.comments
-        //   .find((comment) => comment.commentId === id)
-        //   .replies.unshift(reply.data.data)
       }
-
-      // console.log(
-      //   this.$store.getters.getComments.data.find(
-      //     (comment) => comment.commentId === id
-      //   )
-      // )
-      // this.comments
-      //   .find((comment) => comment.commentId === id)
-      //   .replies.unshift(reply.data.data)
+      this.hideReply(id);
     },
     async deleteReply(commentId, replyId) {
       if (!this.isAuthenticated) return;

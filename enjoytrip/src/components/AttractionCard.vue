@@ -24,8 +24,8 @@
         </v-card-subtitle>
         <v-card-subtitle class="pl-2 pt-0">
           {{ attraction.readcount }} views
-          <span v-if="attraction.updatedAt"><v-icon>mdi-circle-small</v-icon> {{ dateFormatter(attraction.updatedAt) }}</span>
-          <span v-else-if="attraction.createAt"><v-icon>mdi-circle-small</v-icon> {{ dateFormatter(attraction.createAt) }}</span>
+          <span v-if="attraction.updatedAt"><v-icon>mdi-circle-small</v-icon>{{ dateFormatter(attraction.updatedAt) }}</span>
+          <span v-else-if="attraction.createAt"><v-icon>mdi-circle-small</v-icon>{{ dateFormatter(attraction.createAt) }}</span>
         </v-card-subtitle>
       </v-col>
     </v-row>

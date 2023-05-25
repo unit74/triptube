@@ -14,11 +14,11 @@ const routes = [
     },
   },
   {
-    path: '/subscriptions',
-    name: 'Subscription',
+    path: '/library',
+    name: 'Library',
     components: {
       NavBar,
-      default: () => import(/* webpackChunkName: "about" */ '../views/Subscription.vue'),
+      default: () => import(/* webpackChunkName: "about" */ '../views/Library.vue'),
     },
     meta: { requiresAuth: true },
   },

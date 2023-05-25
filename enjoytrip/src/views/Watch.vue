@@ -178,7 +178,7 @@ import { mapGetters } from 'vuex';
 import InfiniteLoading from 'vue-infinite-loading';
 
 import AttractionService from '@/services/AttractionService';
-import SubscriptionService from '@/services/SubscriptionService';
+import LibraryService from '@/services/LibraryService';
 import ReactionService from '@/services/ReactionService';
 // import HistoryService from "@/services/HistoryService";
 
@@ -226,7 +226,7 @@ export default {
         console.log(err);
       } finally {
         this.attractionLoading = false;
-        this.checkSubscription(this.attraction.contentId);
+        this.checkLibrary(this.attraction.contentId);
         this.checkReaction(this.attraction.contentId);
       }
 
@@ -263,11 +263,11 @@ export default {
         }
       }
     },
-    async checkSubscription(contentId) {
+    async checkLibrary(contentId) {
       if (!this.isAuthenticated) return;
 
       this.loading = true;
-      const sub = await SubscriptionService.checkSubscription(contentId)
+      const sub = await LibraryService.checkLibraries(contentId)
         .catch((err) => {
           console.log(err);
         })
@@ -374,13 +374,13 @@ export default {
       this.LibraryLoading = true;
       let sub;
       if (!this.inLibrary) {
-        sub = await SubscriptionService.createSubscription(this.attraction.contentId)
+        sub = await LibraryService.createLibraries(this.attraction.contentId)
           .catch((err) => console.log(err))
           .finally(() => {
             this.LibraryLoading = false;
           });
       } else {
-        sub = await SubscriptionService.deleteLibrary(this.libraryId)
+        sub = await LibraryService.deleteLibrary(this.libraryId)
           .catch((err) => console.log(err))
           .finally(() => {
             this.LibraryLoading = false;
@@ -395,14 +395,7 @@ export default {
         if (this.inLibrary) this.libraryId = sub.data.data.libraryId;
       }
     },
-    // async updateViews(id) {
-    //   const views = await AttractionService.updateViews(id).catch((err) => {
-    //     console.log(err);
-    //   });
-    //   if (!views) return;
 
-    //   this.attraction.readcount++;
-    // },
     play(e) {
       console.log(e);
     },
@@ -437,7 +430,7 @@ export default {
   },
   mounted() {
     this.getAttraction(this.$route.params.id);
-    // if (this.isAuthenticated) this.updateViews(this.$route.params.id);
+    window.scrollTo(0, 0);
   },
   beforeRouteUpdate(to, from, next) {
     this.page = 1;

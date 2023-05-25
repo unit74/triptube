@@ -186,6 +186,8 @@ export default {
   mounted() {
     this.getAttraction(this.$route.params.id);
     document.addEventListener('scroll', this.scroll);
+
+    window.scrollTo(0, 0);
   },
   beforeDestroy() {
     document.removeEventListener('scroll', this.scroll);

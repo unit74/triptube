@@ -49,12 +49,11 @@
                               <v-icon>mdi-close</v-icon>
                             </v-btn>
                           </v-card-title>
-
-                          <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1">
-                            {{ history.attractionInfo.readcount }} views <v-icon>mdi-circle-small</v-icon>{{ dateFormatter(history.updatedAt) }}
-                          </v-card-subtitle>
                           <v-card-subtitle class="pl-2 pt-2 pb-0">
                             {{ history.attractionInfo.addr1 }}
+                          </v-card-subtitle>
+                          <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1">
+                            {{ history.attractionInfo.readcount }} views <v-icon>mdi-circle-small</v-icon>{{ dateFormatter(history.updatedAt) }}
                           </v-card-subtitle>
                         </div>
                       </v-col>

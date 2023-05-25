@@ -24,7 +24,7 @@
             </v-skeleton-loader>
           </v-col>
           <v-col class="text-center" v-if="attractions.length === 0 && !loading">
-            <p>You haven't subscribed to any channel yet</p>
+            <p>You haven't library to any attraction yet</p>
           </v-col>
           <v-col cols="12" sm="12" md="12" lg="12">
             <infinite-loading @infinite="getAttractions">
@@ -61,10 +61,10 @@ import InfiniteLoading from 'vue-infinite-loading';
 import moment from 'moment';
 
 import AttractionCard from '@/components/AttractionCard';
-import SubscriptionService from '@/services/SubscriptionService';
+import LibraryService from '@/services/LibraryService';
 
 export default {
-  name: 'Subscription',
+  name: 'Library',
   data: () => ({
     loading: false,
     loaded: false,
@@ -78,7 +78,7 @@ export default {
         this.loading = true;
       }
 
-      const attractions = await SubscriptionService.getSaveAttractions(this.page)
+      const attractions = await LibraryService.getSaveAttractions(this.page)
         .catch((err) => {
           console.log(err);
           this.errored = true;

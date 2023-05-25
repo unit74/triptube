@@ -155,7 +155,7 @@ export default {
         pages: [
           {
             title: 'Library',
-            link: '/subscriptions',
+            link: '/library',
             icon: 'mdi-package-variant',
           },
           {
