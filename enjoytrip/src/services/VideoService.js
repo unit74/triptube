@@ -16,6 +16,12 @@ export default {
       headers: { Authorization: token },
     });
   },
+  getNearbyAttractions(contentId, page) {
+    return Api().get(`/api/v1/public/trips/attractions/${contentId}/nearby`, { params: page });
+  },
+  getTop10LikedAttractions(contentType) {
+    return Api().get(`/api/v1/public/trips/attractions/hots`, { params: contentType });
+  },
   uploadVideo(data, optional) {
     console.log("uploadVideo");
     return Api().post("videos", data, optional);

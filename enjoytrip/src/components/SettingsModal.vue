@@ -70,11 +70,12 @@
                 <div v-if="currentUser.profilePhotoUrl == 'no-photo.jpg'" class="px-12" id="settings-image-placeholder">
                   <v-icon>mdi-image-plus</v-icon>
                 </div>
+                <v-img v-else-if="this.imageUrl" height="220" :src="this.imageUrl"></v-img>
                 <v-img v-else height="220" :src="defaultProfileUrl + currentUser.profilePhotoUrl"></v-img>
               </v-responsive>
               <v-file-input
                 :rules="rules"
-                accept="image/png, image/jpeg, image/bmp"
+                accept="image/png, image/jpeg"
                 placeholder="Pick an avatar"
                 prepend-icon="mdi-camera"
                 label="Avatar"
@@ -108,16 +109,12 @@ export default {
       snackbar: false,
       snackbarMessage: "",
       image: null,
-      rules: [
-        (value) => {
-          return !value || !value.length || value[0].size < 2000000 || "Avatar size should be less than 2 MB!";
-        },
-      ],
+      imageUrl: null,
+      rules: [(value) => !value || value.size < 1000000 || "Video size should be less than 1 MB!"],
       showCurrentPassword: false,
       showNewPassword: false,
       valid: false,
       interval: {},
-      value: 0,
       show: false,
       categories: ["People", "Technology", "Fashion"],
       visibilty: ["Public", "Private"],
@@ -149,20 +146,13 @@ export default {
         name: this.formData.name,
       })
         .catch((err) => {
-          this.loading.personalInfo = false;
-          const errors = err.response.data.error;
-
-          this.$refs.personalInfoForm.setErrors({
-            name: errors.find((error) => {
-              return error.field === "name";
-            })
-              ? ["This channel name is already taken"]
-              : null,
-          });
+          console.log(err);
+          this.snackbar = true;
+          this.snackbarMessage = "이름 입력이 잘못됐습니다. 다시 입력해주세요";
         })
         .finally(() => (this.loading.personalInfo = false));
 
-      if (!user) return;
+      if (!user.data.success) return;
       if (this.formData.name !== this.currentUser.name) {
         const getUser = JSON.parse(localStorage.getItem("user"));
         getUser.name = this.formData.name;
@@ -179,7 +169,7 @@ export default {
 
       const user = await AuthenticationService.updatePassword({
         currentPassword: this.formData.currentPassword,
-        password: this.formData.newPassword,
+        newPassword: this.formData.newPassword,
       })
         .catch((err) => {
           this.loading.password = false;
@@ -201,17 +191,21 @@ export default {
           });
         })
         .finally(() => (this.loading.password = false));
-      if (!user) return;
+      if (!user.data.success) {
+        this.snackbar = true;
+        this.snackbarMessage = "현재 비밀번호가 틀렸습니다.";
+        return;
+      }
 
       this.formData.currentPassword = "";
       this.formData.newPassword = "";
 
       this.snackbar = true;
       this.snackbarMessage = "다시 로그인이 필요합니다.";
-      this.closeModal();
 
+      this.closeModal();
+      this.$store.dispatch("signOut");
       setTimeout(() => {
-        this.$store.dispatch("signOut");
         this.$router.push("/signin");
       }, 500);
     },
@@ -222,30 +216,12 @@ export default {
     toggleShow() {
       this.show = !this.show;
     },
-    cropSuccess(imgDataUrl, field) {
-      // console.log('-------- crop success --------')
-      console.log(field);
-      this.imgDataUrl = imgDataUrl;
-      // console.log(this.imgDataUrl)
-      // console.log(field)
-    },
-    cropUploadSuccess(jsonData, field) {
-      // console.log('-------- upload success --------')
-      const user = this.$store.getters.currentUser;
-      user.profilePhotoUrl = jsonData.data;
-      this.$store.dispatch("signin", user);
-      console.log("field: " + field);
-    },
-
-    cropUploadFail(status, field) {
-      console.log("-------- upload fail --------");
-      console.log(status);
-      console.log("field: " + field);
-    },
 
     selectImg(file) {
       this.image = file;
+      this.imageUrl = URL.createObjectURL(file);
     },
+
     async uploadUserProfile() {
       if (this.loading.profileImg) return;
       if (this.image == null) {
@@ -260,14 +236,19 @@ export default {
       const result = await AuthenticationService.uploadUserProfile(formData)
         .catch((err) => {
           console.log(err);
-          this.errored = true;
+          this.snackbar = true;
+          this.snackbarMessage = "이미지가 너무 크거나 손상되었습니다. 이미지를 다시 확인해주세요 ";
         })
         .finally(() => (this.loading.profileImg = false));
 
-      console.log("result");
-      console.log(result);
-
+      if (!result.data.success) {
+        console.log("???");
+        this.snackbar = true;
+        this.snackbarMessage = "이미지를 등록에 문제가 생겼습니다. 다시 시도해 주세요";
+        return;
+      }
       this.closeModal();
+      this.$router.go();
     },
   },
   components: {

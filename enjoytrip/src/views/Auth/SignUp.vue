@@ -17,7 +17,7 @@
                   </ValidationProvider>
                   <v-row>
                     <v-col cols="6">
-                      <ValidationProvider v-slot="{ errors }" name="Password" rules="required|password:@confirm">
+                      <ValidationProvider v-slot="{ errors }" name="Password" rules="required|min:5|password:@confirm">
                         <v-text-field v-model="password" type="password" :error-messages="errors" label="Password" outlined dense></v-text-field>
                       </ValidationProvider>
                     </v-col>

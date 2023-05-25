@@ -100,6 +100,22 @@ const routes = [
     },
   },
   {
+    path: "/popular",
+    name: "Popular",
+    components: {
+      NavBar,
+      default: () => import(/* webpackChunkName: "video" */ "../views/Popular.vue"),
+    },
+  },
+  {
+    path: "/top10/:id",
+    name: "Top10",
+    components: {
+      NavBar,
+      default: () => import(/* webpackChunkName: "video" */ "../views/Top10.vue"),
+    },
+  },
+  {
     path: "/history",
     name: "History",
     components: {
@@ -114,6 +130,14 @@ const routes = [
     components: {
       NavBar,
       default: () => import(/* webpackChunkName: "video" */ "../views/Search.vue"),
+    },
+  },
+  {
+    path: "/nearby/:id",
+    name: "Nearby",
+    components: {
+      NavBar,
+      default: () => import(/* webpackChunkName: "video" */ "../views/Nearby.vue"),
     },
   },
 ];

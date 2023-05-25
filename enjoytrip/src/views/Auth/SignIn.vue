@@ -16,9 +16,6 @@
                   </ValidationProvider>
                   <ValidationProvider v-slot="{ errors }" name="Password" rules="required">
                     <v-text-field v-model="password" type="password" :error-messages="errors" label="Password" outlined></v-text-field>
-                    <p class="ma-0 text-right">
-                      <v-btn text small class="pl-0 text-capitalize" color="primary" href="true">비밀번호를 잊어버렸나요?</v-btn>
-                    </p>
                   </ValidationProvider>
                   <div class="mt-6 d-flex justify-space-between">
                     <div>

@@ -7,8 +7,11 @@ export default {
   signUp(data) {
     return Api().post("/api/v1/public/users/register", data);
   },
+  signOut() {
+    return Api().post("/api/v1/private/users/logout");
+  },
   updateUserDetails(data) {
-    return Api().put("/api/v1/private/users", data);
+    return Api().put("/api/v1/private/users/name", data);
   },
   uploadUserProfile(data) {
     console.log("uploadUserAvatar");
@@ -16,7 +19,7 @@ export default {
     return Api().post("/api/v1/private/users/profiles", data, { headers: { "Content-Type": "multipart/form-data" } });
   },
   updatePassword(data) {
-    return Api().put("/api/v1/private/users", data);
+    return Api().put("/api/v1/private/users/password", data);
   },
   me(token) {
     //필요없을듯

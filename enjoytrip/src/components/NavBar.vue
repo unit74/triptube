@@ -133,24 +133,12 @@
               </v-list-item-content>
             </v-list-item>
 
-            <!-- <v-btn
-              id="showBtn"
-              @click="moreChannels"
-              v-if="parentItem.header === 'Subscriptions' && isAuthenticated && items[2].length > 0"
-              block
-              text
-              class="text-none"
-            >
-              <v-icon>{{ channelLength === 3 ? "mdi-chevron-down" : "mdi-chevron-up" }}</v-icon>
-              {{ channelLength === 3 ? `Show ${items[2].pages.length - 3} more ` : "Show less" }}</v-btn
-            > -->
-
             <v-divider v-if="parentItem.header !== false" class="mt-2 mb-2"></v-divider>
           </div>
         </v-list>
       </div>
     </v-navigation-drawer>
-    <settings-modal :open-dialog="settingsDialog" v-on:closeDialog="settingsDialog = false" />
+    <settings-modal v-if="isAuthenticated" :open-dialog="settingsDialog" v-on:closeDialog="settingsDialog = false" />
   </nav>
 </template>
 
@@ -169,7 +157,7 @@ export default {
           { title: "Top Viewed Attractions", link: "/trending", icon: "mdi-fire" },
           {
             title: "Popular Attractions",
-            link: "#sd",
+            link: "/popular",
             icon: "mdi-podium",
           },
         ],

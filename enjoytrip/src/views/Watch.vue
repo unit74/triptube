@@ -23,7 +23,7 @@
                       <v-row>
                         <v-col cols="6">
                           <v-img v-if="video.firstImage" :src="`${video.firstImage}`" width="100%" height="350" style="border-radius: 5%"></v-img>
-                          <v-img v-else :src="require(`@/assets/logo.png`)" width="100%" height="350" style="border-radius: 5%"></v-img>
+                          <v-img v-else :src="noImgUrl" width="100%" height="350" style="border-radius: 5%"></v-img>
                         </v-col>
                         <v-col cols="6">
                           <show-map :video="video" />
@@ -47,8 +47,9 @@
                           ><v-icon :class="`pr-2${feeling !== 'dislike' ? ' grey--text text--darken-1' : ''}`">mdi-thumb-down</v-icon>
                           {{ video.dislikes }}</v-btn
                         >
-                        <!-- 다운로드 버튼은 어찌 쓰지? -->
-                        <v-btn :href="'#'" text class="grey--text text--darken-1"><v-icon>mdi-download</v-icon> Download</v-btn>
+                        <v-btn :to="`/nearby/${video.contentId}`" text class="grey--text text--darken-1"
+                          ><v-icon>mdi-map-marker-distance</v-icon> 주변 관광지</v-btn
+                        >
                         <!-- <v-btn text class="grey--text text--darken-1"
                           ><v-icon>mdi-share</v-icon> Share</v-btn
                         >
@@ -126,7 +127,7 @@
                       <v-col class="mx-auto" cols="12" sm="12" md="5" lg="5">
                         <!-- <v-responsive max-height="100%"> -->
                         <v-img v-if="video.firstImage" class="align-center" height="110" :src="`${video.firstImage}`"> </v-img>
-                        <v-img v-else class="align-center" height="110" :src="require(`@/assets/logo.png`)"> </v-img>
+                        <v-img v-else class="align-center" height="110" :src="noImgUrl"> </v-img>
                         <!-- </v-responsive> -->
                       </v-col>
                       <v-col>
@@ -216,7 +217,7 @@ export default {
     libraryId: null,
   }),
   computed: {
-    ...mapGetters(["currentUser", "getUrl", "isAuthenticated"]),
+    ...mapGetters(["currentUser", "getUrl", "isAuthenticated", "noImgUrl"]),
   },
   methods: {
     async getVideo(id) {
