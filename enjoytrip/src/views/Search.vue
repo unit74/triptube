@@ -5,8 +5,6 @@
         <v-container>
           <v-row>
             <v-col> <v-select v-model="sido" :items="sidos" item-text="sidoName" item-value="sido" label="시/도"></v-select></v-col>
-
-            <!-- <v-col> <v-select :sidos="sidos" label="Standard"></v-select></v-col> -->
             <v-col> <v-select v-model="gugun" :items="guguns" item-text="gugunName" item-value="gugun" label="구/군"></v-select></v-col>
             <v-col> <v-select v-model="contentType" :items="contents" item-text="contentTypeName" item-value="contentType" label="컨텐츠"></v-select></v-col>
           </v-row>
@@ -35,7 +33,7 @@
                   <v-col cols="5" sm="3" md="3" lg="3">
                     <v-img v-if="result.firstImage" class="align-center" :src="`${result.firstImage}`" :alt="`${result.title} avatar`" max-height="200">
                     </v-img>
-                    <v-img v-else class="align-center" :src="require(`@/assets/logo.png`)" :alt="`${result.title} avatar`" max-height="200"> </v-img>
+                    <v-img v-else class="align-center" :src="`${noImgUrl}`" :alt="`${result.title} avatar`" max-height="200"> </v-img>
                   </v-col>
                   <v-col cols="7" sm="7" md="8" lg="8">
                     <div class="ml-2">
@@ -44,13 +42,12 @@
                       </v-card-title>
 
                       <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1.2">
-                        {{ result.title }}<br />
-                        {{ result.readcount }}
-                        views<v-icon>mdi-circle-small</v-icon>6 hours ago
+                        {{ result.title }}
                       </v-card-subtitle>
                       <v-card-subtitle class="pl-2 pt-2 pb-0">
                         {{ result.addr1 }}
                       </v-card-subtitle>
+                      <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1.2"> {{ result.readcount }} views </v-card-subtitle>
                     </div>
                   </v-col>
                 </v-row>
@@ -86,9 +83,9 @@
 </template>
 
 <script>
-import InfiniteLoading from "vue-infinite-loading";
-import { mapGetters } from "vuex";
-import SearchService from "@/services/SearchService";
+import InfiniteLoading from 'vue-infinite-loading';
+import { mapGetters } from 'vuex';
+import SearchService from '@/services/SearchService';
 
 export default {
   data: () => ({
@@ -97,17 +94,17 @@ export default {
     loaded: false,
     page: 1,
     results: [],
-    searchText: "",
+    searchText: '',
     infiniteId: +new Date(),
     sidos: [],
     guguns: [],
     contents: [],
-    sido: "",
-    gugun: "",
-    contentType: "",
+    sido: '',
+    gugun: '',
+    contentType: '',
   }),
   computed: {
-    ...mapGetters(["getUrl"]),
+    ...mapGetters(['noImgUrl']),
   },
   methods: {
     async getSearchResults($state) {
@@ -158,7 +155,7 @@ export default {
       // this.sidos = [{ sidoName: "선택 X", sido: "" }];
       this.sidos = [];
       this.sidos = sidos.data.data;
-      this.sidos.unshift({ sidoName: "시/도", sido: "" });
+      this.sidos.unshift({ sidoName: '시/도', sido: '' });
     },
 
     async getGuguns(sido) {
@@ -168,7 +165,7 @@ export default {
       if (!guguns) return;
       this.guguns = guguns.data.data;
 
-      this.guguns.unshift({ gugunName: "구/군", gugun: "" });
+      this.guguns.unshift({ gugunName: '구/군', gugun: '' });
     },
     async getContents() {
       const contents = await SearchService.getContents().catch((err) => {
@@ -178,7 +175,7 @@ export default {
       if (!contents) return;
 
       this.contents = contents.data.data;
-      this.contents.unshift({ contentTypeName: "컨텐츠", contentType: "" });
+      this.contents.unshift({ contentTypeName: '컨텐츠', contentType: '' });
     },
     clearResult() {
       this.page = 1;
@@ -191,8 +188,8 @@ export default {
   },
   beforeRouteUpdate(to, from, next) {
     // console.log(to.query['search-query'])
-    if (to.query["search-query"] === "") return;
-    this.searchText = to.query["search-query"];
+    if (to.query['search-query'] === '') return;
+    this.searchText = to.query['search-query'];
     this.searchParams = to.query.searchParams;
     this.page = 1;
     this.results = [];
@@ -200,7 +197,7 @@ export default {
     next();
   },
   mounted() {
-    this.searchText = this.$route.query["search-query"];
+    this.searchText = this.$route.query['search-query'];
     this.searchParams = this.$route.query.searchParams;
 
     this.getSidos();
@@ -209,17 +206,15 @@ export default {
   watch: {
     sido() {
       this.getGuguns(this.sido);
-      this.gugun = "";
+      this.gugun = '';
       this.clearResult();
     },
     contentType() {
-      console.log("content()");
+      console.log('content()');
       this.clearResult();
     },
     gugun() {
-      if (this.gugun != "") {
-        this.clearResult();
-      }
+      this.clearResult();
     },
   },
 };

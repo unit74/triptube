@@ -23,22 +23,22 @@ export default {
   props: {
     openModal: {
       type: Boolean,
-      required: true
+      required: true,
     },
     details: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     dialog() {
-      return this.openModal
-    }
+      return this.openModal;
+    },
   },
   methods: {
     closeModal() {
-      this.$emit('closeModal')
-    }
-  }
-}
+      this.$emit('closeModal');
+    },
+  },
+};
 </script>

@@ -38,7 +38,7 @@
                           :src="`${history.attractionInfo.firstImage}`"
                         >
                         </v-img>
-                        <v-img v-else :src="require(`@/assets/logo.png`)" max-width="400" max-height="200" style="border-radius: 5%"></v-img>
+                        <v-img v-else :src="`${noImgUrl}`" max-width="400" max-height="200" style="border-radius: 5%"></v-img>
                       </v-col>
                       <v-col>
                         <div class="ml-2">
@@ -51,13 +51,10 @@
                           </v-card-title>
 
                           <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1">
-                            {{ history.attractionInfo.title }}<v-icon>mdi-circle-small</v-icon>{{ history.attractionInfo.readcount }} views
+                            {{ history.attractionInfo.readcount }} views <v-icon>mdi-circle-small</v-icon>{{ dateFormatter(history.updatedAt) }}
                           </v-card-subtitle>
                           <v-card-subtitle class="pl-2 pt-2 pb-0">
                             {{ history.attractionInfo.addr1 }}
-                          </v-card-subtitle>
-                          <v-card-subtitle class="pl-2 pt-2 pb-0">
-                            {{ dateFormatter(history.updatedAt) }}
                           </v-card-subtitle>
                         </div>
                       </v-col>
@@ -156,7 +153,7 @@
                         :src="`${defaultProfileUrl + currentUser.profilePhotoUrl}`"
                       ></v-img>
                       <v-avatar v-else color="red">
-                        <span class="white--text headline "> {{ currentUser.name.split("")[0].toUpperCase() }}</span>
+                        <span class="white--text headline "> {{ currentUser.name.split('')[0].toUpperCase() }}</span>
                       </v-avatar>
                     </v-list-item-avatar>
                     <v-list-item-content>
@@ -239,11 +236,11 @@
 </template>
 
 <script>
-import moment from "moment";
-import { mapGetters } from "vuex";
+import moment from 'moment';
+import { mapGetters } from 'vuex';
 
-import HistoryService from "@/services/HistoryService";
-import InfiniteLoading from "vue-infinite-loading";
+import HistoryService from '@/services/HistoryService';
+import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
   data: () => ({
@@ -251,9 +248,9 @@ export default {
     loaded: false,
     errored: false,
     snackbar: false,
-    deleteMessage: "",
-    items: ["Watch History", "Search History", "Comment History", "Reply History"],
-    historyType: "Watch History",
+    deleteMessage: '',
+    items: ['Watch History', 'Search History', 'Comment History', 'Reply History'],
+    historyType: 'Watch History',
     histories: [],
     page: 1,
     infiniteId: +new Date(),
@@ -262,7 +259,7 @@ export default {
     isHovering: false,
   }),
   computed: {
-    ...mapGetters(["currentUser", "getUrl", "defaultProfileUrl"]),
+    ...mapGetters(['currentUser', 'noImgUrl', 'defaultProfileUrl']),
   },
   methods: {
     async getHistories($state) {
@@ -275,11 +272,11 @@ export default {
       // console.log(this.historyType);
       const params = {
         page: this.page,
-        type: this.historyType === "Watch History" ? "VISIT" : "SEARCH",
+        type: this.historyType === 'Watch History' ? 'VISIT' : 'SEARCH',
       };
 
       let histories;
-      if (this.historyType == "Reply History") {
+      if (this.historyType == 'Reply History') {
         histories = await HistoryService.getReplies()
           .catch((err) => {
             this.errored = true;
@@ -288,7 +285,7 @@ export default {
           .finally(() => {
             this.loading = false;
           });
-      } else if (this.historyType == "Comment History") {
+      } else if (this.historyType == 'Comment History') {
         histories = await HistoryService.getComments()
           .catch((err) => {
             this.errored = true;
@@ -329,7 +326,7 @@ export default {
     async clearHistory() {
       this.clearLoading = true;
 
-      const type = this.historyType === "Watch History" ? "VISIT" : "SEARCH";
+      const type = this.historyType === 'Watch History' ? 'VISIT' : 'SEARCH';
 
       await HistoryService.deleteAll(type)
         .catch((err) => {
@@ -344,28 +341,28 @@ export default {
         });
     },
     async deleteHistory(id) {
-      console.log("delete");
+      console.log('delete');
       console.log(this.histories, id);
       this.moveCheck = false;
-      if (this.historyType == "Comment History") {
+      if (this.historyType == 'Comment History') {
         this.histories = this.histories.filter((history) => history.commentId.toString() !== id.commentId.toString());
         await HistoryService.deleteComment(id.commentId)
           .catch((err) => {
             console.log(err);
           })
           .finally(() => {
-            this.deleteMessage = "History Deleted Successfully";
+            this.deleteMessage = 'History Deleted Successfully';
             this.snackbar = true;
             this.moveCheck = true;
           });
-      } else if (this.historyType == "Reply History") {
+      } else if (this.historyType == 'Reply History') {
         this.histories = this.histories.filter((history) => history.replyId.toString() !== id.replyId.toString());
         await HistoryService.deleteReply(id.replyId)
           .catch((err) => {
             console.log(err);
           })
           .finally(() => {
-            this.deleteMessage = "History Deleted Successfully";
+            this.deleteMessage = 'History Deleted Successfully';
             this.snackbar = true;
             this.moveCheck = true;
           });
@@ -376,7 +373,7 @@ export default {
             console.log(err);
           })
           .finally(() => {
-            this.deleteMessage = "History Deleted Successfully";
+            this.deleteMessage = 'History Deleted Successfully';
             this.snackbar = true;
             this.moveCheck = true;
           });
@@ -400,7 +397,7 @@ export default {
   },
   watch: {
     historyType() {
-      if (this.historyType == "Comment History" || this.historyType == "Reply History") this.getHistories();
+      if (this.historyType == 'Comment History' || this.historyType == 'Reply History') this.getHistories();
     },
   },
 };

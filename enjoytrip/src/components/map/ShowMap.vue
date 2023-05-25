@@ -49,7 +49,7 @@ export default {
       marker.setMap(this.map);
 
       const iwContent = `
-      <div style="padding:5px;font-weight:bold;text-align:center">${this.attraction.title} <br>
+      <div style="padding:5px;font-weight:bold;text-align:center;height:100%;width:240px">${this.attraction.title} <br>
         <a href="https://map.kakao.com/link/map/${this.attraction.title},${this.attraction.latitude}, ${this.attraction.longitude}" style="color:gray;text-decoration: none; font-size:12px;" target="_blank">큰지도보기</a>
         <a href="https://map.kakao.com/link/to/${this.attraction.title},${this.attraction.latitude}, ${this.attraction.longitude}" style="color:gray;text-decoration: none; font-size:12px;" target="_blank">길찾기</a>
       </div>`; // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다

@@ -1,6 +1,6 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import CommentService from "@/services/CommentService";
+import Vue from 'vue';
+import Vuex from 'vuex';
+import CommentService from '@/services/CommentService';
 
 Vue.use(Vuex);
 
@@ -23,20 +23,17 @@ export default {
           comments.data[i].replies[j].replyUpdateCheck = false;
         }
       }
-      console.log("setComments comments");
+      console.log('setComments comments');
       console.log(comments);
       state.comments = comments;
     },
 
     addComment(state, comment) {
-      // console.log('hello', comment)
-
       comment.commentUpdateCheck = false;
       for (var j = 0; comment.replies.length; j++) {
         comment.replies[j].replyUpdateCheck = false;
       }
       state.comments.data.unshift(comment);
-      // console.log(state.comments.data)
     },
   },
   actions: {
@@ -44,7 +41,7 @@ export default {
       return new Promise((resolve, reject) => {
         CommentService.getCommentByVideoId(videoId)
           .then((comments) => {
-            commit("setComments", comments.data);
+            commit('setComments', comments.data);
 
             resolve(comments);
           })
@@ -52,7 +49,7 @@ export default {
       });
     },
     addComment({ commit }, comment) {
-      commit("addComment", comment);
+      commit('addComment', comment);
     },
   },
 };

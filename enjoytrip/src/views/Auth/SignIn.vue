@@ -36,10 +36,10 @@
 
 <script>
 export default {
-  name: "SignIn",
+  name: 'SignIn',
   data: () => ({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
     loading: false,
   }),
   methods: {
@@ -47,7 +47,7 @@ export default {
       if (this.loading) return;
       this.loading = true;
 
-      const data = await this.$store.dispatch("signIn", { email: this.email, password: this.password }).catch((err) => {
+      const data = await this.$store.dispatch('signIn', { email: this.email, password: this.password }).catch((err) => {
         this.loading = false;
         console.log(err);
         this.$refs.form.setErrors({
@@ -62,7 +62,7 @@ export default {
       if (!user) return;
 
       this.loading = false;
-      this.$router.push({ name: "Home" });
+      this.$router.push({ name: 'Home' });
     },
   },
 };

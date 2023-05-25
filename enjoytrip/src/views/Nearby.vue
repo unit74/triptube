@@ -45,13 +45,12 @@
                           <v-card-title class="pl-2 pt-2 subtitle-1 font-weight-bold " style="line-height: 1">
                             {{ attraction.title }}
                           </v-card-title>
-
+                          <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1">
+                            {{ attraction.addr1 }}
+                          </v-card-subtitle>
                           <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1">
                             <!-- {{ attraction.userId.channelName }}<br /> -->
                             {{ attraction.readcount }} views
-                          </v-card-subtitle>
-                          <v-card-subtitle class="pl-2 pt-2 pb-0" style="line-height: 1">
-                            {{ attraction.addr1 }}
                           </v-card-subtitle>
                         </div>
                       </v-col>

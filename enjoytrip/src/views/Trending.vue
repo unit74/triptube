@@ -1,6 +1,7 @@
 <template>
   <div id="trending" class="pt-7 px-sm-10">
     <v-container fluid>
+      <h3 class=" headline font-weight-medium">Top Viewed Attractions</h3>
       <v-row>
         <v-col cols="8" sm="7" md="10" lg="10" v-for="(attraction, i) in loading ? 12 : attractions" :key="i" class="mx-lg-0 mx-md-0 mx-sm-auto mx-auto">
           <v-skeleton-loader class="mx-auto" type="list-item-avatar-three-line" :loading="loading" tile large>
@@ -9,7 +10,7 @@
                 <v-col class="mx-auto" cols="12" sm="8" md="5" lg="4">
                   <!-- <v-responsive max-height="100%"> -->
                   <v-img v-if="attraction.firstImage" max-height="200" class="align-center" :src="`${attraction.firstImage}`"> </v-img>
-                  <v-img v-else :src="require(`@/assets/logo.png`)" max-height="200" class="align-center"> </v-img>
+                  <v-img v-else :src="`${noImgUrl}`" max-height="200" class="align-center"> </v-img>
                   <!-- </v-responsive> -->
                 </v-col>
                 <v-col class="hidden-sm-and-down">
@@ -19,9 +20,7 @@
                     </v-card-title>
 
                     <v-card-subtitle class="pl-2 pb-0" v-if="attraction">
-                      {{ attraction.addr1 }}
-                      <v-icon>mdi-circle-small</v-icon>{{ attraction.readcount }} views<v-icon>mdi-circle-small</v-icon
-                      >{{ dateFormatter(attraction.createdAt) }}
+                      {{ attraction.readcount }} views <v-icon>mdi-circle-small</v-icon>{{ attraction.addr1 }}
                     </v-card-subtitle>
                     <br />
                     <v-card-subtitle class="pl-2 pt-0">
@@ -83,7 +82,7 @@ export default {
     page: 1,
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated']),
+    ...mapGetters(['currentUser', 'noImgUrl', 'isAuthenticated']),
   },
   methods: {
     async getAttractions($state) {

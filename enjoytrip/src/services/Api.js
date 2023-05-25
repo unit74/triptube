@@ -1,16 +1,16 @@
-import axios from "axios";
+import axios from 'axios';
 
 export default () => {
   const axiosInstance = axios.create({
     // baseURL: "http://192.168.203.120:8080",
-    baseURL: "http://192.168.0.233:8080",
+    baseURL: 'http://localhost:8080',
 
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
   if (token) {
     axiosInstance.defaults.headers.common.Authorization = `${token}`;
   }
@@ -20,18 +20,18 @@ export default () => {
     async (error) => {
       if (error.response.status === 401) {
         try {
-          const response = await axios.post("/api/v1/private/users/reissue");
-          localStorage.setItem("token", response.data.data);
+          const response = await axios.post('/api/v1/private/users/reissue');
+          localStorage.setItem('token', response.data.data);
           axiosInstance.defaults.headers.common.Authorization = `${response.data.data}`;
           return axios(error.config);
         } catch (error) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
           location.reload();
         }
       } else if (error.response.status === 403) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         location.reload();
       }
       return Promise.reject(error);

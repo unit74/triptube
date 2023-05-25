@@ -278,14 +278,9 @@ export default {
         .dispatch('setComments', this.attractionId)
         .catch((err) => console.log(err))
         .finally(() => (this.loading = false));
-      // console.log(this.loading)
       if (!comments) return;
 
       this.comments = this.$store.getters.getComments.data;
-
-      // console.log(this.comments.length)
-      // this.loading = false
-      // console.log(this.$store.getters.getComments.data)
     },
 
     updateTextField(email, commentText, i) {
@@ -366,7 +361,6 @@ export default {
     },
     async deleteComment(commentId) {
       if (!this.isAuthenticated) return;
-      // this.$store.dispatch('deleteComment', id)
 
       const result = await CommentService.deleteById(commentId).catch((err) => {
         console.log(err);

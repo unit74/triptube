@@ -62,7 +62,7 @@ export default {
       this.comment = '';
       comment.data.data.replies = [];
       comment.data.data.userId = this.$store.getters.currentUser;
-
+      this.showCommentBtns = false;
       this.$store.dispatch('addComment', comment.data.data);
       this.$emit('attractionCommentLength');
     },

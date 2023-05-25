@@ -45,7 +45,7 @@
             </v-avatar>
             <template v-else>
               <span class="headline">
-                {{ currentUser.name.split("")[0].toUpperCase() }}
+                {{ currentUser.name.split('')[0].toUpperCase() }}
               </span>
             </template>
           </v-btn>
@@ -60,7 +60,7 @@
                 </v-avatar>
                 <template v-else>
                   <v-avatar color="red">
-                    <span class="white--text headline "> {{ currentUser.name.split("")[0].toUpperCase() }}</span>
+                    <span class="white--text headline "> {{ currentUser.name.split('')[0].toUpperCase() }}</span>
                   </v-avatar>
                 </template>
               </v-list-item-avatar>
@@ -112,24 +112,12 @@
           <v-divider class="hidden-lg-and-up"></v-divider>
           <div v-for="parentItem in items" :key="parentItem.header">
             <v-subheader v-if="parentItem.header" class="pl-3 py-4 subtitle-1 font-weight-bold text-uppercase">{{ parentItem.header }}</v-subheader>
-            <v-list-item
-              v-for="(item, i) in parentItem.header === 'Subscriptions' ? items[2].pages.slice(0, channelLength) : parentItem.pages"
-              :key="item.title"
-              class="mb-0"
-              :to="parentItem.header === 'Subscriptions' ? '/channels/' + item.channelId._id : item.link"
-              exact
-              active-class="active-item"
-            >
-              <v-list-item-icon v-if="parentItem.header !== 'Subscriptions'">
+            <v-list-item v-for="item in parentItem.pages" :key="item.title" class="mb-0" :to="item.link" exact active-class="active-item">
+              <v-list-item-icon>
                 <v-icon>{{ item.icon }}</v-icon>
               </v-list-item-icon>
-              <v-list-item-avatar v-else class="mr-5">
-                {{ i }}
-              </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title class=" font-weight-medium subtitle-2">{{
-                  parentItem.header === "Subscriptions" ? item.channelId.channelName : item.title
-                }}</v-list-item-title>
+                <v-list-item-title class=" font-weight-medium subtitle-2">{{ item.title }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
 
@@ -143,8 +131,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import SettingsModal from "@/components/SettingsModal";
+import { mapGetters } from 'vuex';
+import SettingsModal from '@/components/SettingsModal';
 
 export default {
   data: () => ({
@@ -153,117 +141,78 @@ export default {
       {
         header: null,
         pages: [
-          { title: "Home", link: "/", icon: "mdi-home" },
-          { title: "Top Viewed Attractions", link: "/trending", icon: "mdi-fire" },
+          { title: 'Home', link: '/', icon: 'mdi-home' },
+          { title: 'Top Viewed Attractions', link: '/trending', icon: 'mdi-fire' },
           {
-            title: "Popular Attractions",
-            link: "/popular",
-            icon: "mdi-podium",
+            title: 'Popular Attractions',
+            link: '/popular',
+            icon: 'mdi-podium',
           },
         ],
       },
       {
-        header: "Storage",
+        header: 'Storage',
         pages: [
           {
-            title: "Library",
-            link: "/subscriptions",
-            icon: "mdi-package-variant",
+            title: 'Library',
+            link: '/subscriptions',
+            icon: 'mdi-package-variant',
           },
           {
-            title: "History",
-            link: "/history",
-            icon: "mdi-history",
+            title: 'History',
+            link: '/history',
+            icon: 'mdi-history',
           },
 
-          // {
-          //   title: 'Watch later',
-          //   link: '#wl',
-          //   icon: 'mdi-clock'
-          // },
-
           {
-            title: "Liked Attractions",
-            link: "/liked",
-            icon: "mdi-thumb-up",
+            title: 'Liked Attractions',
+            link: '/liked',
+            icon: 'mdi-thumb-up',
           },
         ],
       },
     ],
     channelLength: 0,
-    searchText: "",
+    searchText: '',
     settingsDialog: false,
     // user: null
   }),
   computed: {
-    ...mapGetters(["currentUser", "getUrl", "isAuthenticated", "logoUrl", "defaultProfileUrl"]),
+    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated', 'logoUrl', 'defaultProfileUrl']),
   },
   components: { SettingsModal },
 
   methods: {
     async search() {
       if (!this.searchText) return;
-      // console.log(this.searchText == this.$route.query['search-query'])
-      if (this.searchText == this.$route.query["search-query"]) return;
-      // this.searchText = this.$route.query['search-query']
-      // const data = {
-      //   type: "search",
-      //   searchText: this.searchText,
-      // };
-
-      // if (this.isAuthenticated) await HistoryService.createHistory(data).catch((err) => console.log(err));
+      if (this.searchText == this.$route.query['search-query']) return;
 
       this.$router.push({
-        name: "Search",
-        query: { "search-query": this.searchText },
+        name: 'Search',
+        query: { 'search-query': this.searchText },
       });
     },
-    // async getSubscribedChannels() {
-    //   const channels = await SubscriptionService.getSubscribedChannels(this.currentUser._id).catch((err) => console.log(err));
-    //   this.items[2].pages = channels.data.data;
-    //   this.channelLength = 3;
-    // },
-    moreChannels() {
-      if (this.channelLength === 3) this.channelLength = this.items[2].pages.length;
-      else this.channelLength = 3;
-    },
+
     signOut() {
-      this.$store.dispatch("signOut");
-      // this.$router.push('/')
+      this.$store.dispatch('signOut');
     },
     settingsMoal() {
       this.settingsDialog = true;
     },
   },
-  // beforeRouteLeave(to, from, next) {
-  //   this.searchText = ''
-  //   next()
-  // },
-  // beforeRouteUpdate(to, from, next) {
-  //   if (!to.query['search-query'] === '') return
-  //   this.searchText = to.query['search-query']
-  //   next()
-  // },
+
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      if (!to.query["search-query"] === "") return;
-      vm.searchText = to.query["search-query"];
-      // vm.getSearchResults(to.query['search-query'])
+      if (!to.query['search-query'] === '') return;
+      vm.searchText = to.query['search-query'];
     });
   },
   mounted() {
-    // if (this.$route.query['search-query'])
-    //   this.searchText = this.$route.query['search-query']
-
-    //if (this.currentUser) this.getSubscribedChannels();
-    // this.user = this.$store.getters.currentUser
-    // console.log(this.user)
     this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true;
-    // console.log(this.$route.name)
-    this.drawer = this.$route.name === "Watch" ? false : this.drawer;
+    this.drawer = this.$route.name === 'Watch' ? false : this.drawer;
   },
   created() {
-    this.drawer = this.$route.name === "Watch" ? false : this.drawer;
+    this.drawer = this.$route.name === 'Watch' ? false : this.drawer;
     if (!this.isAuthenticated) {
       this.items[2].header = false;
       this.items[0].pages.pop();

@@ -16,7 +16,7 @@
       </v-alert>
 
       <main v-else>
-        <!-- <h3 class="headline font-weight-medium">Recommended</h3> -->
+        <h3 class="headline font-weight-medium">Liked Attractions</h3>
         <v-row>
           <v-col cols="12" sm="6" md="4" lg="3" v-for="(attraction, i) in loading ? 12 : attractions" :key="i" class="mx-xs-auto">
             <v-skeleton-loader type="card-avatar" :loading="loading">

@@ -1,21 +1,21 @@
-import Api from "@/services/Api";
+import Api from '@/services/Api';
 
 export default {
-  checkFeeling(contentId) {
+  checkReaction(contentId) {
     return Api().get(`/api/v1/private/trips/reactions/${contentId}`);
   },
-  createFeeling(params) {
+  createReaction(params) {
     console.log(params);
-    return Api().post("/api/v1/private/trips/reactions", {
+    return Api().post('/api/v1/private/trips/reactions', {
       contentId: params.contentId,
       type: params.type,
     });
   },
-  deleteFeeling(contentId) {
+  deleteReaction(contentId) {
     return Api().delete(`/api/v1/private/trips/reactions/${contentId}`);
   },
-  getLikedVideos(page) {
-    return Api().get("/api/v1/private/trips/attractions/likes", {
+  getLikedAttractions(page) {
+    return Api().get('/api/v1/private/trips/attractions/likes', {
       params: {
         page: page,
       },

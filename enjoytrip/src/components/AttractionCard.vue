@@ -9,7 +9,7 @@
             <v-img v-if="attraction.firstImage" class="elevation-6" :src="`${attraction.firstImage2}`"></v-img>
 
             <v-avatar v-else color="red">
-              <span class="white--text headline "> {{ attraction.title.split("")[0].toUpperCase() }}</span>
+              <span class="white--text headline "> {{ attraction.title.split('')[0].toUpperCase() }}</span>
             </v-avatar>
           </v-list-item-avatar>
         </v-list-item>
@@ -33,10 +33,10 @@
 </template>
 
 <script>
-import moment from "moment";
-import { mapGetters } from "vuex";
+import moment from 'moment';
+import { mapGetters } from 'vuex';
 export default {
-  name: "AttractionCard",
+  name: 'AttractionCard',
   props: {
     attraction: {
       type: Object,
@@ -52,7 +52,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["noImgUrl"]),
+    ...mapGetters(['noImgUrl']),
   },
   methods: {
     dateFormatter(date) {
