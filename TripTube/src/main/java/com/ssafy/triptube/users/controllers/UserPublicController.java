@@ -49,7 +49,7 @@ public class UserPublicController {
 		TokenDto tokenDto = authService.login(loginDto);
 
 		HttpCookie httpCookie = ResponseCookie.from("refresh-token", tokenDto.getRefreshToken())
-				.maxAge(COOKIE_EXPIRATION).httpOnly(true).secure(true).build();
+				.maxAge(COOKIE_EXPIRATION).build();
 
 		LoginInfoDto loginInfoDto = userService.me(loginDto.getEmail());
 		loginInfoDto.setToken("Bearer " + tokenDto.getAccessToken());

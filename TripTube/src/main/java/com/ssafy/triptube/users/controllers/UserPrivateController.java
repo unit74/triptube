@@ -88,9 +88,9 @@ public class UserPrivateController {
 
 		if (reissuedTokenDto != null) {
 			ResponseCookie responseCookie = ResponseCookie.from("refresh-token", reissuedTokenDto.getRefreshToken())
-					.maxAge(COOKIE_EXPIRATION).httpOnly(true).secure(true).build();
+					.maxAge(COOKIE_EXPIRATION).build();
 			return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-					.header(HttpHeaders.AUTHORIZATION, "Bearer " + reissuedTokenDto.getAccessToken()).build();
+					.body(new ApiResponseDto<>(true, "재발급", "Bearer " + reissuedTokenDto.getAccessToken()));
 
 		} else {
 			ResponseCookie responseCookie = ResponseCookie.from("refresh-token", "").maxAge(0).path("/").build();

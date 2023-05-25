@@ -48,10 +48,9 @@ public class AttractionPublicController {
 	public ResponseEntity<?> getSearchAttractions(String searchText, @RequestParam(required = false) Integer gugun,
 			@RequestParam(required = false) Integer sido, @RequestParam(required = false) Integer contentType,
 			@RequestParam(required = false) Integer page) {
-		System.out.println(searchText);
-		System.out.println(gugun);
-		System.out.println(sido);
-		System.out.println(contentType);
+		if (searchText == null) {
+			return createResponse(false, "검색어 없음");
+		}
 
 		List<AttractionInfoDto> attractionInfoDto = attractionInfoService.getSearchAttractions(searchText, gugun, sido,
 				contentType, page);
