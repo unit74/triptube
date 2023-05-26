@@ -31,23 +31,35 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-snackbar v-model="snackbar">
+      Comment {{ snackbarMessage }}
+      <v-btn color="white" text @click="snackbar = false" icon>
+        <v-icon>mdi-close-circle</v-icon>
+      </v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 
 <script>
 export default {
-  name: 'SignIn',
+  name: "SignIn",
   data: () => ({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     loading: false,
+    snackbar: false,
+    snackbarMessage: "",
   }),
   methods: {
     async signin() {
       if (this.loading) return;
       this.loading = true;
 
-      const data = await this.$store.dispatch('signIn', { email: this.email, password: this.password }).catch((err) => {
+      console.log("sdfdsf");
+      const data = await this.$store.dispatch("signIn", { email: this.email, password: this.password }).catch((err) => {
+        this.snackbar = true;
+        this.snackbarMessage = "로그인 실패";
+
         this.loading = false;
         console.log(err);
         this.$refs.form.setErrors({
@@ -62,7 +74,7 @@ export default {
       if (!user) return;
 
       this.loading = false;
-      this.$router.push({ name: 'Home' });
+      this.$router.push({ name: "Home" });
     },
   },
 };

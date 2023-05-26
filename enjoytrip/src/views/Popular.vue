@@ -32,11 +32,11 @@
                     <v-avatar size="150" max-width="150" class="mx-auto blue">
                       <img
                         v-if="result.contentTypeName !== 'no-photo.jpg'"
-                        :src="`http://localhost:8080/api/v1/public/images/contents/${result.contentTypeImageUrl}`"
+                        :src="`http://192.168.203.120:8080/api/v1/public/images/contents/${result.contentTypeImageUrl}`"
                         :alt="`${result.name} avatar`"
                       />
                       <template v-else color="red">
-                        <span class="white--text display-1"> {{ result.contentTypeName.split('')[0].toUpperCase() }}</span>
+                        <span class="white--text display-1"> {{ result.contentTypeName.split("")[0].toUpperCase() }}</span>
                       </template>
                     </v-avatar>
                     <!-- </v-responsive> -->
@@ -59,8 +59,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import SearchService from '@/services/SearchService';
+import { mapGetters } from "vuex";
+import SearchService from "@/services/SearchService";
 
 export default {
   data: () => ({
@@ -70,7 +70,7 @@ export default {
     results: [],
   }),
   computed: {
-    ...mapGetters(['getUrl', 'defaultUrl']),
+    ...mapGetters(["getUrl", "defaultUrl"]),
   },
   methods: {
     async getSearchResults($state) {

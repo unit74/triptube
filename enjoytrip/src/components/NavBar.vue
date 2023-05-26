@@ -14,7 +14,17 @@
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-text-field flat hide-details append-icon="mdi-magnify" placeholder="Search" outlined dense v-model="searchText" @click:append="search"></v-text-field>
+      <v-text-field
+        flat
+        hide-details
+        append-icon="mdi-magnify"
+        placeholder="Search"
+        outlined
+        dense
+        v-model="searchText"
+        @keyup.enter="search"
+        @click:append="search"
+      ></v-text-field>
 
       <v-spacer></v-spacer>
 
@@ -45,7 +55,7 @@
             </v-avatar>
             <template v-else>
               <span class="headline">
-                {{ currentUser.name.split('')[0].toUpperCase() }}
+                {{ currentUser.name.split("")[0].toUpperCase() }}
               </span>
             </template>
           </v-btn>
@@ -60,7 +70,7 @@
                 </v-avatar>
                 <template v-else>
                   <v-avatar color="red">
-                    <span class="white--text headline "> {{ currentUser.name.split('')[0].toUpperCase() }}</span>
+                    <span class="white--text headline "> {{ currentUser.name.split("")[0].toUpperCase() }}</span>
                   </v-avatar>
                 </template>
               </v-list-item-avatar>
@@ -131,8 +141,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import SettingsModal from '@/components/SettingsModal';
+import { mapGetters } from "vuex";
+import SettingsModal from "@/components/SettingsModal";
 
 export default {
   data: () => ({
@@ -141,60 +151,60 @@ export default {
       {
         header: null,
         pages: [
-          { title: 'Home', link: '/', icon: 'mdi-home' },
-          { title: 'Top Viewed Attractions', link: '/trending', icon: 'mdi-fire' },
+          { title: "Home", link: "/", icon: "mdi-home" },
+          { title: "Top Viewed Attractions", link: "/trending", icon: "mdi-fire" },
           {
-            title: 'Popular Attractions',
-            link: '/popular',
-            icon: 'mdi-podium',
+            title: "Popular Attractions",
+            link: "/popular",
+            icon: "mdi-podium",
           },
         ],
       },
       {
-        header: 'Storage',
+        header: "Storage",
         pages: [
           {
-            title: 'Library',
-            link: '/library',
-            icon: 'mdi-package-variant',
+            title: "Library",
+            link: "/library",
+            icon: "mdi-package-variant",
           },
           {
-            title: 'History',
-            link: '/history',
-            icon: 'mdi-history',
+            title: "History",
+            link: "/history",
+            icon: "mdi-history",
           },
 
           {
-            title: 'Liked Attractions',
-            link: '/liked',
-            icon: 'mdi-thumb-up',
+            title: "Liked Attractions",
+            link: "/liked",
+            icon: "mdi-thumb-up",
           },
         ],
       },
     ],
     channelLength: 0,
-    searchText: '',
+    searchText: "",
     settingsDialog: false,
     // user: null
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated', 'logoUrl', 'defaultProfileUrl']),
+    ...mapGetters(["currentUser", "getUrl", "isAuthenticated", "logoUrl", "defaultProfileUrl"]),
   },
   components: { SettingsModal },
 
   methods: {
     async search() {
       if (!this.searchText) return;
-      if (this.searchText == this.$route.query['search-query']) return;
+      if (this.searchText == this.$route.query["search-query"]) return;
 
       this.$router.push({
-        name: 'Search',
-        query: { 'search-query': this.searchText },
+        name: "Search",
+        query: { "search-query": this.searchText },
       });
     },
 
     signOut() {
-      this.$store.dispatch('signOut');
+      this.$store.dispatch("signOut");
     },
     settingsMoal() {
       this.settingsDialog = true;
@@ -203,16 +213,16 @@ export default {
 
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      if (!to.query['search-query'] === '') return;
-      vm.searchText = to.query['search-query'];
+      if (!to.query["search-query"] === "") return;
+      vm.searchText = to.query["search-query"];
     });
   },
   mounted() {
     this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true;
-    this.drawer = this.$route.name === 'Watch' ? false : this.drawer;
+    this.drawer = this.$route.name === "Watch" ? false : this.drawer;
   },
   created() {
-    this.drawer = this.$route.name === 'Watch' ? false : this.drawer;
+    this.drawer = this.$route.name === "Watch" ? false : this.drawer;
     if (!this.isAuthenticated) {
       this.items[2].header = false;
       this.items[0].pages.pop();
