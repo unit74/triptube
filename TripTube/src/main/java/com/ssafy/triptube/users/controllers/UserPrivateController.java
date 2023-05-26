@@ -40,9 +40,7 @@ public class UserPrivateController {
 
 	@PostMapping("/profiles")
 	public ResponseEntity<?> updateProfileImage(@RequestParam("image") MultipartFile multipartFile) {
-		userService.updateProfileImage(getLoginUserId(), multipartFile);
-
-		return createResponse(true, "프로필 이미지 업로드");
+		return createResponse(true, "프로필 이미지 업로드", userService.updateProfileImage(getLoginUserId(), multipartFile));
 	}
 
 	@PutMapping("/name")
